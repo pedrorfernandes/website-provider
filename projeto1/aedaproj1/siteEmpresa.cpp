@@ -1,0 +1,96 @@
+//
+//  siteEmpresa.cpp
+//
+//  Projeto 1 AEDA
+//
+//  Turma 1 Grupo 3
+//
+//  ei11111 - Armindo Carvalho
+//  ei11078 - Pedro Rocha
+//  ei11122 - Pedro Fernandes
+//
+
+#include "siteEmpresa.h"
+
+float SiteEmpresa::custoPorPagina = CUSTOEMPRESA_PREDEFINIDO;
+
+SiteEmpresa::SiteEmpresa(string i, unsigned int n, vector<string> tech, vector<Utilizador*> gest): Website(i, n), tecnologias(tech), gestores(gest)
+{
+    for (vector<Utilizador*>::iterator it = gestores.begin(); it != gestores.end(); it++) {
+        atribuiGestao(*it);
+    }
+
+}
+
+SiteEmpresa::~SiteEmpresa(){
+    /*
+    for (vector<Utilizador*>::iterator it = gestores.begin(); it != gestores.end(); it++) {
+        delete (*it);
+    }
+     */
+}
+
+vector<string> SiteEmpresa::getTecnologias() const{
+    return tecnologias;
+}
+
+void SiteEmpresa::setTecnologias(const vector<string> &t){
+    tecnologias = t;
+    return;
+}
+
+vector<Utilizador *> & SiteEmpresa::getGestores(){
+    return gestores;
+}
+
+const vector<Utilizador *> SiteEmpresa::getConstGestores(){
+    return gestores;
+}
+
+void SiteEmpresa::setGestores(const vector<Utilizador*> &g){
+    gestores = g;
+    return;
+}
+
+float SiteEmpresa::getCusto(){
+    return custoPorPagina*numeroPaginas;
+}
+
+void SiteEmpresa::setCustoPorPagina(const float &custo){
+    custoPorPagina = custo;
+    return;
+}
+
+void SiteEmpresa::novaTecnologia(const string &tech){
+    tecnologias.push_back(tech);
+}
+
+bool SiteEmpresa::retiraTecnologia(const string &tech){
+    for (vector<string>::iterator it = tecnologias.begin(); it != tecnologias.end(); it++) {
+        if ( (*it) == tech){
+            it = tecnologias.erase(it);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool SiteEmpresa::retiraGestor(Utilizador* u){
+    for (vector<Utilizador*>::iterator it = gestores.begin(); it != gestores.end(); it++) {
+        if ( *(*it) == u){
+            it = gestores.erase(it);
+            return true;
+        }
+    }
+    return false;
+}
+
+void SiteEmpresa::novoGestor(Utilizador* u){
+    gestores.push_back(u);
+    return;
+}
+
+float SiteEmpresa::getCustoPorPagina() const{
+    return custoPorPagina;
+}
+
