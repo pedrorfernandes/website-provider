@@ -250,7 +250,12 @@ void Menu::opcoes(Website* site){
             
             // imprimir informacoes do site
             cout << "Informacoes do website particular " << site->getIdentificador() << endl;
-            cout << "Tecnologia utilizada: " << site->getTecnologia() << endl;
+            
+            if (site->getTecnologia() == "") {
+                cout << "Este site nao usa uma tecnologia!" << endl;
+            } else {
+                cout << "Tecnologia utilizada: " << site->getTecnologia() << endl;
+            }
             
             if (site->getGestor() == NULL) {
                 cout << "Este website nao tem gestor!" << endl;
@@ -320,12 +325,17 @@ void Menu::opcoes(Website* site){
         {
             
             cout << "Informacoes do website empresa " << site->getIdentificador() << endl;
-            cout << "Tecnologias utilizadas: ";
-            for (vector<string>::iterator tecnologia = site->getTecnologias().begin(); tecnologia != site->getTecnologias().end(); tecnologia++) {
-                if (tecnologia == site->getTecnologias().end()-1) {
-                    cout << *tecnologia << "." << endl;
-                } else
-                    cout << *tecnologia << ", ";
+            
+            if (site->getTecnologias().size() == 0) {
+                cout << "Este site nao utiliza qualquer tecnologia!" << endl;
+            } else {
+                cout << "Tecnologias utilizadas: ";
+                for (vector<string>::iterator tecnologia = site->getTecnologias().begin(); tecnologia != site->getTecnologias().end(); tecnologia++) {
+                    if (tecnologia == site->getTecnologias().end()-1) {
+                        cout << *tecnologia << "." << endl;
+                    } else
+                        cout << *tecnologia << ", ";
+                }
             }
             
             if (site->getGestores().size() == 0) {
@@ -394,7 +404,7 @@ void Menu::opcoes(Website* site){
                     if (tech_pos == 0)
                         break;
                     else
-                        site->retiraTecnologia(site->getTecnologias().at(tech_pos));
+                        site->retiraTecnologia(site->getTecnologias().at(tech_pos-1));
                     break;
                 }
                 case 5: // Alterar numero de paginas
@@ -495,12 +505,16 @@ void Menu::listar_websites(){
             stringstream gestores;
             if (site->getGestores().size() == 0) {
                 gestores << "Nenhum";
+            } else if (site->getGestores().size() == 1) {
+                gestores << site->getGestores()[0]->getNome();
             } else {
                 gestores << site->getGestores()[0]->getNome() << " e mais " << site->getGestores().size()-1;
             }
             stringstream tecnologias;
             if (site->getTecnologias().size() == 0) {
                 tecnologias << "Nenhuma";
+            } else if (site->getTecnologias().size() == 1) {
+                tecnologias << site->getTecnologias()[0];
             } else {
                 tecnologias << site->getTecnologias()[0] << " e mais " << site->getTecnologias().size()-1;
 
