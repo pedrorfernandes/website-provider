@@ -136,7 +136,7 @@ Website* Menu::criar_website(){
         case 1: // site particular
         {
             string tecnologia;
-            Utilizador* gestor;
+            Utilizador* gestor = NULL;
             
             identificador = pergunta<string>("Escolha um identificador (URL) para o website");
             
