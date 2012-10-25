@@ -571,10 +571,16 @@ int Menu::inicio(){
             listar_utilizadores();
             return 0;
             break;
+        case 5:
+            wsp->ordenaWebsitesAlfabetico();
+            listar_websites();
+            break;
+            
         default:
             return 0;
             break;
     }
+    return 0;
 }
 
 Menu::Menu(){
@@ -582,6 +588,9 @@ Menu::Menu(){
     opcoes_inicio.push_back("Criar utilizador");
     opcoes_inicio.push_back("Listar websites");
     opcoes_inicio.push_back("Listar utilizadores");
+    opcoes_inicio.push_back("Ordernar websites");
+    //opcoes_inicio.push_back("Ordenar utilizadores");
+    
     
     escolher_tipo_site.push_back("Site para particular");
     escolher_tipo_site.push_back("Site para empresa");
@@ -612,8 +621,14 @@ Menu::Menu(){
     Utilizador* ze = new Utilizador(123, "Ze");
     wsp->adicionaGestor(pedro);
     wsp->adicionaGestor(ze);
-    Website* blog = new SiteParticular("www.umblog.com", 10, "Ruby", pedro);
+    Website* blog = new SiteParticular("www.Ablog.com", 10, "Ruby", pedro);
+    Website* blog2 = new SiteParticular("www.Bblog.com", 10, "Ruby", pedro);
+    Website* blog3 = new SiteParticular("www.Cblog.com", 10, "Ruby", pedro);
+    Website* blog4 = new SiteParticular("www.Dblog.com", 10, "Ruby", pedro);
     wsp->novoSite(blog);
+    wsp->novoSite(blog3);
+    wsp->novoSite(blog4);
+    wsp->novoSite(blog2);
     vector<Utilizador*> empresa;
     empresa.push_back(ze); empresa.push_back(pedro);
     vector<string> tecnologias;

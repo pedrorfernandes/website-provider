@@ -24,6 +24,12 @@
 class GestorWSP{
     vector<Website*> websites;
     vector<Utilizador*> gestores;
+    
+    // membros auxiliares de ordenacao, nao acessiveis a outras classes
+    static bool Alfabetico(Website* w1, Website* w2);
+    static bool AlfabeticoContrario(Website* w1, Website* w2);
+
+
 public:
     GestorWSP();
     ~GestorWSP();
@@ -40,6 +46,9 @@ public:
     
     // funcoes ordenacao
     
+    void ordenaWebsitesAlfabetico();
+    void ordenaWebsitesAlfabeticoContrario();
+
     
 };
 

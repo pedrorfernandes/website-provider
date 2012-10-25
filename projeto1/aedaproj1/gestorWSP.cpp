@@ -101,3 +101,22 @@ bool GestorWSP::eliminaCliente(Utilizador *u){
     }
     return false;
 }
+
+bool GestorWSP::Alfabetico(Website* w1, Website* w2){
+    return (w1->getIdentificador() < w2->getIdentificador() );
+}
+
+bool GestorWSP::AlfabeticoContrario(Website* w1, Website* w2){
+    return (w1->getIdentificador() > w2->getIdentificador() );
+}
+
+
+
+void GestorWSP::ordenaWebsitesAlfabetico(){
+    sort(websites.begin(), websites.end(), Alfabetico);
+}
+
+void GestorWSP::ordenaWebsitesAlfabeticoContrario(){
+    sort(websites.begin(), websites.end(), AlfabeticoContrario);
+}
+
