@@ -38,7 +38,7 @@ public:
     const vector<Utilizador *> getConstGestores();
     void setGestores(const vector<Utilizador*> &g);
     static void setCustoPorPagina(const float &custo);
-    float getCustoPorPagina() const;
+    static float getCustoPorPagina();
     
     
     float getCusto();
@@ -48,6 +48,7 @@ public:
     void novoGestor(Utilizador* u);
     bool retiraGestor(Utilizador* u);
 
+    friend ostream & operator<<(ostream &out, SiteEmpresa* site);
     // operador atribuicao = 
     // operador == !=
     

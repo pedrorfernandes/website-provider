@@ -51,8 +51,8 @@ string Website::getTecnologia() const{throw Erro("getTecnologia(): so acessivel 
 void Website::setTecnologia(const string &t){throw Erro("setTecnologia(): so acessivel a partir de SiteParticular");}
 Utilizador* Website::getGestor() const{throw Erro("getGestor(): so acessivel a partir de SiteParticular");}
 void Website::setGestor(Utilizador* u){throw Erro("setGestor(): so acessivel a partir de SiteParticular");}
-unsigned int Website::getLimitePaginas() const{throw Erro("getLimitePaginas(): so acessivel a partir de SiteParticular");}
-float Website::getCustoPorPagina() const{throw Erro("getCustoPorPagina(): so acessivel a partir de SiteParticular");}
+//unsigned int Website::getLimitePaginas() const{throw Erro("getLimitePaginas(): so acessivel a partir de SiteParticular");}
+//float Website::getCustoPorPagina() const{throw Erro("getCustoPorPagina(): so acessivel a partir de SiteParticular");}
 
 // membros funcao para aceder aos dados da filha siteEmpresa
 vector<string> Website::getTecnologias() const{throw Erro("getTecnologias(): so acessivel a partir de SiteEmpresa");}
@@ -64,7 +64,7 @@ bool Website::retiraTecnologia(const string & tech){throw Erro("retiraTecnologia
 void Website::novoGestor(Utilizador* u){throw Erro("novoGestor(): so acessivel a partir de SiteEmpresa");}
 bool Website::retiraGestor(Utilizador* u){throw Erro("novoGestor(): so acessivel a partir de SiteEmpresa");}
 
-std::ostream & operator<<(std::ostream &out, Website* w){
+ostream & operator<<(ostream &out, Website* w){
     out << w->identificador;
     return out;
 }

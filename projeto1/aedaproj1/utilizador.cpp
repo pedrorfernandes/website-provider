@@ -74,9 +74,9 @@ bool Utilizador::operator==(Utilizador* u) const{
     return (nome == u->nome && numIdentidade == u->numIdentidade);
 }
 
-std::ostream & operator<<(std::ostream &out, Utilizador* u){
-    out << setw(ESPACO) << u->getNome() << setw(ESPACO) << u->getNumIdentidade();
-    return out;
+std::ostream & operator<<(std::ostream &os, Utilizador* u){
+    os << endl << u->getNome() << endl << u->getNumIdentidade();
+    return os;
 }
 
 // ISTO ESTA MAL

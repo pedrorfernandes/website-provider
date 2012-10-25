@@ -51,8 +51,8 @@ public:
     virtual Utilizador* getGestor() const;
     virtual void setGestor(Utilizador* u);
     
-    virtual unsigned int getLimitePaginas() const;
-    virtual float getCustoPorPagina() const;
+    //virtual unsigned int getLimitePaginas() const;
+    //virtual float getCustoPorPagina() const;
     
     // membros funcao para aceder aos dados da filha siteEmpresa
     virtual vector<string> getTecnologias() const;
@@ -67,7 +67,7 @@ public:
     
     bool operator==(Website* w) const;
     
-    friend std::ostream & operator<<(std::ostream &out, Website* w);
+    friend ostream & operator<<(ostream &out, Website* w);
 
     
 };

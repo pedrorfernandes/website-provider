@@ -51,13 +51,15 @@ public:
     void setGestor(Utilizador* u);
     static void setCustoPorPagina(const float & custo);
     static void setLimitePaginas(const unsigned int & limite);
-    unsigned int getLimitePaginas() const;
-    float getCustoPorPagina() const;
+    static unsigned int getLimitePaginas();
+    static float getCustoPorPagina();
     
     void setNumeroPaginas(unsigned int n);
 
     
     float getCusto();
+    
+    friend ostream & operator<<(ostream &out, SiteParticular* site);
     
     
 };

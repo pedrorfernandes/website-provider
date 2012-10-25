@@ -92,7 +92,7 @@ bool GestorWSP::eliminaSite(Website* w){
 
 bool GestorWSP::eliminaCliente(Utilizador *u){
     // eliminar um gestor elimina-o das listas dos sites de que sao responsaveis
-     for (vector<Utilizador*>::iterator it = gestores.begin(); it != gestores.end(); it++) {
+    for (vector<Utilizador*>::iterator it = gestores.begin(); it != gestores.end(); it++) {
         if ( (*(*it)) == u) {
             delete (*it);
             it = gestores.erase(it);
@@ -118,5 +118,15 @@ void GestorWSP::ordenaWebsitesAlfabetico(){
 
 void GestorWSP::ordenaWebsitesAlfabeticoContrario(){
     sort(websites.begin(), websites.end(), AlfabeticoContrario);
+}
+
+Utilizador* GestorWSP::getGestorPointer(Utilizador u){
+    for (vector<Utilizador*>::iterator gestor_it = gestores.begin(); gestor_it != gestores.end(); gestor_it++) {
+        if ( (*(*gestor_it)) == u ) {
+            return (*gestor_it);
+            break;
+        }
+    }
+    return NULL;
 }
 

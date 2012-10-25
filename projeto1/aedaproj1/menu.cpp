@@ -12,6 +12,196 @@
 
 #include "menu.h"
 
+#define TAG_UTILIZADOR "**Utilizador**"
+#define TAG_EMPRESA "**SiteEmpresa**"
+#define TAG_PARTICULAR "**SiteParticular**"
+#define TAG_CUSTO_PARTICULAR "**CUSTOPARTICULAR_PREDEFINIDO**"
+#define TAG_CUSTO_EMPRESA "**CUSTOEMPRESA_PREDEFINIDO**"
+#define TAG_LIMITE "**LIMITEPAGINAS_PREDEFINIDO**"
+#define FICHEIRO "wsp.txt"
+
+bool Menu::guardaDados(){
+    /*
+     Formatacao exemplo dos dados
+     
+     **Utilizador** Pedro 12345
+     **Utilizador** Ze 123
+     
+     **SiteParticular** www.blog.com 10 Ruby Pedro 12345
+     
+     **SiteEmpresa** www.google.com 100 2 c++ java 2 Pedro 12345 Ze 123
+     
+     **CUSTOPARTICULAR_PREDEFINIDO** 10
+     
+     **CUSTOEMPRESA_PREDEFINIDO** 100
+     
+     **LIMITEPAGINAS_PREDEFINIDO** 50
+     */
+    
+    ofstream ficheiro;
+    ficheiro.open(FICHEIRO);
+    
+    for (vector<Utilizador*>::iterator gestor_it = wsp->getGestores().begin(); gestor_it != wsp->getGestores().end() ; gestor_it++) {
+        ficheiro << TAG_UTILIZADOR << " " << (*gestor_it) << endl;
+    }
+    
+    for (vector<Website*>::iterator site_it = wsp->getWebsites().begin(); site_it != wsp->getWebsites().end(); site_it++) {
+        SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(*site_it);
+        SiteParticular* particular = dynamic_cast< SiteParticular* >(*site_it);
+        if (empresa){
+            ficheiro << TAG_EMPRESA << " " << empresa << endl;
+        }
+        if (particular) {
+            ficheiro << TAG_PARTICULAR << " " << particular << endl;
+        }
+    }
+    
+    ficheiro << TAG_CUSTO_PARTICULAR << " " << SiteParticular::getCustoPorPagina() << endl;
+    
+    ficheiro << TAG_CUSTO_EMPRESA << " " << SiteEmpresa::getCustoPorPagina() << endl;
+    
+    ficheiro << TAG_LIMITE << " " << SiteParticular::getLimitePaginas() << endl;
+    
+    
+    ficheiro.close();
+    return true;
+
+}
+
+
+bool Menu::leDados(){
+    /*
+     Formatacao exemplo dos dados
+     
+     **Utilizador** Pedro 12345
+     **Utilizador** Ze 123
+     
+     **SiteParticular** www.blog.com 10 Ruby Pedro 12345
+     
+     **SiteEmpresa** www.google.com 100 2 c++ java 2 Pedro 12345 Ze 123
+     
+     **CUSTOPARTICULAR_PREDEFINIDO** 10
+     
+     **CUSTOEMPRESA_PREDEFINIDO** 100
+     
+     **LIMITEPAGINAS_PREDEFINIDO** 50
+     */
+    
+    ifstream ficheiro;
+    ficheiro.open (FICHEIRO);
+    string str;
+    
+    if(!ficheiro.good())
+    {
+        cout << "Ficheiro de dados nao existe. Foi criado " << FICHEIRO << "." << endl;
+        return false;
+    }
+    
+    // Primeiro temos de ter o vector de gestores completo
+    // So assim podemos criar sites com apontadores para gestores
+    while (ficheiro.good() )
+    {
+        if (ficheiro.good() && str == TAG_UTILIZADOR) {
+            string nome;
+            unsigned int numero;
+            ficheiro >> nome;
+            ficheiro >> numero;
+            ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
+            wsp->adicionaGestor(new Utilizador(numero,nome));
+        }
+        
+        if (ficheiro.good() && str == TAG_CUSTO_PARTICULAR) {
+            float preco;
+            ficheiro >> preco;
+            SiteParticular::setCustoPorPagina(preco);
+            ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+        
+        if (ficheiro.good() && str == TAG_CUSTO_EMPRESA) {
+            float preco;
+            ficheiro >> preco;
+            SiteEmpresa::setCustoPorPagina(preco);
+            ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+        
+        if (ficheiro.good() && str == TAG_LIMITE) {
+            unsigned int limite;
+            ficheiro >> limite;
+            SiteParticular::setLimitePaginas(limite);
+            ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+        
+        ficheiro >> str;
+    }
+    
+    ficheiro.close();
+    // de volta ao inicio do ficheiro, agora vamos criar os websites,
+    // pois ja temos acesso aos apontadores dos gestores
+    ficheiro.open(FICHEIRO);
+    while (ficheiro.good() )
+    {
+        if (ficheiro.good() && str == TAG_PARTICULAR) {
+            string identificador;
+            unsigned int numeroPaginas;
+            string tecnologia;
+            string nomeGestor;
+            unsigned int numeroGestor;
+            ficheiro >> identificador;
+            ficheiro >> numeroPaginas;
+            ficheiro >> tecnologia;
+            ficheiro >> nomeGestor;
+            ficheiro >> numeroGestor;
+            ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
+            Utilizador* gestor = wsp->getGestorPointer(Utilizador(numeroGestor, nomeGestor));
+            Website* site = new SiteParticular(identificador, numeroPaginas, tecnologia, gestor);
+            wsp->novoSite(site);
+        }
+        
+        if (ficheiro.good() && str == TAG_EMPRESA) {
+            string identificador;
+            unsigned int numeroPaginas;
+            unsigned int numTecnologias;
+            string tecnologia;
+            vector<string> tecnologias;
+            unsigned int numGestores;
+            string nomeGestor;
+            unsigned int numeroGestor;
+            Utilizador* gestor;
+            vector<Utilizador*> gestores;
+            ficheiro >> identificador;
+            ficheiro >> numeroPaginas;
+            ficheiro >> numTecnologias;
+            unsigned int counter;
+            for (counter = 1; counter <= numTecnologias; counter++) {
+                ficheiro >> tecnologia;
+                tecnologias.push_back(tecnologia);
+            }
+            ficheiro >> numGestores;
+            for (counter = 1; counter <= numGestores; counter++) {
+                ficheiro >> nomeGestor;
+                ficheiro >> numeroGestor;
+                gestor = wsp->getGestorPointer(Utilizador(numeroGestor, nomeGestor));
+                gestores.push_back(gestor);
+            }
+            
+            Website* site = new SiteEmpresa(identificador, numeroPaginas, tecnologias, gestores);
+            wsp->novoSite(site);
+
+            ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+
+        
+        
+        ficheiro >> str;
+    }
+
+    ficheiro.close();
+    
+    cout << "Ficheiro de texto encontrado e lido com sucesso!" << endl;
+    
+    return true;
+}
+
 unsigned int Menu::escolhe(vector<string> & escolhas, const string &perg){
     unsigned int i = 1;
     cout << perg << endl;
@@ -32,13 +222,13 @@ unsigned int Menu::escolhe(vector<string> & escolhas, const string &perg){
     }
     return escolha;
 }
-
+/* // PRECISO DO OPERADOR << PARA GRAVAR AS INFOS
 template<class T>
 T Menu::escolhe(vector<T> & escolhas, const string & perg){
     unsigned int i = 1;
     cout << perg << endl;
     for (typename vector<T>::iterator opcao = escolhas.begin(); opcao != escolhas.end() ; opcao++, i++) {
-        cout << i << " - " << *opcao << endl;
+        // cout << i << " - " << *opcao << endl;
     }
     i--;
     unsigned int numero_escolha;
@@ -59,6 +249,61 @@ T Menu::escolhe(vector<T> & escolhas, const string & perg){
     }
     return escolha;
 }
+ */
+
+Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
+    unsigned int i = 1;
+    cout << perg << endl;
+    for (vector<Website*>::iterator site_it = escolhas.begin(); site_it != escolhas.end() ; site_it++, i++) {
+            cout << i << " - " << (*site_it)->getIdentificador() << endl;
+    }
+    i--;
+    unsigned int numero_escolha;
+    cout << PROMPT;
+    cin >> numero_escolha;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    while ( cin.fail() || numero_escolha > i ) {
+        cout << "Escolha invalida. Selecione uma opcao de 0 a " << i << "." << endl << PROMPT;
+        cin.clear();
+        cin >> numero_escolha;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    Website* escolha;
+    if (numero_escolha == 0) {
+        escolha = NULL;
+    } else{
+        escolha = escolhas.at(numero_escolha-1);
+    }
+    return escolha;
+}
+
+Utilizador* Menu::escolhe(vector<Utilizador*> & escolhas, const string & perg){
+    unsigned int i = 1;
+    cout << perg << endl;
+    for (vector<Utilizador*>::iterator gestor_it = escolhas.begin(); gestor_it != escolhas.end() ; gestor_it++, i++) {
+        cout << i << " - " << setw(ESPACO_PEQUENO) << (*gestor_it)->getNome() << setw(ESPACO_PEQUENO) << (*gestor_it)->getNumIdentidade() << endl;
+
+    }
+    i--;
+    unsigned int numero_escolha;
+    cout << PROMPT;
+    cin >> numero_escolha;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    while ( cin.fail() || numero_escolha > i ) {
+        cout << "Escolha invalida. Selecione uma opcao de 0 a " << i << "." << endl << PROMPT;
+        cin.clear();
+        cin >> numero_escolha;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    Utilizador* escolha;
+    if (numero_escolha == 0) {
+        escolha = NULL;
+    } else{
+        escolha = escolhas.at(numero_escolha-1);
+    }
+    return escolha;
+}
+
 
 template<class T>
 T Menu::escolheSemListagem(vector<T> & escolhas, const string & perg){
@@ -263,7 +508,7 @@ void Menu::opcoes(Website* site){
                 cout << "Gestor: " << site->getGestor()->getNome() << " (BI n. " << site->getGestor()->getNumIdentidade() << ")" << endl;
             }
             
-            cout << "Numero de paginas: " << site->getNumeroPaginas() << " (max. " << site->getLimitePaginas() << " / custo por pagina: " << site->getCustoPorPagina() << ")" << endl;
+            cout << "Numero de paginas: " << site->getNumeroPaginas() << " (max. " << SiteParticular::getLimitePaginas() << " / custo por pagina: " << SiteParticular::getCustoPorPagina() << ")" << endl;
             cout << "Custo total do site: " << site->getCusto() << " $" <<  endl;
             switch (escolhe(opcoes_website_particular, "Selecione uma opcao"))
             {
@@ -352,7 +597,7 @@ void Menu::opcoes(Website* site){
                 }
             }
             
-            cout << "Numero de paginas: " << site->getNumeroPaginas() << " (custo por pagina: " << site->getCustoPorPagina() << ")" << endl;
+            cout << "Numero de paginas: " << site->getNumeroPaginas() << " (custo por pagina: " << SiteEmpresa::getCustoPorPagina() << ")" << endl;
             cout << "Custo total do site: " << site->getCusto() << " $" <<  endl;
             
             switch (escolhe(opcoes_website_empresa, "Selecione uma opcao"))
@@ -617,11 +862,13 @@ Menu::Menu(){
     
     // TESTES
     wsp = new GestorWSP();
+/*
     Utilizador* pedro = new Utilizador(12345, "Pedro");
     Utilizador* ze = new Utilizador(123, "Ze");
     wsp->adicionaGestor(pedro);
     wsp->adicionaGestor(ze);
-    Website* blog = new SiteParticular("www.Ablog.com", 10, "Ruby", pedro);
+    
+    Website* blog  = new SiteParticular("www.Ablog.com", 10, "Ruby", pedro);
     Website* blog2 = new SiteParticular("www.Bblog.com", 10, "Ruby", pedro);
     Website* blog3 = new SiteParticular("www.Cblog.com", 10, "Ruby", pedro);
     Website* blog4 = new SiteParticular("www.Dblog.com", 10, "Ruby", pedro);
@@ -635,10 +882,11 @@ Menu::Menu(){
     tecnologias.push_back("c++"); tecnologias.push_back("java"); tecnologias.push_back("python");
     Website* google = new SiteEmpresa("www.google.com", 100, tecnologias, empresa);
     wsp->novoSite(google);
-
+*/  
     cout << "Bem vindo ao gestor de website provider!" << endl << "NOTA: escolher 0 cancela a opcao e regressa para o menu anterior (quando possivel)" << endl;
+    leDados();
     while (inicio() != 1) {
-        
+        guardaDados();
     }
     cout << "A terminar aplicacao..." << endl;
 }

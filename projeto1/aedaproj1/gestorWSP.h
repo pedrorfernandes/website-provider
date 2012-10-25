@@ -44,6 +44,9 @@ public:
     bool eliminaSite(Website* w);
     bool eliminaCliente(Utilizador* u);
     
+    // funcao auxiliar para escrita ficheiro
+    Utilizador* getGestorPointer(Utilizador u);
+    
     // funcoes ordenacao
     
     void ordenaWebsitesAlfabetico();

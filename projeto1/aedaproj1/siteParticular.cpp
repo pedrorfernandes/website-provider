@@ -27,11 +27,12 @@ SiteParticular::SiteParticular(string i, unsigned int n, string tech, Utilizador
     atribuiGestao(gestor);
 }
 
-SiteParticular::~SiteParticular(){ // eliminar dos gestor este site
+SiteParticular::~SiteParticular(){ // eliminar do gestor este site
     vector<Website*> & sites = gestor->sitesResponsavel;
-    for (vector<Website*>::iterator site_it = sites.begin(); site_it != sites.end() ; site_it++) {
-        if ( (*site_it) == this) {
+    for (vector<Website*>::iterator site_it = sites.begin(); site_it != sites.end() ; ++site_it) {
+        if ( (*(*site_it)) == this) {
             site_it = sites.erase(site_it);
+            break;
         }
     }
 }
@@ -65,11 +66,11 @@ void SiteParticular::setLimitePaginas(const unsigned int &limite){
     return;
 }
 
-unsigned int SiteParticular::getLimitePaginas() const{
+unsigned int SiteParticular::getLimitePaginas(){
     return limitePaginas;
 }
 
-float SiteParticular::getCustoPorPagina() const{
+float SiteParticular::getCustoPorPagina(){
     return custoPorPagina;
 }
 
@@ -82,6 +83,11 @@ void SiteParticular::setNumeroPaginas(unsigned int n){
     } else
         Website::setNumeroPaginas(n);
 
+}
+
+ostream & operator<<(ostream &out, SiteParticular* site){
+    out << site->getIdentificador() << " " << site->getNumeroPaginas() << " " << site->tecnologia << " " << site->gestor;
+    return out;
 }
 
 

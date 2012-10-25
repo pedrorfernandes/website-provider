@@ -18,6 +18,7 @@
 #include <vector>
 #include <limits>
 #include <sstream>
+#include <fstream>
 
 #define PROMPT "> "
 #define ESPACO_LISTAGEM 20
@@ -54,8 +55,13 @@ public:
     void opcoes(Website* site);
     void opcoes(Utilizador* gestor);
     unsigned int escolhe(vector<string> & escolhas, const string &perg);
-    template<class T> T escolhe(vector<T> & escolhas, const string & perg);
+    Website* escolhe(vector<Website*> & escolhas, const string & perg);
+    Utilizador* escolhe(vector<Utilizador*> & escolhas, const string & perg);
+
     template<class T> T escolheSemListagem(vector<T> & escolhas, const string & perg);
+    
+    bool guardaDados();
+    bool leDados();
 
 };
 
