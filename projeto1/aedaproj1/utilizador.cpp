@@ -37,19 +37,30 @@ Utilizador::~Utilizador(){
      }
 }
 
-unsigned int Utilizador::getNumIdentidade(){
+unsigned int Utilizador::getNumIdentidade() const{
     return numIdentidade;
 }
 void Utilizador::setNumIdentidade(unsigned int &n){
     numIdentidade = n;
     return;
 }
-string Utilizador::getNome(){
-    return nome;
+string Utilizador::getNome() const{
+    /*
+     if (this == NULL) {
+        return "Nenhum";    // o menu deve tratar de output correto
+    } else
+     */
+        return nome;
 }
 void Utilizador::setNome(string &n){
     nome = n;
 }
+
+const vector<Website*> & Utilizador::getSitesResponsavel() const{
+    return sitesResponsavel;
+}
+
+
 
 void Utilizador::adicionaSite(Website* site){
     sitesResponsavel.push_back(site);
@@ -68,6 +79,8 @@ std::ostream & operator<<(std::ostream &out, Utilizador* u){
     return out;
 }
 
+// ISTO ESTA MAL
+// a funcao esta a modificar vectores que nao devia!!!
 vector<Utilizador*> operator-(const vector<Utilizador*> vec1, const vector<Utilizador*> vec2){
     vector<Utilizador*> vec3;
     for (vector<Utilizador*>::const_iterator vec1_it = vec1.begin(); vec1_it != vec1.end(); vec1_it++) {

@@ -42,6 +42,7 @@ class Menu{
     vector<string> escolher_utilizador;
     vector<string> opcoes_website_particular;
     vector<string> opcoes_website_empresa;
+    vector<string> opcoes_utilizador;
 public:
     Menu();
     int inicio();

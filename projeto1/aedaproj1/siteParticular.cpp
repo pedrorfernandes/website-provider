@@ -27,8 +27,13 @@ SiteParticular::SiteParticular(string i, unsigned int n, string tech, Utilizador
     atribuiGestao(gestor);
 }
 
-SiteParticular::~SiteParticular(){
-    // delete gestor; // isto elimina o gestor tmb!
+SiteParticular::~SiteParticular(){ // eliminar dos gestor este site
+    vector<Website*> & sites = gestor->sitesResponsavel;
+    for (vector<Website*>::iterator site_it = sites.begin(); site_it != sites.end() ; site_it++) {
+        if ( (*site_it) == this) {
+            site_it = sites.erase(site_it);
+        }
+    }
 }
 
 string SiteParticular::getTecnologia() const{
@@ -38,7 +43,7 @@ void SiteParticular::setTecnologia(const string &t){
     tecnologia = t;
 }
 Utilizador* SiteParticular::getGestor() const{
-    if (gestor == NULL) throw Erro("null");
+    // if (gestor == NULL) throw Erro("null"); // o programa ira lidar com NULL
     return gestor;
 }
 void SiteParticular::setGestor(Utilizador* u){

@@ -26,7 +26,7 @@ unsigned int Menu::escolhe(vector<string> & escolhas, const string &perg){
     while ( cin.fail() || escolha > i ) {
         cout << "Escolha invalida. Selecione uma opcao de 0 a " << i << "." << endl << PROMPT;
         cin.clear();
-        //cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cin >> escolha;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
@@ -244,10 +244,20 @@ void Menu::opcoes(Website* site){
         bool acabado = false;
         while (!acabado)
         {
-            // vamos imprimir informacoes do site
+            string nome;
+            if (site->getGestor() == NULL) {
+            }
+            
+            // imprimir informacoes do site
             cout << "Informacoes do website particular " << site->getIdentificador() << endl;
             cout << "Tecnologia utilizada: " << site->getTecnologia() << endl;
-            cout << "Gestor: " << site->getGestor()->getNome() << " (BI n. " << site->getGestor()->getNumIdentidade() << ")" << endl;
+            
+            if (site->getGestor() == NULL) {
+                cout << "Este website nao tem gestor!" << endl;
+            } else {
+                cout << "Gestor: " << site->getGestor()->getNome() << " (BI n. " << site->getGestor()->getNumIdentidade() << ")" << endl;
+            }
+            
             cout << "Numero de paginas: " << site->getNumeroPaginas() << " (max. " << site->getLimitePaginas() << " / custo por pagina: " << site->getCustoPorPagina() << ")" << endl;
             cout << "Custo total do site: " << site->getCusto() << " $" <<  endl;
             switch (escolhe(opcoes_website_particular, "Selecione uma opcao"))
@@ -317,17 +327,22 @@ void Menu::opcoes(Website* site){
                 } else
                     cout << *tecnologia << ", ";
             }
-            cout << "Gestores: ";
-            for (vector<Utilizador*>::iterator gestor = site->getGestores().begin(); gestor != site->getGestores().end() ; gestor++)
-            {
-                if (gestor == site->getGestores().end()-1 )
+            
+            if (site->getGestores().size() == 0) {
+                cout << "Este site nao tem gestores!" << endl;
+            } else {
+                cout << "Gestores: ";
+                for (vector<Utilizador*>::iterator gestor = site->getGestores().begin(); gestor != site->getGestores().end() ; gestor++)
                 {
-                    cout << (*gestor)->getNome() << " (BI n. " << (*gestor)->getNumIdentidade() << ")." << endl;
-                } else
-                    cout << (*gestor)->getNome() << " (BI n. " << (*gestor)->getNumIdentidade() << "), ";
+                    if (gestor == site->getGestores().end()-1 )
+                    {
+                        cout << (*gestor)->getNome() << " (BI n. " << (*gestor)->getNumIdentidade() << ")." << endl;
+                    } else
+                        cout << (*gestor)->getNome() << " (BI n. " << (*gestor)->getNumIdentidade() << "), ";
+                }
             }
             
-            //cout << "Numero de paginas: " << site->getNumeroPaginas() << " (custo por pagina: " << site->getCustoPorPagina() << ")" << endl;
+            cout << "Numero de paginas: " << site->getNumeroPaginas() << " (custo por pagina: " << site->getCustoPorPagina() << ")" << endl;
             cout << "Custo total do site: " << site->getCusto() << " $" <<  endl;
             
             switch (escolhe(opcoes_website_empresa, "Selecione uma opcao"))
@@ -354,6 +369,7 @@ void Menu::opcoes(Website* site){
                         cout << "ole" << endl;
                         site->novoGestor(escolhe(gestores_que_nao_estao_no_site, "Escolha um gestor"));
                          // ISTO NAO FUNCIONA, a funcao operator- esta a destruir os gestores do website
+                         // NEED FIX!!
                          */
                         site->novoGestor(escolhe(wsp->getGestores(), "Escolha um gestor"));
 
@@ -407,26 +423,90 @@ void Menu::opcoes(Website* site){
     
 }
 
+void Menu::opcoes(Utilizador* gestor){
+    bool acabado = false;
+    while (!acabado)
+    {
+        cout << "Nome do utilizador: " << gestor->getNome() << endl;
+        cout << "Numero de identidade: " << gestor->getNumIdentidade() << endl;
+        cout << "Sites responsavel: ";
+        for (vector<Website*>::const_iterator site_it = gestor->getSitesResponsavel().begin(); site_it != gestor->getSitesResponsavel().end() ; site_it++) {
+            if (site_it == gestor->getSitesResponsavel().end()-1) {
+                cout << (*site_it)->getIdentificador() << "." << endl;
+            } else
+                cout << (*site_it)->getIdentificador() << ", ";
+        }
+        switch (escolhe(opcoes_utilizador, "Selecione uma opcao")) {
+            case 0:
+                acabado = true;
+                break;
+            case 1: // Alterar o nome do utilizador
+            {
+                string nome = pergunta<string>("Selecione um novo nome de utilizador");
+                gestor->setNome(nome);
+                break;
+            }
+            case 2: // Alterar o numero do BI
+            {
+                unsigned int numero = pergunta<unsigned int>("Selecione um novo numero de bilhete de identidade");
+                gestor->setNumIdentidade(numero);
+                break;
+            }
+            case 3: // Aceder a um website responsavel
+            {
+                vector<Website*> sites = gestor->getSitesResponsavel();
+                opcoes(escolhe(sites, "Escolha o website a que quer aceder"));
+                cout << "A regressar para o utilizador..." << endl;
+                break;
+            }
+            case 4:
+                wsp->eliminaCliente(gestor);
+                return;
+                break;
+            default:
+                break;
+        }
+        
+    }
+    
+    return;
+}
+
 
 void Menu::listar_websites(){
     cout << left << setw(ESPACO_MUITO_PEQUENO) << "Numero" << setw(ESPACO_PEQUENO) << "Tipo" << setw(ESPACO_LISTAGEM) << "Identificador" << setw(ESPACO_LISTAGEM) << "Gestor(es)" << setw(ESPACO_LISTAGEM) << "Tecnologia(s)" << setw(ESPACO_PEQUENO) << "Paginas" << endl;
     unsigned int numero = 1;
-    for (vector<Website*>::iterator site_it = wsp->getWebsites().begin(); site_it != wsp->getWebsites().end(); site_it++) {
+    for (vector<Website*>::iterator site_it = wsp->getWebsites().begin(); site_it != wsp->getWebsites().end(); site_it++, numero++) {
         Website* site = *site_it;
         SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(site);
         SiteParticular* particular = dynamic_cast< SiteParticular* >(site);
         
-        if (particular){  // como listar as informacoes se o site for particular
-            cout << left << setw(ESPACO_MUITO_PEQUENO) << numero << setw(ESPACO_PEQUENO) <<  "Particular" << setw(ESPACO_LISTAGEM)<< site->getIdentificador() << setw(ESPACO_LISTAGEM) << site->getGestor()->getNome() << setw(ESPACO_LISTAGEM) << site->getTecnologia() << setw(ESPACO_LISTAGEM) << site->getNumeroPaginas() << endl;
+        if (particular){// como listar as informacoes se o site for particular
+            string nome;
+            if (site->getGestor() == NULL) { // verificar se existe gestor
+                nome = "Nenhum";
+            } else {
+                nome = site->getGestor()->getNome();
+            }
+            
+            cout << left << setw(ESPACO_MUITO_PEQUENO) << numero << setw(ESPACO_PEQUENO) <<  "Particular" << setw(ESPACO_LISTAGEM)<< site->getIdentificador() << setw(ESPACO_LISTAGEM) << nome << setw(ESPACO_LISTAGEM) << site->getTecnologia() << setw(ESPACO_LISTAGEM) << site->getNumeroPaginas() << endl;
         } 
         if (empresa){ // como listar as informacoes se o site for de uma empresa
-            stringstream tecnologias;
-            tecnologias << site->getTecnologias()[0] << " e mais " << site->getTecnologias().size()-1;
             stringstream gestores;
-            gestores << site->getGestores()[0]->getNome() << " e mais " << site->getGestores().size()-1;
+            if (site->getGestores().size() == 0) {
+                gestores << "Nenhum";
+            } else {
+                gestores << site->getGestores()[0]->getNome() << " e mais " << site->getGestores().size()-1;
+            }
+            stringstream tecnologias;
+            if (site->getTecnologias().size() == 0) {
+                tecnologias << "Nenhuma";
+            } else {
+                tecnologias << site->getTecnologias()[0] << " e mais " << site->getTecnologias().size()-1;
+
+            }
             cout << left << setw(ESPACO_MUITO_PEQUENO) << numero << setw(ESPACO_PEQUENO) << "Empresa" << setw(ESPACO_LISTAGEM) << site->getIdentificador() << setw(ESPACO_LISTAGEM) << gestores.str() << setw(ESPACO_LISTAGEM) << tecnologias.str() << setw(ESPACO_PEQUENO) << site->getNumeroPaginas() << endl;
         }
-        numero++;
     }
     Website* site = NULL;
     site = escolheSemListagem(wsp->getWebsites(), "Escolha um website para ver as informacoes");
@@ -440,7 +520,21 @@ void Menu::listar_websites(){
 }
 
 void Menu::listar_utilizadores(){
-    escolhe(wsp->getGestores(), "Escolhe um utilizador para efetuar modificacoes");
+    cout << left << setw(ESPACO_MUITO_PEQUENO) << "Numero" << setw(ESPACO_LISTAGEM) << "Nome" << setw(ESPACO_PEQUENO) << "Numero de B.I." << endl;
+    unsigned int numero = 1;
+    for (vector<Utilizador*>::iterator gestor_it = wsp->getGestores().begin(); gestor_it != wsp->getGestores().end(); gestor_it++, numero++)
+    {
+        cout << left << setw(ESPACO_MUITO_PEQUENO) << numero << setw(ESPACO_LISTAGEM) << (*gestor_it)->getNome() << setw(ESPACO_PEQUENO) << (*gestor_it)->getNumIdentidade() << endl;
+    }
+    Utilizador* gestor = NULL;
+    gestor = escolheSemListagem(wsp->getGestores(), "Escolha um gestor para aceder as informacoes");
+    if (gestor == NULL){ // se o utilizador cancelou, volta para o menu anterior
+        return;
+    } else{
+        opcoes(gestor);
+    }
+    
+    return;
 }
 
 int Menu::inicio(){
@@ -492,6 +586,11 @@ Menu::Menu(){
     opcoes_website_empresa.push_back("Retirar tecnologia");
     opcoes_website_empresa.push_back("Alterar o numero de paginas");
     opcoes_website_empresa.push_back("Eliminar website");
+    
+    opcoes_utilizador.push_back("Alterar nome");
+    opcoes_utilizador.push_back("Alterar numero do bilhete de identidade");
+    opcoes_utilizador.push_back("Aceder a um wesite responsavel");
+    opcoes_utilizador.push_back("Eliminar utilizador");
     
     // TESTES
     wsp = new GestorWSP();

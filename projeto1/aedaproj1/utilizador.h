@@ -35,10 +35,14 @@ public:
     Utilizador(unsigned int i, string n);
     ~Utilizador();
     
-    unsigned int getNumIdentidade();
+    friend class SiteEmpresa;
+    friend class SiteParticular;
+    
+    unsigned int getNumIdentidade() const;
     void setNumIdentidade(unsigned int &n);
-    string getNome();
+    string getNome() const;
     void setNome(string &n);
+    const vector<Website*> & getSitesResponsavel() const;
     
     void adicionaSite(Website *site);
     bool operator==(Utilizador u) const;
