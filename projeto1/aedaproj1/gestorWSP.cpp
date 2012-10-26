@@ -69,14 +69,6 @@ vector<Utilizador*> & GestorWSP::getGestores(){
     return gestores;
 }
 
-/*
-const vector<Website*> & GestorWSP::getWebsites() const{
-    return websites;
-}
-const vector<Utilizador*> & GestorWSP::getGestores() const{
-    return gestores;
-}
-*/
 
 bool GestorWSP::eliminaSite(Website* w){
     // eliminar um site nao elimina os gestores
@@ -128,5 +120,9 @@ Utilizador* GestorWSP::getGestorPointer(Utilizador u){
         }
     }
     return NULL;
+}
+
+const vector<Utilizador *> GestorWSP::getConstGestores(){
+    return gestores;
 }
 

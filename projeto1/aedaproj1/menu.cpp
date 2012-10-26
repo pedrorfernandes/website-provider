@@ -17,8 +17,8 @@ bool Menu::guardaDados(){
     /*
      Formatacao exemplo dos dados
      
-     **Utilizador** Pedro 12345
-     **Utilizador** Ze 123
+     **Utilizador** Pedro | 12345
+     **Utilizador** Ze | 123
      **SiteParticular** www.blog.com 10 Ruby Pedro | 12345
      **SiteEmpresa** www.google.com 100 2 c++ java 2 Pedro | 12345 Ze | 123
      **CUSTOPARTICULAR_PREDEFINIDO** 10
@@ -61,8 +61,8 @@ bool Menu::leDados(){
     /*
      Formatacao exemplo dos dados
      
-     **Utilizador** Pedro 12345
-     **Utilizador** Ze 123
+     **Utilizador** Pedro | 12345
+     **Utilizador** Ze | 123
      **SiteParticular** www.blog.com 10 Ruby Pedro | 12345
      **SiteEmpresa** www.google.com 100 2 c++ java 2 Pedro | 12345 Ze | 123
      **CUSTOPARTICULAR_PREDEFINIDO** 10
@@ -466,7 +466,7 @@ Website* Menu::criar_website(){
                             i--;
                             break;
                         } else
-                        gestores.push_back(gestor);
+                            gestores.push_back(gestor);
                         break;
                     }
                     default:
@@ -537,7 +537,13 @@ void Menu::opcoes(Website* site){
                         site->setGestor(criar_utilizador());
                         break;
                     case 2: // escolher um gestor ja existente
-                        site->setGestor(escolhe(wsp->getGestores(), "Escolha um gestor"));
+                    {
+                        Utilizador* gestor = escolhe(wsp->getGestores(), "Escolha um gestor");
+                        if (gestor == NULL) {
+                            break;
+                        } else
+                            site->setGestor(gestor);
+                    }
                     default:
                         break;
                 }
@@ -628,19 +634,12 @@ void Menu::opcoes(Website* site){
                         break;
                     case 2: // escolher um gestor ja existente que nao pertence ao website
                     {
-                        /*
-                        vector<Utilizador*> vector1 = wsp->getGestores();
-                        vector<Utilizador*> vector2 = empresa->getConstGestores();
-                        cout << "ola" << endl;
-                        vector<Utilizador*> gestores_que_nao_estao_no_site;
-                        gestores_que_nao_estao_no_site = vector1 - vector2;
-                        cout << "ole" << endl;
-                        site->novoGestor(escolhe(gestores_que_nao_estao_no_site, "Escolha um gestor"));
-                         // ISTO NAO FUNCIONA, a funcao operator- esta a destruir os gestores do website
-                         // NEED FIX!!
-                         */
-                        site->novoGestor(escolhe(wsp->getGestores(), "Escolha um gestor"));
-
+                        vector<Utilizador*> gestores_que_nao_estao_no_site = wsp->getGestores() - empresa->getGestores();
+                        Utilizador* gestor = escolhe(gestores_que_nao_estao_no_site, "Escolha um gestor");
+                        if (gestor == NULL) {
+                            break;
+                        } else
+                            site->novoGestor(gestor);
                         break;
                     }
                     default:

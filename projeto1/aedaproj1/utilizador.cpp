@@ -83,21 +83,19 @@ std::ostream & operator<<(std::ostream &os, Utilizador* u){
     return os;
 }
 
-// ISTO ESTA MAL
-// a funcao esta a modificar vectores que nao devia!!!
 vector<Utilizador*> operator-(const vector<Utilizador*> vec1, const vector<Utilizador*> vec2){
     vector<Utilizador*> vec3;
     for (vector<Utilizador*>::const_iterator vec1_it = vec1.begin(); vec1_it != vec1.end(); vec1_it++) {
         bool encontrado = false;
-        Utilizador utilizador = *(*vec1_it);
+        Utilizador* utilizador = (*vec1_it);
         for (vector<Utilizador*>::const_iterator vec2_it = vec2.begin(); vec2_it != vec2.end(); vec2_it++) {
-            if (utilizador == *(*vec2_it)) {
+            if (utilizador == (*vec2_it)) {
                 encontrado = true;
                 break;
             }
         }
         if (!encontrado) {
-            vec3.push_back(*vec1_it);
+            vec3.push_back(utilizador);
         }
     }
     return vec3;

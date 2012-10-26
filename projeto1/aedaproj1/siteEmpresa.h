@@ -24,6 +24,9 @@
 
 using namespace std;
 
+/**
+ * O SiteEmpresa, para alem de um identificador e numero de paginas, possui um vector com as tecnologias que usa, um vector com os gestores do site e um custo por pagina para sites empresa
+ */
 class SiteEmpresa : public Website{
     vector<string> tecnologias;
     vector<Utilizador* > gestores;
@@ -32,9 +35,29 @@ public:
     SiteEmpresa(string i, unsigned int n, vector<string> tech, vector<Utilizador*> gest);
     ~SiteEmpresa();
     
+    /**
+     * Retorna o vector de tecnologias do website empresa
+     * @return O vector de tecnologias (strings)
+     */
     vector<string> getTecnologias() const;
+    
+    /**
+     * Modifica o vector de tecnologias do website empresa
+     * @param t O novo vector de tecnologias (strings)
+     * @return Void
+     */
     void setTecnologias(const vector<string> &t);
+    
+    /**
+     * Retorna o vector de utilizadores que sao gestores website empresa
+     * @return O vector de gestores
+     */
     vector<Utilizador *> & getGestores();  // endereco de memoria, assim da para ordenar o vector
+    
+    /**
+     * Retorna um vector imutavel de utilizadores que sao gestores website empresa
+     * @return O vector constante de gestores
+     */
     const vector<Utilizador *> getConstGestores();
     void setGestores(const vector<Utilizador*> &g);
     static void setCustoPorPagina(const float &custo);
