@@ -14,7 +14,11 @@
 #include "siteParticular.h"
 #include "siteEmpresa.h"
 
-Utilizador::Utilizador(unsigned int i, string n): numIdentidade(i), nome(n){}
+Utilizador::Utilizador(unsigned int i, string n)//: numIdentidade(i), nome(n){}
+{
+    numIdentidade = i;
+    nome = n;
+}
 
 Utilizador::~Utilizador(){
     // para cada site responsavel, o utilizador sera eliminado da lista de gestores desse site
@@ -75,7 +79,7 @@ bool Utilizador::operator==(Utilizador* u) const{
 }
 
 std::ostream & operator<<(std::ostream &os, Utilizador* u){
-    os << endl << u->getNome() << endl << u->getNumIdentidade();
+    os << u->getNome() << " | " << u->getNumIdentidade();
     return os;
 }
 

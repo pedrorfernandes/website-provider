@@ -12,13 +12,6 @@
 
 #include "menu.h"
 
-#define TAG_UTILIZADOR "**Utilizador**"
-#define TAG_EMPRESA "**SiteEmpresa**"
-#define TAG_PARTICULAR "**SiteParticular**"
-#define TAG_CUSTO_PARTICULAR "**CUSTOPARTICULAR_PREDEFINIDO**"
-#define TAG_CUSTO_EMPRESA "**CUSTOEMPRESA_PREDEFINIDO**"
-#define TAG_LIMITE "**LIMITEPAGINAS_PREDEFINIDO**"
-#define FICHEIRO "wsp.txt"
 
 bool Menu::guardaDados(){
     /*
@@ -26,15 +19,10 @@ bool Menu::guardaDados(){
      
      **Utilizador** Pedro 12345
      **Utilizador** Ze 123
-     
-     **SiteParticular** www.blog.com 10 Ruby Pedro 12345
-     
-     **SiteEmpresa** www.google.com 100 2 c++ java 2 Pedro 12345 Ze 123
-     
+     **SiteParticular** www.blog.com 10 Ruby Pedro | 12345
+     **SiteEmpresa** www.google.com 100 2 c++ java 2 Pedro | 12345 Ze | 123
      **CUSTOPARTICULAR_PREDEFINIDO** 10
-     
      **CUSTOEMPRESA_PREDEFINIDO** 100
-     
      **LIMITEPAGINAS_PREDEFINIDO** 50
      */
     
@@ -75,15 +63,10 @@ bool Menu::leDados(){
      
      **Utilizador** Pedro 12345
      **Utilizador** Ze 123
-     
-     **SiteParticular** www.blog.com 10 Ruby Pedro 12345
-     
-     **SiteEmpresa** www.google.com 100 2 c++ java 2 Pedro 12345 Ze 123
-     
+     **SiteParticular** www.blog.com 10 Ruby Pedro | 12345
+     **SiteEmpresa** www.google.com 100 2 c++ java 2 Pedro | 12345 Ze | 123
      **CUSTOPARTICULAR_PREDEFINIDO** 10
-     
      **CUSTOEMPRESA_PREDEFINIDO** 100
-     
      **LIMITEPAGINAS_PREDEFINIDO** 50
      */
     
@@ -103,8 +86,15 @@ bool Menu::leDados(){
     {
         if (ficheiro.good() && str == TAG_UTILIZADOR) {
             string nome;
+            string str; // string auxiliar para o nome
             unsigned int numero;
             ficheiro >> nome;
+            ficheiro >> str;
+            while (str != FIM_DE_NOME) {
+                nome += " ";
+                nome += str;
+                ficheiro >> str;
+            }
             ficheiro >> numero;
             ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
             wsp->adicionaGestor(new Utilizador(numero,nome));
@@ -145,16 +135,25 @@ bool Menu::leDados(){
             unsigned int numeroPaginas;
             string tecnologia;
             string nomeGestor;
+            string str = ""; // string auxiliar para o nome do gestor
             unsigned int numeroGestor;
             ficheiro >> identificador;
             ficheiro >> numeroPaginas;
             ficheiro >> tecnologia;
             ficheiro >> nomeGestor;
+            ficheiro >> str;
+            while (str != FIM_DE_NOME) {
+                nomeGestor += " ";
+                nomeGestor += str;
+                ficheiro >> str;
+            }
             ficheiro >> numeroGestor;
             ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
             Utilizador* gestor = wsp->getGestorPointer(Utilizador(numeroGestor, nomeGestor));
-            Website* site = new SiteParticular(identificador, numeroPaginas, tecnologia, gestor);
-            wsp->novoSite(site);
+            if (gestor != NULL) {
+                Website* site = new SiteParticular(identificador, numeroPaginas, tecnologia, gestor);
+                wsp->novoSite(site);
+            }
         }
         
         if (ficheiro.good() && str == TAG_EMPRESA) {
@@ -165,6 +164,7 @@ bool Menu::leDados(){
             vector<string> tecnologias;
             unsigned int numGestores;
             string nomeGestor;
+            string str = ""; // string auxiliar para o nome do gestor
             unsigned int numeroGestor;
             Utilizador* gestor;
             vector<Utilizador*> gestores;
@@ -179,9 +179,17 @@ bool Menu::leDados(){
             ficheiro >> numGestores;
             for (counter = 1; counter <= numGestores; counter++) {
                 ficheiro >> nomeGestor;
+                ficheiro >> str;
+                while (str != FIM_DE_NOME) {
+                    nomeGestor += " ";
+                    nomeGestor += str;
+                    ficheiro >> str;
+                }
                 ficheiro >> numeroGestor;
                 gestor = wsp->getGestorPointer(Utilizador(numeroGestor, nomeGestor));
-                gestores.push_back(gestor);
+                if (gestor != NULL){
+                    gestores.push_back(gestor);
+                }
             }
             
             Website* site = new SiteEmpresa(identificador, numeroPaginas, tecnologias, gestores);
@@ -189,9 +197,6 @@ bool Menu::leDados(){
 
             ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
         }
-
-        
-        
         ficheiro >> str;
     }
 
@@ -253,6 +258,10 @@ T Menu::escolhe(vector<T> & escolhas, const string & perg){
 
 Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
     unsigned int i = 1;
+    if (escolhas.size() == 0) {
+        cout << "Nao existem websites na base de dados!" << endl;
+        return NULL;
+    }
     cout << perg << endl;
     for (vector<Website*>::iterator site_it = escolhas.begin(); site_it != escolhas.end() ; site_it++, i++) {
             cout << i << " - " << (*site_it)->getIdentificador() << endl;
@@ -279,6 +288,10 @@ Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
 
 Utilizador* Menu::escolhe(vector<Utilizador*> & escolhas, const string & perg){
     unsigned int i = 1;
+    if (escolhas.size() == 0) {
+        cout << "Nao existem utilizadores na base de dados!" << endl;
+        return NULL;
+    }
     cout << perg << endl;
     for (vector<Utilizador*>::iterator gestor_it = escolhas.begin(); gestor_it != escolhas.end() ; gestor_it++, i++) {
         cout << i << " - " << setw(ESPACO_PEQUENO) << (*gestor_it)->getNome() << setw(ESPACO_PEQUENO) << (*gestor_it)->getNumIdentidade() << endl;
@@ -363,8 +376,8 @@ Utilizador* Menu::criar_utilizador(){ // falta seguranca para detetar se o utili
     unsigned int numIdentidade;
     nome = pergunta<string>("Escolha o nome do utilizador");
     numIdentidade = pergunta<unsigned int>("Indique o numero do bilhete de identidade");
-    Utilizador* u_pointer;
-    wsp->adicionaGestor(u_pointer = new Utilizador(numIdentidade, nome));
+    Utilizador* u_pointer = new Utilizador(numIdentidade, nome);
+    wsp->adicionaGestor(u_pointer);
     return u_pointer;
 }
 
@@ -729,6 +742,10 @@ void Menu::opcoes(Utilizador* gestor){
 
 
 void Menu::listar_websites(){
+    if (wsp->getWebsites().size() == 0) {
+        cout << "Nao existem websites na base de dados! Por favor crie um website primeiro." << endl;
+        return;
+    }
     cout << left << setw(ESPACO_MUITO_PEQUENO) << "Numero" << setw(ESPACO_PEQUENO) << "Tipo" << setw(ESPACO_LISTAGEM) << "Identificador" << setw(ESPACO_LISTAGEM) << "Gestor(es)" << setw(ESPACO_LISTAGEM) << "Tecnologia(s)" << setw(ESPACO_PEQUENO) << "Paginas" << endl;
     unsigned int numero = 1;
     for (vector<Website*>::iterator site_it = wsp->getWebsites().begin(); site_it != wsp->getWebsites().end(); site_it++, numero++) {
@@ -779,6 +796,11 @@ void Menu::listar_websites(){
 }
 
 void Menu::listar_utilizadores(){
+    if (wsp->getGestores().size() == 0) {
+        cout << "Nao existem utilizadores na base de dados! Por favor crie um utilizador primeiro." << endl;
+        return;
+    }
+    
     cout << left << setw(ESPACO_MUITO_PEQUENO) << "Numero" << setw(ESPACO_LISTAGEM) << "Nome" << setw(ESPACO_PEQUENO) << "Numero de B.I." << endl;
     unsigned int numero = 1;
     for (vector<Utilizador*>::iterator gestor_it = wsp->getGestores().begin(); gestor_it != wsp->getGestores().end(); gestor_it++, numero++)
@@ -798,25 +820,26 @@ void Menu::listar_utilizadores(){
 
 int Menu::inicio(){
     switch (escolhe(opcoes_inicio, "Selecione uma opcao")) {
-        case 0:
+        case 0: // Terminar aplicacao
             return 1;
-        case 1:
+            break;
+        case 1: // Criar website
             criar_website();
             return 0;
             break;
-        case 2:
-            wsp->getGestores().push_back(criar_utilizador());
+        case 2: // Criar um novo utilizador
+            criar_utilizador();
             return 0;
             break;
-        case 3:
+        case 3: // listar todos os websites
             listar_websites();
             return 0;
             break;
-        case 4:
+        case 4: // listar todos os utilizadores
             listar_utilizadores();
             return 0;
             break;
-        case 5:
+        case 5: // ordenar websites
             wsp->ordenaWebsitesAlfabetico();
             listar_websites();
             break;
@@ -860,29 +883,7 @@ Menu::Menu(){
     opcoes_utilizador.push_back("Aceder a um wesite responsavel");
     opcoes_utilizador.push_back("Eliminar utilizador");
     
-    // TESTES
     wsp = new GestorWSP();
-/*
-    Utilizador* pedro = new Utilizador(12345, "Pedro");
-    Utilizador* ze = new Utilizador(123, "Ze");
-    wsp->adicionaGestor(pedro);
-    wsp->adicionaGestor(ze);
-    
-    Website* blog  = new SiteParticular("www.Ablog.com", 10, "Ruby", pedro);
-    Website* blog2 = new SiteParticular("www.Bblog.com", 10, "Ruby", pedro);
-    Website* blog3 = new SiteParticular("www.Cblog.com", 10, "Ruby", pedro);
-    Website* blog4 = new SiteParticular("www.Dblog.com", 10, "Ruby", pedro);
-    wsp->novoSite(blog);
-    wsp->novoSite(blog3);
-    wsp->novoSite(blog4);
-    wsp->novoSite(blog2);
-    vector<Utilizador*> empresa;
-    empresa.push_back(ze); empresa.push_back(pedro);
-    vector<string> tecnologias;
-    tecnologias.push_back("c++"); tecnologias.push_back("java"); tecnologias.push_back("python");
-    Website* google = new SiteEmpresa("www.google.com", 100, tecnologias, empresa);
-    wsp->novoSite(google);
-*/  
     cout << "Bem vindo ao gestor de website provider!" << endl << "NOTA: escolher 0 cancela a opcao e regressa para o menu anterior (quando possivel)" << endl;
     leDados();
     while (inicio() != 1) {

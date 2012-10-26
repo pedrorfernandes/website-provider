@@ -25,6 +25,15 @@
 #define ESPACO_PEQUENO 15
 #define ESPACO_MUITO_PEQUENO 10
 
+#define TAG_UTILIZADOR "**Utilizador**"
+#define TAG_EMPRESA "**SiteEmpresa**"
+#define TAG_PARTICULAR "**SiteParticular**"
+#define TAG_CUSTO_PARTICULAR "**CUSTOPARTICULAR_PREDEFINIDO**"
+#define TAG_CUSTO_EMPRESA "**CUSTOEMPRESA_PREDEFINIDO**"
+#define TAG_LIMITE "**LIMITEPAGINAS_PREDEFINIDO**"
+#define FIM_DE_NOME "|"
+#define FICHEIRO "wsp.txt"
+
 #include "gestorWSP.h"
 #include "utilizador.h"
 #include "website.h"
