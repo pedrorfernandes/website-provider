@@ -36,7 +36,7 @@ class GestorWSP{
      *
      * @return True se o identificador do primeiro site for menor do que o segundo, False caso contrario
      */
-    static bool Alfabetico(Website* w1, Website* w2);
+    static bool identificadorAlfabetico(Website* w1, Website* w2);
     /**
      * Compara dois identificadores de websites
      *
@@ -45,7 +45,47 @@ class GestorWSP{
      *
      * @return True se o identificador do primeiro site for maior do que o segundo, False caso contrario
      */
-    static bool AlfabeticoContrario(Website* w1, Website* w2);
+    static bool identificadorAlfabeticoInverso(Website* w1, Website* w2);
+    
+    /**
+     * Compara dois nomes de utilizadores
+     *
+     * @param w1 O apontador para o primeiro utilizador
+     * @param w2 O apontador para o segundo utilizador
+     *
+     * @return True se o nome do primeiro utilizador for menor do que o segundo, False caso contrario
+     */
+    static bool nomeAlfabetico(Utilizador* u1, Utilizador* u2);
+    
+    /**
+     * Compara dois nomes de utilizadores
+     *
+     * @param w1 O apontador para o primeiro utilizador
+     * @param w2 O apontador para o segundo utilizador
+     *
+     * @return True se o nome do primeiro utilizador for maior do que o segundo, False caso contrario
+     */
+    static bool nomeAlfabeticoInverso(Utilizador* u1, Utilizador* u2);
+    
+    /**
+     * Compara dois numeros de identidade de utilizadores
+     *
+     * @param w1 O apontador para o primeiro utilizador
+     * @param w2 O apontador para o segundo utilizador
+     *
+     * @return True se o numero do primeiro utilizador for menor do que o segundo, False caso contrario
+     */
+    static bool numeroAscendente(Utilizador* u1, Utilizador* u2);
+    
+    /**
+     * Compara dois numeros de identidade de utilizadores
+     *
+     * @param w1 O apontador para o primeiro utilizador
+     * @param w2 O apontador para o segundo utilizador
+     *
+     * @return True se o numero do primeiro utilizador for menor do que o segundo, False caso contrario
+     */
+    static bool numeroDescendente(Utilizador* u1, Utilizador* u2);
 
 
 public:
@@ -111,20 +151,68 @@ public:
     Utilizador* getGestorPointer(Utilizador u);
     
     /**
-     * Ordena o vector de websites alfabeticamente, segundo os identificadores
+     * Ordena o vector de websites segundo varios criterios
+     * @param criterio O criterio para ordenar o vector. Ex: "Alfabetico"
      *
      * @return Void
      */
-    void ordenaWebsitesAlfabetico();
-    /**
-     * Ordena o vector de websites por ordem alfabetica decrescente, segundo os identificadores
-     *
-     * @return Void
-     */
-    void ordenaWebsitesAlfabeticoContrario();
+    void ordenaWebsites(string criterio);
     
-    const vector<Utilizador *> getConstGestores();
-
+    /**
+     * Ordena o vector de utilizadores segundo varios criterios
+     * @param criterio O criterio para ordenar o vector. Ex: "nome ascendente"
+     *
+     * @return Void
+     */
+    void ordenaUtilizadores(string criterio);
+    
+    /**
+     * Lista so os websites que estao incluidos dentro do criterio indicado
+     * @param tipoCriterio O tipo de criterio a ser pesquisado. Ex: "identificador", "tecnologia"
+     * @param criterio A string a pesquisar
+     *
+     * @return O vector dos websites encontrados
+     */
+    vector<Website*> pesquisaWebsite(string tipoCriterio, string criterio);
+    
+    /**
+     * Lista so os websites que estao incluidos dentro do criterio indicado
+     * @param tipoCriterio O tipo de criterio a ser pesquisado. Ex: "numero paginas"
+     * @param criterio O numero a pesquisar
+     *
+     * @return O vector dos websites encontrados
+     */
+    vector<Website*> pesquisaWebsite(string tipoCriterio, unsigned int criterio);
+    
+    /**
+     * Lista so os gestores que estao incluidos dentro do criterio indicado
+     * @param tipoCriterio O tipo de criterio a ser pesquisado. Ex: "nome"
+     * @param criterio A string a pesquisar
+     *
+     * @return O vector dos gestores encontrados
+     */
+    vector<Utilizador*> pesquisaUtilizador(string tipoCriterio, string criterio);
+    
+    /**
+     * Lista so os gestores que estao incluidos dentro do criterio indicado
+     * @param tipoCriterio O tipo de criterio a ser pesquisado. Ex: "numero"
+     * @param criterio O numero a pesquisar
+     *
+     * @return O vector dos gestores encontrados
+     */
+    vector<Utilizador*> pesquisaUtilizador(string tipoCriterio, unsigned int criterio);
+    
+    /**
+     * Calcula custo total para todos os websites no vector
+     * @return O valor do custo total
+     */
+    float calculoCustoTotal();
+    
+    /**
+     * Ao definir um novo limite no numero de paginas para sites particulares, esta funcao ajusta o numero de paginas dos sites que ultrapassam o novo limite
+     * @return Void
+     */
+    void ajustarNumeroPaginasParaParticulares();
     
 };
 

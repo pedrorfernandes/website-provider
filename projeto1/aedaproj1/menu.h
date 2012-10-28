@@ -31,7 +31,7 @@
 #define TAG_CUSTO_PARTICULAR "**CUSTOPARTICULAR_PREDEFINIDO**"
 #define TAG_CUSTO_EMPRESA "**CUSTOEMPRESA_PREDEFINIDO**"
 #define TAG_LIMITE "**LIMITEPAGINAS_PREDEFINIDO**"
-#define FIM_DE_NOME "|"
+#define FIM_DE_STRING "|"
 #define FICHEIRO "wsp.txt"
 
 #include "gestorWSP.h"
@@ -53,6 +53,11 @@ class Menu{
     vector<string> opcoes_website_particular;
     vector<string> opcoes_website_empresa;
     vector<string> opcoes_utilizador;
+    vector<string> consulta_custos;
+    vector<string> criterios_utilizadores;
+    vector<string> criterios_websites;
+    vector<string> pesquisa_websites;
+    vector<string> pesquisa_utilizadores;
 public:
     Menu();
     int inicio();
@@ -71,6 +76,12 @@ public:
     
     bool guardaDados();
     bool leDados();
+    
+    void consultaCustos();
+    void ordenaUtilizadoresCriterio();
+    void ordenaWebsitesCriterio();
+    void pesquisaNosWebsites();
+    void pesquisaNosUtilizadores();
 
 };
 

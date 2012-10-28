@@ -102,7 +102,7 @@ ostream & operator<<(ostream &out, SiteEmpresa* site){
     out << site->getIdentificador() << " " << site->getNumeroPaginas() << " ";
     out << site->tecnologias.size() << " ";
     for (vector<string>::iterator tech_it = site->tecnologias.begin(); tech_it != site->tecnologias.end() ; tech_it++) {
-        out << (*tech_it) << " ";
+        out << (*tech_it) << " | ";
     }
     out << site->gestores.size() << " ";
     for (vector<Utilizador*>::iterator gestor_it = site->gestores.begin(); gestor_it != site->gestores.end(); gestor_it++) {

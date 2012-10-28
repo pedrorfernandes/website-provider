@@ -86,7 +86,7 @@ void SiteParticular::setNumeroPaginas(unsigned int n){
 }
 
 ostream & operator<<(ostream &out, SiteParticular* site){
-    out << site->getIdentificador() << " " << site->getNumeroPaginas() << " " << site->tecnologia << " " << site->gestor;
+    out << site->getIdentificador() << " " << site->getNumeroPaginas() << " " << site->tecnologia << " | " << site->gestor;
     return out;
 }
 

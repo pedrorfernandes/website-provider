@@ -19,8 +19,8 @@ bool Menu::guardaDados(){
      
      **Utilizador** Pedro | 12345
      **Utilizador** Ze | 123
-     **SiteParticular** www.blog.com 10 Ruby Pedro | 12345
-     **SiteEmpresa** www.google.com 100 2 c++ java 2 Pedro | 12345 Ze | 123
+     **SiteParticular** www.blog.com 10 Ruby | Pedro | 12345
+     **SiteEmpresa** www.google.com 100 2 c++ | java | 2 Pedro | 12345 Ze | 123
      **CUSTOPARTICULAR_PREDEFINIDO** 10
      **CUSTOEMPRESA_PREDEFINIDO** 100
      **LIMITEPAGINAS_PREDEFINIDO** 50
@@ -63,8 +63,8 @@ bool Menu::leDados(){
      
      **Utilizador** Pedro | 12345
      **Utilizador** Ze | 123
-     **SiteParticular** www.blog.com 10 Ruby Pedro | 12345
-     **SiteEmpresa** www.google.com 100 2 c++ java 2 Pedro | 12345 Ze | 123
+     **SiteParticular** www.blog.com 10 Ruby | Pedro | 12345
+     **SiteEmpresa** www.google.com 100 2 c++ | java | 2 Pedro | 12345 Ze | 123
      **CUSTOPARTICULAR_PREDEFINIDO** 10
      **CUSTOEMPRESA_PREDEFINIDO** 100
      **LIMITEPAGINAS_PREDEFINIDO** 50
@@ -90,7 +90,7 @@ bool Menu::leDados(){
             unsigned int numero;
             ficheiro >> nome;
             ficheiro >> str;
-            while (str != FIM_DE_NOME) {
+            while (str != FIM_DE_STRING) {
                 nome += " ";
                 nome += str;
                 ficheiro >> str;
@@ -135,14 +135,20 @@ bool Menu::leDados(){
             unsigned int numeroPaginas;
             string tecnologia;
             string nomeGestor;
-            string str = ""; // string auxiliar para o nome do gestor
+            string str = ""; // string auxiliar
             unsigned int numeroGestor;
             ficheiro >> identificador;
             ficheiro >> numeroPaginas;
             ficheiro >> tecnologia;
+            ficheiro >> str;
+            while (str != FIM_DE_STRING) {
+                tecnologia += " ";
+                tecnologia += str;
+                ficheiro >> str;
+            }
             ficheiro >> nomeGestor;
             ficheiro >> str;
-            while (str != FIM_DE_NOME) {
+            while (str != FIM_DE_STRING) {
                 nomeGestor += " ";
                 nomeGestor += str;
                 ficheiro >> str;
@@ -164,23 +170,30 @@ bool Menu::leDados(){
             vector<string> tecnologias;
             unsigned int numGestores;
             string nomeGestor;
-            string str = ""; // string auxiliar para o nome do gestor
+            string str = ""; // string auxiliar
             unsigned int numeroGestor;
             Utilizador* gestor;
             vector<Utilizador*> gestores;
+            //**SiteEmpresa** www.google.com 100 2 c++ | java | 2 Pedro | 12345 Ze | 123
             ficheiro >> identificador;
             ficheiro >> numeroPaginas;
             ficheiro >> numTecnologias;
             unsigned int counter;
             for (counter = 1; counter <= numTecnologias; counter++) {
                 ficheiro >> tecnologia;
+                ficheiro >> str;
+                while (str != FIM_DE_STRING) {
+                    tecnologia += " ";
+                    tecnologia += str;
+                    ficheiro >> str;
+                }
                 tecnologias.push_back(tecnologia);
             }
             ficheiro >> numGestores;
             for (counter = 1; counter <= numGestores; counter++) {
                 ficheiro >> nomeGestor;
                 ficheiro >> str;
-                while (str != FIM_DE_NOME) {
+                while (str != FIM_DE_STRING) {
                     nomeGestor += " ";
                     nomeGestor += str;
                     ficheiro >> str;
@@ -257,16 +270,52 @@ T Menu::escolhe(vector<T> & escolhas, const string & perg){
  */
 
 Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
-    unsigned int i = 1;
+    unsigned int i = escolhas.size();
     if (escolhas.size() == 0) {
         cout << "Nao existem websites na base de dados!" << endl;
         return NULL;
     }
     cout << perg << endl;
-    for (vector<Website*>::iterator site_it = escolhas.begin(); site_it != escolhas.end() ; site_it++, i++) {
-            cout << i << " - " << (*site_it)->getIdentificador() << endl;
+    // Codigo igual ao da funcao listar_websites() ------------------
+    cout << left << setw(ESPACO_MUITO_PEQUENO) << "Numero" << setw(ESPACO_PEQUENO) << "Tipo" << setw(ESPACO_LISTAGEM) << "Identificador" << setw(ESPACO_LISTAGEM) << "Gestor(es)" << setw(ESPACO_LISTAGEM) << "Tecnologia(s)" << setw(ESPACO_PEQUENO) << "Paginas" << endl;
+    unsigned int numero = 1;
+    for (vector<Website*>::iterator site_it = escolhas.begin(); site_it != escolhas.end(); site_it++, numero++) {
+        Website* site = *site_it;
+        SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(site);
+        SiteParticular* particular = dynamic_cast< SiteParticular* >(site);
+        
+        if (particular){// como listar as informacoes se o site for particular
+            string nome;
+            if (site->getGestor() == NULL) { // verificar se existe gestor
+                nome = "Nenhum";
+            } else {
+                nome = site->getGestor()->getNome();
+            }
+            
+            cout << left << setw(ESPACO_MUITO_PEQUENO) << numero << setw(ESPACO_PEQUENO) <<  "Particular" << setw(ESPACO_LISTAGEM)<< site->getIdentificador() << setw(ESPACO_LISTAGEM) << nome << setw(ESPACO_LISTAGEM) << site->getTecnologia() << setw(ESPACO_LISTAGEM) << site->getNumeroPaginas() << endl;
+        }
+        if (empresa){ // como listar as informacoes se o site for de uma empresa
+            stringstream gestores;
+            if (site->getGestores().size() == 0) {
+                gestores << "Nenhum";
+            } else if (site->getGestores().size() == 1) {
+                gestores << site->getGestores()[0]->getNome();
+            } else {
+                gestores << site->getGestores()[0]->getNome() << " e mais " << site->getGestores().size()-1;
+            }
+            stringstream tecnologias;
+            if (site->getTecnologias().size() == 0) {
+                tecnologias << "Nenhuma";
+            } else if (site->getTecnologias().size() == 1) {
+                tecnologias << site->getTecnologias()[0];
+            } else {
+                tecnologias << site->getTecnologias()[0] << " e mais " << site->getTecnologias().size()-1;
+                
+            }
+            cout << left << setw(ESPACO_MUITO_PEQUENO) << numero << setw(ESPACO_PEQUENO) << "Empresa" << setw(ESPACO_LISTAGEM) << site->getIdentificador() << setw(ESPACO_LISTAGEM) << gestores.str() << setw(ESPACO_LISTAGEM) << tecnologias.str() << setw(ESPACO_PEQUENO) << site->getNumeroPaginas() << endl;
+        }
     }
-    i--;
+    //---------------------------------------------------
     unsigned int numero_escolha;
     cout << PROMPT;
     cin >> numero_escolha;
@@ -696,12 +745,17 @@ void Menu::opcoes(Utilizador* gestor){
     {
         cout << "Nome do utilizador: " << gestor->getNome() << endl;
         cout << "Numero de identidade: " << gestor->getNumIdentidade() << endl;
-        cout << "Sites responsavel: ";
-        for (vector<Website*>::const_iterator site_it = gestor->getSitesResponsavel().begin(); site_it != gestor->getSitesResponsavel().end() ; site_it++) {
-            if (site_it == gestor->getSitesResponsavel().end()-1) {
-                cout << (*site_it)->getIdentificador() << "." << endl;
-            } else
-                cout << (*site_it)->getIdentificador() << ", ";
+        
+        if (gestor->getSitesResponsavel().size() == 0) {
+            cout << "Nao e' gestor de nenhum website" << endl;
+        } else {
+            cout << "Sites responsavel: ";
+            for (vector<Website*>::const_iterator site_it = gestor->getSitesResponsavel().begin(); site_it != gestor->getSitesResponsavel().end() ; site_it++) {
+                if (site_it == gestor->getSitesResponsavel().end()-1) {
+                    cout << (*site_it)->getIdentificador() << "." << endl;
+                } else
+                    cout << (*site_it)->getIdentificador() << ", ";
+            }
         }
         switch (escolhe(opcoes_utilizador, "Selecione uma opcao")) {
             case 0:
@@ -817,6 +871,235 @@ void Menu::listar_utilizadores(){
     return;
 }
 
+void Menu::consultaCustos(){
+    bool acabado = false;
+    
+    while (!acabado) {
+        cout << "Custo por pagina para websites particulares: " << SiteParticular::getCustoPorPagina() << endl;
+        cout << "Custo por paginas para websites empresa: " << SiteEmpresa::getCustoPorPagina() << endl;
+        cout << "Limite de paginas para websites particulares: " << SiteParticular::getLimitePaginas() << endl;
+        cout << "Custo total de todos os websites: " << wsp->calculoCustoTotal() << endl;
+        
+        switch (escolhe(consulta_custos, "Selecione uma opcao")) {
+            case 0: // utilizador terminou
+                acabado = true;
+                break;
+            case 1: // alterar custo particular
+                SiteParticular::setCustoPorPagina(pergunta<float>("Defina o custo por pagina particular"));
+                break;
+            case 2: // alterar custo empresa
+                SiteEmpresa::setCustoPorPagina(pergunta<float>("Defina o custo por pagina empresa"));
+                break;
+            case 3: // definir limite de paginas para particulares
+                SiteParticular::setLimitePaginas(pergunta<unsigned int>("Defina o maximo numero paginas para websites particulares"));
+                wsp->ajustarNumeroPaginasParaParticulares();
+                break;
+            default:
+                break;
+        }
+    }
+    return;
+}
+
+void Menu::ordenaWebsitesCriterio(){
+    switch (escolhe(criterios_websites, "Escolha um criterio") ) {
+        case 0: // cancelar
+            return;
+            break;
+        case 1: // identificador alfabetico
+            wsp->ordenaWebsites("identificador alfabetico");
+            listar_websites();
+            return;
+            break;
+        case 2: // identificador alfabetico
+            wsp->ordenaWebsites("nome alfabetico inverso");
+            listar_websites();
+            return;
+            break;
+            /*
+        case 3: // numero ascendente
+            wsp->ordenaWebsites("");
+            listar_websites();
+            return;
+            break;
+        case 4: // numero descendente
+            wsp->ordenaWebsites("");
+            listar_websites();
+            return;
+            break;
+             */
+        default:
+            break;
+    }
+    return;
+
+}
+
+
+void Menu::ordenaUtilizadoresCriterio(){
+    switch (escolhe(criterios_utilizadores, "Escolha um criterio") ) {
+        case 0: // cancelar
+            return;
+            break;
+        case 1: // nome alfabetico
+            wsp->ordenaUtilizadores("nome alfabetico");
+            listar_utilizadores();
+            return;
+            break;
+        case 2: // nome alfabetico inverso
+            wsp->ordenaUtilizadores("nome alfabetico inverso");
+            listar_utilizadores();
+            return;
+            break;
+        case 3: // numero ascendente
+            wsp->ordenaUtilizadores("numero ascendente");
+            listar_utilizadores();
+            return;
+            break;
+        case 4: // numero descendente
+            wsp->ordenaUtilizadores("numero descendente");
+            listar_utilizadores();
+            return;
+            break;
+        default:
+            break;
+    }
+    return;
+}
+
+void Menu::pesquisaNosUtilizadores(){
+    bool acabado = false;
+    while (!acabado) {
+        switch (escolhe(pesquisa_utilizadores, "Escolha um criterio a pesquisar")) {
+            case 0:
+                acabado = true;
+                break;
+            case 1: // pesquisar nome
+            {
+                string pesquisa = pergunta<string>("Que nome quer pesquisar?");
+                while (true) {
+                    stringstream resultados_da_pesquisa;
+                    vector<Utilizador*> resultados = wsp->pesquisaUtilizador("nome", pesquisa);
+                    if (resultados.size() == 0) {
+                        cout << "Nao foram encontrados resultados para a pesquisa \"" << pesquisa << "\""<< endl;
+                        break;
+                    }
+                    resultados_da_pesquisa << "A pesquisa do nome \"" << pesquisa << "\"" << " retornou os resultados abaixo. Escolha um utilizador";
+                    Utilizador* escolha = escolhe(resultados, resultados_da_pesquisa.str());
+                    if (escolha == NULL) {
+                        break;
+                    }
+                    opcoes(escolha);
+                    // utilizador termina de mexer no site e regressa aqui
+                }
+                break;
+            }
+            case 2: // pesquisar numero
+            {
+                unsigned int pesquisa = pergunta<unsigned int>("Que numero quer pesquisar?");
+                while (true) {
+                    stringstream resultados_da_pesquisa;
+                    vector<Utilizador*> resultados = wsp->pesquisaUtilizador("numero", pesquisa);
+                    if (resultados.size() == 0) {
+                        cout << "Nao foram encontrados resultados para a pesquisa \"" << pesquisa << "\""<< endl;
+                        break;
+                    }
+                    resultados_da_pesquisa << "A pesquisa do nome \"" << pesquisa << "\"" << " retornou os resultados abaixo. Escolha um utilizador";
+                    Utilizador* escolha = escolhe(resultados, resultados_da_pesquisa.str());
+                    if (escolha == NULL) {
+                        break;
+                    }
+                    opcoes(escolha);
+                    // utilizador termina de mexer no site e regressa aqui
+                }
+                break;
+            }
+
+                
+            default:
+                break;
+        }
+        
+        
+    }
+}
+
+void Menu::pesquisaNosWebsites(){
+    bool acabado = false;
+    while (!acabado) {
+        
+        switch (escolhe(pesquisa_websites, "Escolha um criterio a pesquisar") ) {
+            case 0: // cancelar
+                acabado = true;
+                break;
+            case 1: // listar sites particulares
+            {
+                while (true) { // so termina quando o utilizador quer cancelar ou nao ha resultados
+                    vector<Website*> resultados = wsp->pesquisaWebsite("particulares", "");
+                    if (resultados.size() == 0) {
+                        cout << "Nao existem ainda sites particulares" << endl;
+                        break;
+                    }
+                    Website* escolha = escolhe(resultados, "Escolhe um site particular");
+                    if (escolha == NULL) {
+                        break;
+                    } else {
+                        opcoes(escolha);
+                    }
+                    
+                }
+                break;
+            }
+            case 2: // listar sites empresas
+            {
+                while (true) {
+                    vector<Website*> resultados = wsp->pesquisaWebsite("empresas", "");
+                    if (resultados.size() == 0) {
+                        cout << "Nao existem sites empresa" << endl;
+                        break;
+                    }
+                    Website* escolha = escolhe(resultados, "Escolhe um site empresa");
+                    if (escolha == NULL) {
+                        break;
+                    } else {
+                        opcoes(escolha);
+                    }
+                    
+                }
+                break;
+            }
+            case 3: // pesquisar identificador
+            {
+                string pesquisa = pergunta<string>("Que identificador quer pesquisar?");
+                while (true) {
+                    stringstream resultados_da_pesquisa;
+                    vector<Website*> resultados = wsp->pesquisaWebsite("identificador", pesquisa);
+                    if (resultados.size() == 0) {
+                        cout << "Nao foram encontrados resultados da pesquisa \"" << pesquisa << "\""<< endl;
+                        break;
+                    }
+                    resultados_da_pesquisa << "A pesquisa \"" << pesquisa << "\"" << " retornou os resultados abaixo. Escolha um website";
+                    Website* escolha = escolhe(resultados, resultados_da_pesquisa.str());
+                    if (escolha == NULL) {
+                        break;
+                    }
+                    opcoes(escolha);
+                    // utilizador termina de mexer no site e regressa aqui
+                }
+                break;
+            }
+            case 4: // numero descendente
+                wsp->ordenaUtilizadores("numero descendente");
+                listar_websites();
+                break;
+            default:
+                break;
+        }
+    }
+    return;
+}
+
+
 int Menu::inicio(){
     switch (escolhe(opcoes_inicio, "Selecione uma opcao")) {
         case 0: // Terminar aplicacao
@@ -838,9 +1121,24 @@ int Menu::inicio(){
             listar_utilizadores();
             return 0;
             break;
-        case 5: // ordenar websites
-            wsp->ordenaWebsitesAlfabetico();
-            listar_websites();
+        case 5: // pesquisar websites segundo criterio
+            pesquisaNosWebsites();
+            return 0;
+            break;
+        case 6: // pesquisar utilizadores segundo criterio
+            pesquisaNosUtilizadores();
+            break;
+        case 7: // ordernar websites segundo criterio
+            ordenaWebsitesCriterio();
+            return 0;
+            break;
+        case 8: // ordernar utilizadores segundo criterio
+            ordenaUtilizadoresCriterio();
+            return 0;
+            break;
+        case 9: // consultar os custos
+            consultaCustos();
+            return 0;
             break;
             
         default:
@@ -853,10 +1151,13 @@ int Menu::inicio(){
 Menu::Menu(){
     opcoes_inicio.push_back("Criar website");
     opcoes_inicio.push_back("Criar utilizador");
-    opcoes_inicio.push_back("Listar websites");
-    opcoes_inicio.push_back("Listar utilizadores");
+    opcoes_inicio.push_back("Listar todos os websites");
+    opcoes_inicio.push_back("Listar todos os utilizadores");
+    opcoes_inicio.push_back("Pesquisar websites");
+    opcoes_inicio.push_back("Pesquisar utilizadores");
     opcoes_inicio.push_back("Ordernar websites");
-    //opcoes_inicio.push_back("Ordenar utilizadores");
+    opcoes_inicio.push_back("Ordenar utilizadores");
+    opcoes_inicio.push_back("Consultar custos");
     
     
     escolher_tipo_site.push_back("Site para particular");
@@ -881,6 +1182,26 @@ Menu::Menu(){
     opcoes_utilizador.push_back("Alterar numero do bilhete de identidade");
     opcoes_utilizador.push_back("Aceder a um wesite responsavel");
     opcoes_utilizador.push_back("Eliminar utilizador");
+    
+    consulta_custos.push_back("Alterar custo para particulares");
+    consulta_custos.push_back("Alterar custo para empresas");
+    consulta_custos.push_back("Definir limite de paginas parar particulares");
+    
+    criterios_utilizadores.push_back("Nome (alfabetico)");
+    criterios_utilizadores.push_back("Nome (alfabetico inverso)");
+    criterios_utilizadores.push_back("Numero de B.I. (ascendente)");
+    criterios_utilizadores.push_back("Numero de B.I. (descendente)");
+    
+    criterios_websites.push_back("Identificador (alfabetico)");
+    criterios_websites.push_back("Identificador (alfabetico inverso)");
+    
+    pesquisa_websites.push_back("Listar sites particulares");
+    pesquisa_websites.push_back("Listar sites empresa");
+    pesquisa_websites.push_back("Pesquisar identificador");
+    
+    pesquisa_utilizadores.push_back("Nome");
+    pesquisa_utilizadores.push_back("Numero de B.I.");
+
     
     wsp = new GestorWSP();
     cout << "Bem vindo ao gestor de website provider!" << endl << "NOTA: escolher 0 cancela a opcao e regressa para o menu anterior (quando possivel)" << endl;
