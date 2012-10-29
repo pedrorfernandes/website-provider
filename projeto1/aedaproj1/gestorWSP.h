@@ -15,11 +15,17 @@
 
 
 #include <iostream>
+#include <sstream>
 
 #include "website.h"
 #include "utilizador.h"
 #include "siteEmpresa.h"
 #include "siteParticular.h"
+
+class UtilizadorJaExistente: public Erro{
+public:
+    UtilizadorJaExistente(string msg): Erro(msg){};
+};
 
 /**
  * O gestor de website provider contem o vector de utilizadores e de websites e as funcoes para gerir estes dois vectores.
@@ -48,10 +54,30 @@ class GestorWSP{
     static bool identificadorAlfabeticoInverso(Website* w1, Website* w2);
     
     /**
+     * Compara dois numeros de paginas de websites
+     *
+     * @param w1 O apontador para o primeiro website
+     * @param w2 O apontador para o segundo website
+     *
+     * @return True se o numero de paginas do primeiro website for menor do que o segundo, False caso contrario
+     */
+    static bool numeroPaginasAscendente(Website* w1, Website* w2);
+    
+    /**
+     * Compara dois numeros de paginas de websites
+     *
+     * @param w1 O apontador para o primeiro website
+     * @param w2 O apontador para o segundo website
+     *
+     * @return True se o numero de paginas do primeiro website for maior do que o segundo, False caso contrario
+     */
+    static bool numeroPaginasDescendente(Website* w1, Website* w2);
+    
+    /**
      * Compara dois nomes de utilizadores
      *
-     * @param w1 O apontador para o primeiro utilizador
-     * @param w2 O apontador para o segundo utilizador
+     * @param u1 O apontador para o primeiro utilizador
+     * @param u2 O apontador para o segundo utilizador
      *
      * @return True se o nome do primeiro utilizador for menor do que o segundo, False caso contrario
      */
@@ -60,8 +86,8 @@ class GestorWSP{
     /**
      * Compara dois nomes de utilizadores
      *
-     * @param w1 O apontador para o primeiro utilizador
-     * @param w2 O apontador para o segundo utilizador
+     * @param u1 O apontador para o primeiro utilizador
+     * @param u2 O apontador para o segundo utilizador
      *
      * @return True se o nome do primeiro utilizador for maior do que o segundo, False caso contrario
      */
@@ -70,8 +96,8 @@ class GestorWSP{
     /**
      * Compara dois numeros de identidade de utilizadores
      *
-     * @param w1 O apontador para o primeiro utilizador
-     * @param w2 O apontador para o segundo utilizador
+     * @param u1 O apontador para o primeiro utilizador
+     * @param u2 O apontador para o segundo utilizador
      *
      * @return True se o numero do primeiro utilizador for menor do que o segundo, False caso contrario
      */
@@ -80,13 +106,12 @@ class GestorWSP{
     /**
      * Compara dois numeros de identidade de utilizadores
      *
-     * @param w1 O apontador para o primeiro utilizador
-     * @param w2 O apontador para o segundo utilizador
+     * @param u1 O apontador para o primeiro utilizador
+     * @param u2 O apontador para o segundo utilizador
      *
-     * @return True se o numero do primeiro utilizador for menor do que o segundo, False caso contrario
+     * @return True se o numero do primeiro utilizador for maior do que o segundo, False caso contrario
      */
     static bool numeroDescendente(Utilizador* u1, Utilizador* u2);
-
 
 public:
     GestorWSP();
@@ -213,6 +238,13 @@ public:
      * @return Void
      */
     void ajustarNumeroPaginasParaParticulares();
+    
+    /**
+     * Verifica se um identificador de website existe no vector de websites
+     * @param identificador O identificador a ser verificado
+     * @return True se o identificador nao existir, False se ja existir um website ja possui esse identificador
+     */
+    bool identificadorValido(string identificador);
     
 };
 

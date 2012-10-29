@@ -12,6 +12,38 @@
 
 #include "menu.h"
 
+ostream & operator<<(ostream &os, Utilizador* u){
+    os << u->getNome() << FIM_DE_STRING_OUTPUT << u->getNumIdentidade();
+    return os;
+}
+
+ostream & operator<<(ostream &out, Website* w){
+    out << w->identificador;
+    return out;
+}
+
+ostream & operator<<(ostream &out, SiteEmpresa* site){
+    out << site->getIdentificador() << " " << site->getNumeroPaginas() << " ";
+    out << site->tecnologias.size() << " ";
+    for (vector<string>::iterator tech_it = site->tecnologias.begin(); tech_it != site->tecnologias.end() ; tech_it++) {
+        out << (*tech_it) << FIM_DE_STRING_OUTPUT;
+    }
+    out << site->gestores.size() << " ";
+    for (vector<Utilizador*>::iterator gestor_it = site->gestores.begin(); gestor_it != site->gestores.end(); gestor_it++) {
+        if (gestor_it == site->gestores.end()-1) {
+            out << (*gestor_it);
+        } else
+            out << (*gestor_it) << " ";
+    }
+    return out;
+}
+
+ostream & operator<<(ostream &out, SiteParticular* site){
+    out << site->getIdentificador() << " " << site->getNumeroPaginas() << " " << site->tecnologia << FIM_DE_STRING_OUTPUT << site->gestor;
+    return out;
+}
+
+
 
 bool Menu::guardaDados(){
     /*
@@ -240,37 +272,9 @@ unsigned int Menu::escolhe(vector<string> & escolhas, const string &perg){
     }
     return escolha;
 }
-/* // PRECISO DO OPERADOR << PARA GRAVAR AS INFOS
-template<class T>
-T Menu::escolhe(vector<T> & escolhas, const string & perg){
-    unsigned int i = 1;
-    cout << perg << endl;
-    for (typename vector<T>::iterator opcao = escolhas.begin(); opcao != escolhas.end() ; opcao++, i++) {
-        // cout << i << " - " << *opcao << endl;
-    }
-    i--;
-    unsigned int numero_escolha;
-    cout << PROMPT;
-    cin >> numero_escolha;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    while ( cin.fail() || numero_escolha > i ) {
-        cout << "Escolha invalida. Selecione uma opcao de 0 a " << i << "." << endl << PROMPT;
-        cin.clear();
-        cin >> numero_escolha;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    }
-    T escolha;
-    if (numero_escolha == 0) {
-        escolha = NULL;
-    } else{
-        escolha = escolhas.at(numero_escolha-1);
-    }
-    return escolha;
-}
- */
 
 Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
-    unsigned int i = escolhas.size();
+    unsigned long i = escolhas.size();
     if (escolhas.size() == 0) {
         cout << "Nao existem websites na base de dados!" << endl;
         return NULL;
@@ -369,7 +373,7 @@ Utilizador* Menu::escolhe(vector<Utilizador*> & escolhas, const string & perg){
 
 template<class T>
 T Menu::escolheSemListagem(vector<T> & escolhas, const string & perg){
-    unsigned int i = escolhas.size();
+    unsigned long i = escolhas.size();
     cout << perg << endl;
     unsigned int numero_escolha;
     cout << PROMPT;
@@ -420,13 +424,23 @@ string pergunta(const string &perg)
     return str;
 }
 
-Utilizador* Menu::criar_utilizador(){ // falta seguranca para detetar se o utilizador ja existe
+Utilizador* Menu::criar_utilizador(){
     string nome;
     unsigned int numIdentidade;
-    nome = pergunta<string>("Escolha o nome do utilizador");
-    numIdentidade = pergunta<unsigned int>("Indique o numero do bilhete de identidade");
-    Utilizador* u_pointer = new Utilizador(numIdentidade, nome);
-    wsp->adicionaGestor(u_pointer);
+    bool ok = false;
+    Utilizador* u_pointer = NULL;
+    while (!ok) {
+        
+        nome = pergunta<string>("Escolha o nome do utilizador");
+        numIdentidade = pergunta<unsigned int>("Indique o numero do bilhete de identidade");
+        u_pointer = new Utilizador(numIdentidade, nome);
+        try {
+            wsp->adicionaGestor(u_pointer);
+            ok = true;
+        } catch (UtilizadorJaExistente &e) {
+            cout << "O utilizador com B.I. " << e.getMsg() << " ja existe. Por favor selecione um novo." << endl;
+        }
+    }
     return u_pointer;
 }
 
@@ -444,8 +458,11 @@ Website* Menu::criar_website(){
         {
             string tecnologia;
             Utilizador* gestor = NULL;
-            
+    
             identificador = pergunta<string>("Escolha um identificador (URL) para o website");
+            while (!wsp->identificadorValido(identificador)) {
+                identificador = pergunta<string>("Esse identificador ja pertence a outro website.\nPor favor escolha um identificador diferente");
+            }
             
             tecnologia = pergunta<string>("Escolha a tecnologia que vai ser utilizada para o website");
             
@@ -487,6 +504,9 @@ Website* Menu::criar_website(){
             vector<Utilizador*> gestores;
             
             identificador = pergunta<string>("Escolha um identificador (URL) para o website");
+            while (!wsp->identificadorValido(identificador)) {
+                identificador = pergunta<string>("Esse identificador ja pertence a outro website.\nPor favor escolha um identificador diferente");
+            }
             
             numeroPaginas = pergunta<unsigned int>("Escolha um numero de paginas");
 
@@ -528,7 +548,8 @@ Website* Menu::criar_website(){
                     wsp->novoSite(site = new SiteEmpresa(identificador, numeroPaginas, tecnologias, gestores));
                     ok = true;
                 } catch (...) {
-                    cout << "Oops" << endl;
+                    cout << "Erro. Nao foi possivel adicionar o website empresa." << endl;
+                    break;
                 }
             }
             cout << "O website " << identificador << " foi criado com sucesso!" << endl;
@@ -758,7 +779,7 @@ void Menu::opcoes(Utilizador* gestor){
             }
         }
         switch (escolhe(opcoes_utilizador, "Selecione uma opcao")) {
-            case 0:
+            case 0: // cancelar
                 acabado = true;
                 break;
             case 1: // Alterar o nome do utilizador
@@ -902,7 +923,7 @@ void Menu::consultaCustos(){
 }
 
 void Menu::ordenaWebsitesCriterio(){
-    switch (escolhe(criterios_websites, "Escolha um criterio") ) {
+    switch (escolhe(ordenar_websites, "Escolha um criterio") ) {
         case 0: // cancelar
             return;
             break;
@@ -912,22 +933,20 @@ void Menu::ordenaWebsitesCriterio(){
             return;
             break;
         case 2: // identificador alfabetico
-            wsp->ordenaWebsites("nome alfabetico inverso");
+            wsp->ordenaWebsites("identificador inverso");
             listar_websites();
             return;
             break;
-            /*
-        case 3: // numero ascendente
-            wsp->ordenaWebsites("");
+        case 3: // numero paginas ascendente
+            wsp->ordenaWebsites("numero paginas ascendente");
             listar_websites();
             return;
             break;
-        case 4: // numero descendente
-            wsp->ordenaWebsites("");
+        case 4: // numero paginas descendente
+            wsp->ordenaWebsites("numero paginas descendente");
             listar_websites();
             return;
             break;
-             */
         default:
             break;
     }
@@ -937,7 +956,7 @@ void Menu::ordenaWebsitesCriterio(){
 
 
 void Menu::ordenaUtilizadoresCriterio(){
-    switch (escolhe(criterios_utilizadores, "Escolha um criterio") ) {
+    switch (escolhe(ordenar_utilizadores, "Escolha um criterio") ) {
         case 0: // cancelar
             return;
             break;
@@ -1088,10 +1107,27 @@ void Menu::pesquisaNosWebsites(){
                 }
                 break;
             }
-            case 4: // numero descendente
-                wsp->ordenaUtilizadores("numero descendente");
-                listar_websites();
+            case 4: // pesquisa tecnologia
+            {
+                string pesquisa = pergunta<string>("Que tecnologia quer pesquisar?");
+                while (true) {
+                    stringstream resultados_da_pesquisa;
+                    vector<Website*> resultados = wsp->pesquisaWebsite("tecnologia", pesquisa);
+                    if (resultados.size() == 0) {
+                        cout << "Nao foram encontrados resultados da pesquisa \"" << pesquisa << "\""<< endl;
+                        break;
+                    }
+                    resultados_da_pesquisa << "A pesquisa \"" << pesquisa << "\"" << " retornou os resultados abaixo. Escolha um website";
+                    Website* escolha = escolhe(resultados, resultados_da_pesquisa.str());
+                    if (escolha == NULL) {
+                        break;
+                    }
+                    opcoes(escolha);
+                    // utilizador termina de mexer no site e regressa aqui
+                }
                 break;
+            }
+                
             default:
                 break;
         }
@@ -1185,26 +1221,30 @@ Menu::Menu(){
     
     consulta_custos.push_back("Alterar custo para particulares");
     consulta_custos.push_back("Alterar custo para empresas");
-    consulta_custos.push_back("Definir limite de paginas parar particulares");
+    consulta_custos.push_back("Definir limite de paginas para particulares");
     
-    criterios_utilizadores.push_back("Nome (alfabetico)");
-    criterios_utilizadores.push_back("Nome (alfabetico inverso)");
-    criterios_utilizadores.push_back("Numero de B.I. (ascendente)");
-    criterios_utilizadores.push_back("Numero de B.I. (descendente)");
+    ordenar_utilizadores.push_back("Nome (alfabetico)");
+    ordenar_utilizadores.push_back("Nome (alfabetico inverso)");
+    ordenar_utilizadores.push_back("Numero de B.I. (ascendente)");
+    ordenar_utilizadores.push_back("Numero de B.I. (descendente)");
     
-    criterios_websites.push_back("Identificador (alfabetico)");
-    criterios_websites.push_back("Identificador (alfabetico inverso)");
+    ordenar_websites.push_back("Identificador (alfabetico)");
+    ordenar_websites.push_back("Identificador (alfabetico inverso)");
+    ordenar_websites.push_back("Numero paginas (ascendente)");
+    ordenar_websites.push_back("Numero paginas (descendente)");
     
     pesquisa_websites.push_back("Listar sites particulares");
     pesquisa_websites.push_back("Listar sites empresa");
     pesquisa_websites.push_back("Pesquisar identificador");
-    
+    pesquisa_websites.push_back("Pesquisar tecnologia");
+
     pesquisa_utilizadores.push_back("Nome");
     pesquisa_utilizadores.push_back("Numero de B.I.");
 
     
     wsp = new GestorWSP();
-    cout << "Bem vindo ao gestor de website provider!" << endl << "NOTA: escolher 0 cancela a opcao e regressa para o menu anterior (quando possivel)" << endl;
+    cout << "Bem vindo ao gestor de website provider!" << endl;
+    cout << "NOTA: escolher 0 cancela a opcao e regressa para o menu anterior (quando possivel)" << endl;
     leDados();
     while (inicio() != 1) {
         guardaDados();

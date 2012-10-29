@@ -22,8 +22,11 @@ GestorWSP::~GestorWSP(){
 
 
 bool GestorWSP::adicionaGestor(Utilizador* u){
-    for (vector<Utilizador*>::iterator it = gestores.begin(); it != gestores.end(); it++) {
-        if ( (*(*it)) == u ) {
+    for (vector<Utilizador*>::iterator gestor_it = gestores.begin(); gestor_it != gestores.end(); gestor_it++) {
+        if ( (*(*gestor_it)) == u ) {
+            stringstream numero;
+            numero << u->getNumIdentidade();
+            throw UtilizadorJaExistente(numero.str());
             return false;
         }
     }
@@ -39,10 +42,10 @@ bool GestorWSP::novoSite(Website* w){
         }
     }
     
+    /*
     // para descobrir se o site eh de uma empresa ou particular
     SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(w);
     SiteParticular* particular = dynamic_cast< SiteParticular* >(w);
-    
     
     // adicionar automaticamente os gestores do site ao vector de utilizadores do WSP
     if (empresa) {
@@ -55,8 +58,7 @@ bool GestorWSP::novoSite(Website* w){
     if (particular) {
         adicionaGestor(particular->getGestor() );
     }
-
-    
+     */
     websites.push_back(w);
     return true;
 }
@@ -102,6 +104,14 @@ bool GestorWSP::identificadorAlfabeticoInverso(Website* w1, Website* w2){
     return (w1->getIdentificador() > w2->getIdentificador() );
 }
 
+bool GestorWSP::numeroPaginasAscendente(Website* w1, Website* w2){
+    return (w1->getNumeroPaginas() < w2->getNumeroPaginas());
+}
+
+bool GestorWSP::numeroPaginasDescendente(Website* w1, Website* w2){
+    return (w1->getNumeroPaginas() > w2->getNumeroPaginas());
+}
+
 
 
 void GestorWSP::ordenaWebsites(string criterio){
@@ -109,6 +119,10 @@ void GestorWSP::ordenaWebsites(string criterio){
         sort(websites.begin(), websites.end(), identificadorAlfabetico);
     } else if (criterio == "identificador alfabetico inverso"){
         sort(websites.begin(), websites.end(), identificadorAlfabeticoInverso);
+    } else if (criterio == "numero paginas ascendente"){
+        sort(websites.begin(), websites.end(), numeroPaginasAscendente);
+    } else if (criterio == "numero paginas descendente"){
+        sort(websites.begin(), websites.end(), numeroPaginasDescendente);
     }
     return;
 }
@@ -198,6 +212,27 @@ vector<Website*> GestorWSP::pesquisaWebsite(string tipoCriterio, string criterio
                 resultados.push_back(*site_it);
             }
         }
+    } else if (tipoCriterio == "tecnologia") {
+        for (vector<Website*>::iterator site_it = websites.begin(); site_it != websites.end(); site_it++) {
+            SiteParticular* particular = dynamic_cast< SiteParticular* >(*site_it);
+            SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(*site_it);
+            if (particular) {
+                if (string::npos != (*site_it)->getTecnologia().find(criterio))
+                {
+                    resultados.push_back(*site_it);
+                }
+            }
+            if (empresa) {
+                for (vector<string>::iterator tech_it = (*site_it)->getTecnologias().begin(); tech_it != (*site_it)->getTecnologias().end(); tech_it++) {
+                    if (string::npos != (*tech_it).find(criterio))
+                    {
+                        resultados.push_back(*site_it);
+                        break;
+                    }
+                }
+            }
+            
+        }
     }
     return resultados;
     
@@ -233,5 +268,20 @@ vector<Utilizador*> GestorWSP::pesquisaUtilizador(string tipoCriterio, unsigned 
     }
     return resultados;
 }
+
+bool GestorWSP::identificadorValido(string identificador){
+    bool jaExiste = false;
+    for (vector<Website*>::iterator site_it = websites.begin(); site_it != websites.end(); site_it++) {
+        if ( (*site_it)->getIdentificador() == identificador) {
+            jaExiste = true;
+            break;
+        }
+    }
+    if (jaExiste) {
+        return false;
+    } else
+        return true;
+}
+
 
 

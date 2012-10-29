@@ -64,26 +64,20 @@ const vector<Website*> & Utilizador::getSitesResponsavel() const{
     return sitesResponsavel;
 }
 
-
-
 void Utilizador::adicionaSite(Website* site){
     sitesResponsavel.push_back(site);
 }
 
 bool Utilizador::operator==(Utilizador u) const{
-    return (nome == u.nome && numIdentidade == u.numIdentidade);
+    return (numIdentidade == u.numIdentidade);
 }
 
 bool Utilizador::operator==(Utilizador* u) const{
-    return (nome == u->nome && numIdentidade == u->numIdentidade);
-}
-
-std::ostream & operator<<(std::ostream &os, Utilizador* u){
-    os << u->getNome() << " | " << u->getNumIdentidade();
-    return os;
+    return (numIdentidade == u->numIdentidade);
 }
 
 vector<Utilizador*> operator-(const vector<Utilizador*> vec1, const vector<Utilizador*> vec2){
+    // o vector vec1 menos o vector vec2 da um vector v3 com os elementos de vec1 que nao existem em vec2
     vector<Utilizador*> vec3;
     for (vector<Utilizador*>::const_iterator vec1_it = vec1.begin(); vec1_it != vec1.end(); vec1_it++) {
         bool encontrado = false;

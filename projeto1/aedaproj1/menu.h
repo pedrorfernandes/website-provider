@@ -32,6 +32,7 @@
 #define TAG_CUSTO_EMPRESA "**CUSTOEMPRESA_PREDEFINIDO**"
 #define TAG_LIMITE "**LIMITEPAGINAS_PREDEFINIDO**"
 #define FIM_DE_STRING "|"
+#define FIM_DE_STRING_OUTPUT " | "
 #define FICHEIRO "wsp.txt"
 
 #include "gestorWSP.h"
@@ -54,8 +55,8 @@ class Menu{
     vector<string> opcoes_website_empresa;
     vector<string> opcoes_utilizador;
     vector<string> consulta_custos;
-    vector<string> criterios_utilizadores;
-    vector<string> criterios_websites;
+    vector<string> ordenar_utilizadores;
+    vector<string> ordenar_websites;
     vector<string> pesquisa_websites;
     vector<string> pesquisa_utilizadores;
 public:
