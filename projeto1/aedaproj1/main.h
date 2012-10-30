@@ -13,9 +13,6 @@
 #ifndef main_h
 #define main_h
 
-#include <vector>
-#include <string>
-
 #include "gestorWSP.h"
 #include "website.h"
 #include "siteEmpresa.h"
