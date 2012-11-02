@@ -53,7 +53,7 @@ public:
      *
      * @return Void
      */
-    void setNumeroPaginas(unsigned int n);
+    virtual void setNumeroPaginas(unsigned int n);
     
     /**
      * Retorna o identificador do website
@@ -88,22 +88,86 @@ public:
     void atribuiGestao(Utilizador* gestor);
     
     // membros funcao para aceder aos dados da filha siteParticular
+    
+    /**
+     * Retorna a tecnologia utilizada pelo website particular
+     * @return A string da tecnologia
+     */
     virtual string getTecnologia() const;
+    
+    /**
+     * Modifica a tecnologia utilizada pelo website particular
+     * @param t A string da nova tecnologia
+     * @return Void
+     */
     virtual void setTecnologia(const string &t);
+    
+    /**
+     * Retorna o gestor responsavel pelo website particular (caso nao exista gestor, retorna um apontador nulo)
+     * @return O apontador para o gestor
+     */
     virtual Utilizador* getGestor() const;
+    
+    /**
+     * Modifica o gestor responsavel pelo website particular
+     * @param u O apontador para o novo gestor
+     * @return Void
+     */
     virtual void setGestor(Utilizador* u);
     
-    //virtual unsigned int getLimitePaginas() const;
-    //virtual float getCustoPorPagina() const;
-    
     // membros funcao para aceder aos dados da filha siteEmpresa
+    
+    /**
+     * Retorna o vector de tecnologias do website empresa
+     * @return O vector de tecnologias (strings)
+     */
     virtual vector<string> getTecnologias() const;
+    
+    /**
+     * Modifica o vector de tecnologias do website empresa
+     * @param t O novo vector de tecnologias (strings)
+     * @return Void
+     */
     virtual void setTecnologias(const vector<string> &t);
+    
+    /**
+     * Retorna o vector de utilizadores que sao gestores website empresa
+     * @return O vector de gestores
+     */
     virtual vector<Utilizador *> & getGestores();
+    
+    /**
+     * Retorna um vector imutavel de utilizadores que sao gestores website empresa
+     * @return O vector constante de gestores
+     */
     virtual void setGestores(const vector<Utilizador*> g);
-    virtual void novaTecnologia(const string &tech);
+    
+    /**
+     * Adiciona uma nova tecnologia ao vector de tecnologias do website empresa
+     * @param tech A tecnologia a ser adicionada
+     * @return True se a tecnologia foi adicionada com sucesso, False caso ja exista
+     */
+    virtual bool novaTecnologia(const string &tech);
+    
+    /**
+     * Retira a tecnologia especificada do vector de tecnologias do website empresa
+     * @param tech A tecnologia a ser removida
+     * @return True se a tecnologia foi removida, False caso nao exista
+     */
     virtual bool retiraTecnologia(const string & tech);
+    
+    /**
+     * Adiciona um novo utilizador ao vector de gestores responsaveis pelo website empresa
+     * @param u O apontador para o novo utilizador
+     * @return Void
+     */
     virtual void novoGestor(Utilizador* u);
+    
+    /**
+     * Retira um utilizador do vector de gestores responsaveis pelo website empresa
+     * @param u O apontador para o utilizador a ser apagado
+     * @return True se o gestor foi removido com sucesso, False caso nao exista
+     */
     virtual bool retiraGestor(Utilizador* u);
 
     /**
@@ -115,6 +179,14 @@ public:
      */
     bool operator==(Website* w) const;
     
+    /**
+     * Funcao para escrita de informacoes de um website
+     *
+     * @param out Onde vao ser colocadas as informacoes do website
+     * @param w O website que contem as informacoes
+     *
+     * @return Devolve out modificado
+     */
     friend ostream & operator<<(ostream &out, Website* w);
 
     

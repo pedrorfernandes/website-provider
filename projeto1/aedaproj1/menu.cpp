@@ -75,12 +75,12 @@ bool Menu::guardaDados(){
             ficheiro << TAG_PARTICULAR << " " << particular << endl;
         }
     }
+    ficheiro.setf(ios::fixed);
+    ficheiro << TAG_CUSTO_PARTICULAR << " " << setprecision(CENTIMOS) << SiteParticular::getCustoPorPagina() << endl;
     
-    ficheiro << TAG_CUSTO_PARTICULAR << " " << SiteParticular::getCustoPorPagina() << endl;
+    ficheiro << TAG_CUSTO_EMPRESA << " " << setprecision(CENTIMOS) << SiteEmpresa::getCustoPorPagina() << endl;
     
-    ficheiro << TAG_CUSTO_EMPRESA << " " << SiteEmpresa::getCustoPorPagina() << endl;
-    
-    ficheiro << TAG_LIMITE << " " << SiteParticular::getLimitePaginas() << endl;
+    ficheiro << TAG_LIMITE << " " << setprecision(CENTIMOS) << SiteParticular::getLimitePaginas() << endl;
     
     
     ficheiro.close();
@@ -519,6 +519,8 @@ Website* Menu::criar_website(){
             }
             repete = pergunta<unsigned int>("Quantos gestores tera o website?");
             i = 0;
+            //lololol
+            // site nao pode ter gestor nulo!!!
             while (i < repete) {
                 switch (escolhe(escolher_utilizador, "Defina como quer escolher o gestor")) {
                     case 0: // utilizador cancelou
@@ -590,9 +592,9 @@ void Menu::opcoes(Website* site){
             } else {
                 cout << "Gestor: " << site->getGestor()->getNome() << " (BI n. " << site->getGestor()->getNumIdentidade() << ")" << endl;
             }
-            
-            cout << "Numero de paginas: " << site->getNumeroPaginas() << " (max. " << SiteParticular::getLimitePaginas() << " / custo por pagina: " << SiteParticular::getCustoPorPagina() << ")" << endl;
-            cout << "Custo total do site: " << site->getCusto() << " $" <<  endl;
+            cout.setf(ios::fixed);
+            cout << "Numero de paginas: " << site->getNumeroPaginas() << " (max. " << SiteParticular::getLimitePaginas() << " / custo por pagina: " << setprecision(CENTIMOS) << SiteParticular::getCustoPorPagina() << " $)" << endl;
+            cout << "Custo total do site: " << setprecision(CENTIMOS) << site->getCusto() << " $" <<  endl;
             switch (escolhe(opcoes_website_particular, "Selecione uma opcao"))
             {
                 case 0:
@@ -685,9 +687,9 @@ void Menu::opcoes(Website* site){
                         cout << (*gestor)->getNome() << " (BI n. " << (*gestor)->getNumIdentidade() << "), ";
                 }
             }
-            
-            cout << "Numero de paginas: " << site->getNumeroPaginas() << " (custo por pagina: " << SiteEmpresa::getCustoPorPagina() << ")" << endl;
-            cout << "Custo total do site: " << site->getCusto() << " $" <<  endl;
+            cout.setf(ios::fixed);
+            cout << "Numero de paginas: " << site->getNumeroPaginas() << " (custo por pagina: " << setprecision(CENTIMOS) << SiteEmpresa::getCustoPorPagina() << " $)" << endl;
+            cout << "Custo total do site: " << setprecision(CENTIMOS)<< site->getCusto() << " $" <<  endl;
             
             switch (escolhe(opcoes_website_empresa, "Selecione uma opcao"))
             {
@@ -721,8 +723,18 @@ void Menu::opcoes(Website* site){
                     site->retiraGestor(escolhe(site->getGestores(), "Escolha que gestor pretende retirar"));
                     break;
                 case 3: // Adicionar tecnologia
-                    site->novaTecnologia(pergunta<string>("Escolhe uma nova tecnologia para o website"));
+                {
+                    while (true) {
+                        string tecnologia = pergunta<string>("Escolhe uma nova tecnologia para o website (para cancelar, introduza 0)");
+                        if (tecnologia == "0") // utilizador cancelou
+                            break;
+                        else if ( site->novaTecnologia(tecnologia) )
+                            break;
+                        else
+                            cout << "Tecnologia ja implementada no website" << endl;
+                    }
                     break;
+                }
                 case 4: // Retirar tecnologia
                 {
                     // e' necessario utilizar a funcao escolhe() para permitir cancelar com 0
@@ -790,8 +802,17 @@ void Menu::opcoes(Utilizador* gestor){
             }
             case 2: // Alterar o numero do BI
             {
-                unsigned int numero = pergunta<unsigned int>("Selecione um novo numero de bilhete de identidade");
-                gestor->setNumIdentidade(numero);
+                while (true) {
+                    unsigned int numero = pergunta<unsigned int>("Selecione um novo numero de bilhete de identidade");
+                    if (numero == 0) {
+                        break;
+                    }
+                    if (wsp->numeroIdentidadeValido(numero) ){
+                        gestor->setNumIdentidade(numero);
+                        break;
+                    }
+                    cout << "Numero de bilhete de identidade ja existente." << endl;
+                }
                 break;
             }
             case 3: // Aceder a um website responsavel
@@ -896,10 +917,11 @@ void Menu::consultaCustos(){
     bool acabado = false;
     
     while (!acabado) {
-        cout << "Custo por pagina para websites particulares: " << SiteParticular::getCustoPorPagina() << endl;
-        cout << "Custo por paginas para websites empresa: " << SiteEmpresa::getCustoPorPagina() << endl;
-        cout << "Limite de paginas para websites particulares: " << SiteParticular::getLimitePaginas() << endl;
-        cout << "Custo total de todos os websites: " << wsp->calculoCustoTotal() << endl;
+        cout.setf(ios::fixed);
+        cout << "Custo por pagina para websites particulares: " << setprecision(CENTIMOS) << SiteParticular::getCustoPorPagina() << " $" << endl;
+        cout << "Custo por paginas para websites empresa: " << setprecision(CENTIMOS) << SiteEmpresa::getCustoPorPagina() << " $" << endl;
+        cout << "Limite de paginas para websites particulares: " << setprecision(CENTIMOS) << SiteParticular::getLimitePaginas() << endl;
+        cout << "Custo total de todos os websites: " << setprecision(CENTIMOS)<< wsp->calculoCustoTotal() << " $" << endl;
         
         switch (escolhe(consulta_custos, "Selecione uma opcao")) {
             case 0: // utilizador terminou

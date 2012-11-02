@@ -44,7 +44,6 @@ void SiteParticular::setTecnologia(const string &t){
     tecnologia = t;
 }
 Utilizador* SiteParticular::getGestor() const{
-    // if (gestor == NULL) throw Erro("null"); // o programa ira lidar com NULL
     return gestor;
 }
 void SiteParticular::setGestor(Utilizador* u){
@@ -77,7 +76,7 @@ float SiteParticular::getCustoPorPagina(){
 void SiteParticular::setNumeroPaginas(unsigned int n){
     if (n > limitePaginas) {
         stringstream ss;
-        ss << "O numero limite de paginas para particulares e'" << limitePaginas << ".";
+        ss << "O numero limite de paginas para particulares e' " << limitePaginas << ".";
         string str = ss.str();
         throw LimiteDePaginasUltrapassado(str);
     } else

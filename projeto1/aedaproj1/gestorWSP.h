@@ -22,6 +22,9 @@
 #include "siteEmpresa.h"
 #include "siteParticular.h"
 
+/**
+ * Uma classe de erro para identificar utilizadores que ja existem no gestorWSP
+ */
 class UtilizadorJaExistente: public Erro{
 public:
     UtilizadorJaExistente(string msg): Erro(msg){};
@@ -245,6 +248,13 @@ public:
      * @return True se o identificador nao existir, False se ja existir um website ja possui esse identificador
      */
     bool identificadorValido(string identificador);
+    
+    /**
+     * Verifica se um numero de bilhete de identidade ja pertence a um utilizador no vector de utilizadores
+     * @param numero O numero de B.I. a ser verificado
+     * @return True se o numero nao pertencer a ninguem, False caso contrario
+     */
+    bool numeroIdentidadeValido(unsigned int numero);
     
 };
 

@@ -25,9 +25,6 @@
 
 using namespace std;
 
-/* erros a implementar:
-    - gestor inexistente
- */
 
 class Utilizador;
 
@@ -36,6 +33,9 @@ public:
     LimiteDePaginasUltrapassado(string mensagem): Erro(mensagem){}
 };
 
+/**
+ * O SiteParticular, para alem de um identificador e numero de paginas, possui um gestor, uma tecnologia e um limite no numero de paginas
+ */
 class SiteParticular: public Website{
     string tecnologia;
     Utilizador* gestor;
@@ -45,20 +45,77 @@ public:
     SiteParticular(string i, unsigned int n, string tech, Utilizador* gest);
     ~SiteParticular();
     
+    /**
+     * Retorna a tecnologia utilizada pelo website particular
+     * @return A string da tecnologia
+     */
     string getTecnologia() const;
+    
+    /**
+     * Modifica a tecnologia utilizada pelo website particular
+     * @param t A string da nova tecnologia
+     * @return Void
+     */
     void setTecnologia(const string &t);
+    
+    /**
+     * Retorna o gestor responsavel pelo website particular (caso nao exista gestor, retorna um apontador nulo)
+     * @return O apontador para o gestor
+     */
     Utilizador* getGestor() const;
+    
+    /**
+     * Modifica o gestor responsavel pelo website particular
+     * @param u O apontador para o novo gestor
+     * @return Void
+     */
     void setGestor(Utilizador* u);
+    
+    /**
+     * Altera o custo por pagina para todos os websites particulares
+     * @param custo O novo valor (float) do custo por pagina
+     * @return Void
+     */
     static void setCustoPorPagina(const float & custo);
+    
+    /**
+     * Altera o limite de paginas para todos os websites particulares
+     * @param limite O novo numero (int) limite de paginas
+     * @return Void
+     */
     static void setLimitePaginas(const unsigned int & limite);
+    
+    /**
+     * Retorna o limite de paginas definido para todos os websites particulares
+     * @return O numero limite de paginas
+     */
     static unsigned int getLimitePaginas();
+    
+    /**
+     * Retorna o custo por cada pagina para todos os websites particulares
+     * @return O valor (float) do custo por pagina
+     */
     static float getCustoPorPagina();
     
+    /**
+     * Altera o numero de paginas de um website particular (caso o numero de paginas ultrapassa o limite, e' atirada uma excepcao)
+     * @param n O novo numero de paginas
+     * @return Void
+     */
     void setNumeroPaginas(unsigned int n);
 
-    
+    /**
+     * Retorna o custo do website. O custo e' calculado multiplicando o numero de paginas pelo custo por pagina
+     * @return O valor do custo do website particular
+     */
     float getCusto();
     
+    /**
+     * Funcao para escrita de informacoes de um website particular
+     * @param out Onde vao ser colocadas as informacoes do website particular
+     * @param site O website que contem as informacoes
+     * @return Devolve out modificado
+     */
     friend ostream & operator<<(ostream &out, SiteParticular* site);
     
     

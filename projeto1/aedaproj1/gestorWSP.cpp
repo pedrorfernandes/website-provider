@@ -283,5 +283,14 @@ bool GestorWSP::identificadorValido(string identificador){
         return true;
 }
 
+bool GestorWSP::numeroIdentidadeValido(unsigned int numero){
+    for (vector<Utilizador*>::iterator gestor_it = gestores.begin(); gestor_it != gestores.end();gestor_it++) {
+        if ((*gestor_it)->getNumIdentidade() == numero) {
+            return false;
+        }
+    }
+    return true;
+}
+
 
 
