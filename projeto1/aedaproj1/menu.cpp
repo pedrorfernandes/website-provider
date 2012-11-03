@@ -1353,11 +1353,11 @@ int Menu::inicio(){
                     return 0;
                     break;
                 case 1: // website
-                    pesquisaNosWebsites();
+                    ordenaWebsitesCriterio();
                     return 0;
                     break;
                 case 2: // utilizador
-                    pesquisaNosUtilizadores();
+                    ordenaUtilizadoresCriterio();
                     return 0;
                     break;
                 default:
