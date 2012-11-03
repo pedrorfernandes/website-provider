@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 #include "website.h"
 #include "utilizador.h"

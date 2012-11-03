@@ -190,9 +190,13 @@ void GestorWSP::ajustarNumeroPaginasParaParticulares(){
 
 vector<Website*> GestorWSP::pesquisaWebsite(string tipoCriterio, string criterio){
     vector<Website*> resultados;
+    transform(criterio.begin(), criterio.end(), criterio.begin(), ::tolower);
+    string aux; // string auxiliar na pesquisa
     if (tipoCriterio == "identificador") {
         for (vector<Website*>::iterator site_it = websites.begin(); site_it != websites.end(); site_it++) {
-            if (string::npos != (*site_it)->getIdentificador().find(criterio))
+            aux = (*site_it)->getIdentificador();
+            transform(aux.begin(), aux.end(), aux.begin(), ::tolower);
+            if (string::npos != aux.find(criterio))
             {
                 resultados.push_back(*site_it);
             }
@@ -217,14 +221,18 @@ vector<Website*> GestorWSP::pesquisaWebsite(string tipoCriterio, string criterio
             SiteParticular* particular = dynamic_cast< SiteParticular* >(*site_it);
             SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(*site_it);
             if (particular) {
-                if (string::npos != (*site_it)->getTecnologia().find(criterio))
+                aux = (*site_it)->getTecnologia();
+                transform(aux.begin(), aux.end(), aux.begin(), ::tolower);
+                if (string::npos != aux.find(criterio))
                 {
                     resultados.push_back(*site_it);
                 }
             }
             if (empresa) {
                 for (vector<string>::iterator tech_it = (*site_it)->getTecnologias().begin(); tech_it != (*site_it)->getTecnologias().end(); tech_it++) {
-                    if (string::npos != (*tech_it).find(criterio))
+                    aux = (*tech_it);
+                    transform(aux.begin(), aux.end(), aux.begin(), ::tolower);
+                    if (string::npos != aux.find(criterio))
                     {
                         resultados.push_back(*site_it);
                         break;
@@ -246,9 +254,13 @@ vector<Website*> GestorWSP::pesquisaWebsite(string tipoCriterio, unsigned int cr
 
 vector<Utilizador*> GestorWSP::pesquisaUtilizador(string tipoCriterio, string criterio){
     vector<Utilizador*> resultados;
+    transform(criterio.begin(), criterio.end(), criterio.begin(), ::tolower);
+    string aux; // string auxiliar na pesquisa
     if (tipoCriterio == "nome") {
         for (vector<Utilizador*>::iterator gestor_it = gestores.begin(); gestor_it != gestores.end();gestor_it++) {
-            if (string::npos != (*gestor_it)->getNome().find(criterio))
+            aux = (*gestor_it)->getNome();
+            transform(aux.begin(), aux.end(), aux.begin(), ::tolower);
+            if (string::npos != aux.find(criterio))
             {
                 resultados.push_back(*gestor_it);
             }
@@ -271,8 +283,12 @@ vector<Utilizador*> GestorWSP::pesquisaUtilizador(string tipoCriterio, unsigned 
 
 bool GestorWSP::identificadorValido(string identificador){
     bool jaExiste = false;
+    transform(identificador.begin(), identificador.end(), identificador.begin(), ::tolower);
+    string aux; // string auxiliar na pesquisa
     for (vector<Website*>::iterator site_it = websites.begin(); site_it != websites.end(); site_it++) {
-        if ( (*site_it)->getIdentificador() == identificador) {
+        aux = (*site_it)->getIdentificador();
+        transform(aux.begin(), aux.end(), aux.begin(), ::tolower);
+        if ( aux == identificador) {
             jaExiste = true;
             break;
         }

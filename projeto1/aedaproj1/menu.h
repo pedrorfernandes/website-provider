@@ -25,12 +25,12 @@
 #define ESPACO_PEQUENO 15
 #define ESPACO_MUITO_PEQUENO 10
 
-#define TAG_UTILIZADOR "**Utilizador**"
-#define TAG_EMPRESA "**SiteEmpresa**"
-#define TAG_PARTICULAR "**SiteParticular**"
-#define TAG_CUSTO_PARTICULAR "**CUSTOPARTICULAR_PREDEFINIDO**"
-#define TAG_CUSTO_EMPRESA "**CUSTOEMPRESA_PREDEFINIDO**"
-#define TAG_LIMITE "**LIMITEPAGINAS_PREDEFINIDO**"
+#define TAG_UTILIZADOR "*UTILIZADOR*"
+#define TAG_EMPRESA "*SITEEMPRESA*"
+#define TAG_PARTICULAR "*SITEPARTICULAR*"
+#define TAG_CUSTO_PARTICULAR "*CUSTOPARTICULAR_PREDEFINIDO*"
+#define TAG_CUSTO_EMPRESA "*CUSTOEMPRESA_PREDEFINIDO*"
+#define TAG_LIMITE "*LIMITEPAGINAS_PREDEFINIDO*"
 #define FIM_DE_STRING "|"
 #define FIM_DE_STRING_OUTPUT " | "
 #define FICHEIRO "wsp.txt"
@@ -63,6 +63,8 @@ class Menu{
     vector<string> ordenar_websites;
     vector<string> pesquisa_websites;
     vector<string> pesquisa_utilizadores;
+    vector<string> escolher_tecnologias;
+    vector<string> website_ou_utilizador;
 public:
     Menu();
     /**

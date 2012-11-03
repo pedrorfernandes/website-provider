@@ -253,7 +253,7 @@ bool Menu::leDados(){
 }
 
 unsigned int Menu::escolhe(vector<string> & escolhas, const string &perg){
-    unsigned int i = 1;
+    unsigned int i = 0;
     cout << perg << endl;
     for (vector<string>::iterator opcao = escolhas.begin(); opcao != escolhas.end() ; opcao++, i++) {
         cout << i << " - " << *opcao << endl;
@@ -418,7 +418,10 @@ string pergunta(const string &perg)
     cout << perg << endl << PROMPT;
     while (str == "") {
         getline(cin, str);
-        if (str == "")
+        if (string::npos != str.find("*")){
+            cout << "Nao e' permitido o uso de asteriscos (*). Tente novamente" << endl << PROMPT;
+            str = "";
+        } else if (str == "")
             cout << PROMPT;
     }
     return str;
@@ -470,7 +473,8 @@ Website* Menu::criar_website(){
             while (gestor == NULL) {
                 switch (escolhe(escolher_utilizador, "Defina como quer escolher o gestor")) {
                     case 0: // utilizador cancelou
-                        gestor = NULL;
+                        cout << "Todos os websites devem ter um gestor." << endl << "Criacao de website cancelada" << endl;
+                        return NULL;
                         break;
                     case 1: // criar um novo utilizador
                         gestor = criar_utilizador();
@@ -509,22 +513,46 @@ Website* Menu::criar_website(){
             }
             
             numeroPaginas = pergunta<unsigned int>("Escolha um numero de paginas");
-
-            unsigned int repete = pergunta<unsigned int>("Quantas tecnologias vao ser utilizadas pelo website?");
-            unsigned int i = 0;
             
-            while (i < repete) {
-                tecnologias.push_back(pergunta<string>("Escolha uma tecnologia"));
-                i++;
+            bool acabado = false;
+            while (!acabado) {
+                if (tecnologias.size() > 0) { // escrever que tecnologias ja foram selecionadas
+                    cout << "Tecnologias ja adicionadas: ";
+                    for (vector<string>::iterator tech_it = tecnologias.begin(); tech_it != tecnologias.end(); tech_it++) {
+                        if (tech_it == tecnologias.end()-1) {
+                            cout << (*tech_it) << "." << endl;
+                        } else
+                            cout << (*tech_it) << ", ";
+                    }
+                } else if (tecnologias.size() == 0) // escolher a primeira tecnologia
+                    tecnologias.push_back(pergunta<string>("Indique o nome da primeira tecnologia"));
+                // comecar o loop da escolha de tecnologias seguintes
+                switch (escolhe(escolher_tecnologias, "Escolha uma opcao")) {
+                    case 0: // terminar a escolha das tecnologias
+                        if (tecnologias.size() > 0) {
+                            acabado = true;
+                        } else
+                            cout << "O website deve ter no minimo uma tecnologia!" << endl;
+                        break;
+                    case 1: // adicionar tecnologia
+                        tecnologias.push_back(pergunta<string>("Indique o nome da tecnologia"));
+                        break;
+                    default:
+                        break;
+                }
             }
-            repete = pergunta<unsigned int>("Quantos gestores tera o website?");
-            i = 0;
-            //lololol
-            // site nao pode ter gestor nulo!!!
-            while (i < repete) {
+
+            cout << "Agora pode escolher quais sao os gestores do seu website empresa" << endl;
+            cout << "NOTA: Escolha cancelar para terminar" << endl;
+            acabado = false;
+            while (!acabado) {
                 switch (escolhe(escolher_utilizador, "Defina como quer escolher o gestor")) {
                     case 0: // utilizador cancelou
-                        i--;
+                        if (gestores.size() > 0) {
+                            acabado = true;
+                            break;
+                        } else
+                            cout << "Todos os websites devem ter no minimo um gestor!" << endl;
                         break;
                     case 1: // criar um novo utilizador
                         gestores.push_back(criar_utilizador());
@@ -534,7 +562,6 @@ Website* Menu::criar_website(){
                         Utilizador* gestor = NULL;
                         gestor = escolhe(wsp->getGestores(), "Escolha um gestor");
                         if (gestor == NULL){
-                            i--;
                             break;
                         } else
                             gestores.push_back(gestor);
@@ -543,7 +570,6 @@ Website* Menu::criar_website(){
                     default:
                         break;
                 }
-                i++;
             }
             while (!ok) {
                 try {
@@ -1159,46 +1185,87 @@ void Menu::pesquisaNosWebsites(){
 
 
 int Menu::inicio(){
+    cout << "--------- Menu Principal ---------" << endl;
     switch (escolhe(opcoes_inicio, "Selecione uma opcao")) {
         case 0: // Terminar aplicacao
             return 1;
             break;
-        case 1: // Criar website
-            criar_website();
+        case 1: // Criar
+            switch (escolhe(website_ou_utilizador, "Escolha o que pretende criar")) {
+                case 0:
+                    return 0;
+                    break;
+                case 1: // website
+                    criar_website();
+                    return 0;
+                    break;
+                case 2: // utilizador
+                    criar_utilizador();
+                    return 0;
+                    break;
+                default:
+                    break;
+            }
             return 0;
             break;
-        case 2: // Criar um novo utilizador
-            criar_utilizador();
+        case 2: // Listar
+            switch (escolhe(website_ou_utilizador, "Escolha o que pretende listar (na totalidade)")) {
+                case 0:
+                    return 0;
+                    break;
+                case 1: // website
+                    listar_websites();
+                    return 0;
+                    break;
+                case 2: // utilizador
+                    listar_utilizadores();
+                    return 0;
+                    break;
+                default:
+                    break;
+            }
             return 0;
             break;
-        case 3: // listar todos os websites
-            listar_websites();
+        case 3: // pesquisar
+            switch (escolhe(website_ou_utilizador, "Escolha o que pretende pesquisar")) {
+                case 0:
+                    return 0;
+                    break;
+                case 1: // website
+                    pesquisaNosWebsites();
+                    return 0;
+                    break;
+                case 2: // utilizador
+                    pesquisaNosUtilizadores();
+                    return 0;
+                    break;
+                default:
+                    break;
+            }
             return 0;
             break;
-        case 4: // listar todos os utilizadores
-            listar_utilizadores();
+        case 4: // ordenar
+            switch (escolhe(website_ou_utilizador, "Escolha o que pretende ordenar e listar")) {
+                case 0:
+                    return 0;
+                    break;
+                case 1: // website
+                    pesquisaNosWebsites();
+                    return 0;
+                    break;
+                case 2: // utilizador
+                    pesquisaNosUtilizadores();
+                    return 0;
+                    break;
+                default:
+                    break;
+            }
             return 0;
             break;
-        case 5: // pesquisar websites segundo criterio
-            pesquisaNosWebsites();
-            return 0;
-            break;
-        case 6: // pesquisar utilizadores segundo criterio
-            pesquisaNosUtilizadores();
-            break;
-        case 7: // ordernar websites segundo criterio
-            ordenaWebsitesCriterio();
-            return 0;
-            break;
-        case 8: // ordernar utilizadores segundo criterio
-            ordenaUtilizadoresCriterio();
-            return 0;
-            break;
-        case 9: // consultar os custos
+        case 5: // consultar os custos
             consultaCustos();
             return 0;
             break;
-            
         default:
             return 0;
             break;
@@ -1207,28 +1274,28 @@ int Menu::inicio(){
 }
 
 Menu::Menu(){
-    opcoes_inicio.push_back("Criar website");
-    opcoes_inicio.push_back("Criar utilizador");
-    opcoes_inicio.push_back("Listar todos os websites");
-    opcoes_inicio.push_back("Listar todos os utilizadores");
-    opcoes_inicio.push_back("Pesquisar websites");
-    opcoes_inicio.push_back("Pesquisar utilizadores");
-    opcoes_inicio.push_back("Ordernar websites");
-    opcoes_inicio.push_back("Ordenar utilizadores");
+    opcoes_inicio.push_back("Terminar aplicacao");
+    opcoes_inicio.push_back("Criar");
+    opcoes_inicio.push_back("Listar");
+    opcoes_inicio.push_back("Pesquisar");
+    opcoes_inicio.push_back("Ordernar");
     opcoes_inicio.push_back("Consultar custos");
     
-    
+    escolher_tipo_site.push_back("Cancelar");
     escolher_tipo_site.push_back("Site para particular");
     escolher_tipo_site.push_back("Site para empresa");
     
+    escolher_utilizador.push_back("Cancelar");
     escolher_utilizador.push_back("Criar novo utilizador");
     escolher_utilizador.push_back("Escolher um utilizador ja existente");
     
+    opcoes_website_particular.push_back("Voltar ao menu anterior");
     opcoes_website_particular.push_back("Alterar o gestor");
     opcoes_website_particular.push_back("Alterar a tecnologia usada pelo website");
     opcoes_website_particular.push_back("Alterar o numero de paginas do website");
     opcoes_website_particular.push_back("Eliminar o website");
 
+    opcoes_website_empresa.push_back("Voltar ao menu anterior");
     opcoes_website_empresa.push_back("Adicionar gestor");
     opcoes_website_empresa.push_back("Retirar gestor");
     opcoes_website_empresa.push_back("Adicionar tecnologia");
@@ -1236,37 +1303,48 @@ Menu::Menu(){
     opcoes_website_empresa.push_back("Alterar o numero de paginas");
     opcoes_website_empresa.push_back("Eliminar website");
     
+    opcoes_utilizador.push_back("Voltar ao menu anterior");
     opcoes_utilizador.push_back("Alterar nome");
     opcoes_utilizador.push_back("Alterar numero do bilhete de identidade");
     opcoes_utilizador.push_back("Aceder a um wesite responsavel");
     opcoes_utilizador.push_back("Eliminar utilizador");
     
+    consulta_custos.push_back("Voltar ao menu anterior");
     consulta_custos.push_back("Alterar custo para particulares");
     consulta_custos.push_back("Alterar custo para empresas");
     consulta_custos.push_back("Definir limite de paginas para particulares");
     
+    ordenar_utilizadores.push_back("Cancelar");
     ordenar_utilizadores.push_back("Nome (alfabetico)");
     ordenar_utilizadores.push_back("Nome (alfabetico inverso)");
     ordenar_utilizadores.push_back("Numero de B.I. (ascendente)");
     ordenar_utilizadores.push_back("Numero de B.I. (descendente)");
     
+    ordenar_websites.push_back("Cancelar");
     ordenar_websites.push_back("Identificador (alfabetico)");
     ordenar_websites.push_back("Identificador (alfabetico inverso)");
     ordenar_websites.push_back("Numero paginas (ascendente)");
     ordenar_websites.push_back("Numero paginas (descendente)");
     
+    pesquisa_websites.push_back("Cancelar");
     pesquisa_websites.push_back("Listar sites particulares");
     pesquisa_websites.push_back("Listar sites empresa");
     pesquisa_websites.push_back("Pesquisar identificador");
     pesquisa_websites.push_back("Pesquisar tecnologia");
 
+    pesquisa_utilizadores.push_back("Cancelar");
     pesquisa_utilizadores.push_back("Nome");
     pesquisa_utilizadores.push_back("Numero de B.I.");
-
     
+    escolher_tecnologias.push_back("Terminar escolha das tecnologias");
+    escolher_tecnologias.push_back("Adicionar uma nova tecnologia");
+    
+    website_ou_utilizador.push_back("Cancelar");
+    website_ou_utilizador.push_back("Websites");
+    website_ou_utilizador.push_back("Utilizadores");
+ 
     wsp = new GestorWSP();
     cout << "Bem vindo ao gestor de website provider!" << endl;
-    cout << "NOTA: escolher 0 cancela a opcao e regressa para o menu anterior (quando possivel)" << endl;
     leDados();
     while (inicio() != 1) {
         guardaDados();
