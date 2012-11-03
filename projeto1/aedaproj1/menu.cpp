@@ -337,6 +337,7 @@ Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
                 tecnologias << site->getTecnologias()[0] << " e mais " << site->getTecnologias().size()-1;
                 
             }
+            cout.setf(ios::fixed);
             cout << left
             << setw(ESPACO_MUITO_PEQUENO) << numero
             << setw(ESPACO_PEQUENO) << "Empresa"
@@ -932,7 +933,15 @@ void Menu::listar_websites(){
         cout << "Nao existem websites na base de dados! Por favor crie um website primeiro." << endl;
         return;
     }
-    cout << left << setw(ESPACO_MUITO_PEQUENO) << "Numero" << setw(ESPACO_PEQUENO) << "Tipo" << setw(ESPACO_LISTAGEM) << "Identificador" << setw(ESPACO_LISTAGEM) << "Gestor(es)" << setw(ESPACO_LISTAGEM) << "Tecnologia(s)" << setw(ESPACO_PEQUENO) << "Paginas" << setw(ESPACO_LISTAGEM) << "Custo" << endl;
+    cout << left
+    << setw(ESPACO_MUITO_PEQUENO)<< "Numero"
+    << setw(ESPACO_PEQUENO) << "Tipo"
+    << setw(ESPACO_LISTAGEM) << "Identificador"
+    << setw(ESPACO_LISTAGEM) << "Gestor(es)"
+    << setw(ESPACO_LISTAGEM) << "Tecnologia(s)"
+    << setw(ESPACO_PEQUENO) << "Paginas"
+    << setw(ESPACO_LISTAGEM) << "Custo"
+    << endl;
     unsigned int numero = 1;
     for (vector<Website*>::iterator site_it = wsp->getWebsites().begin(); site_it != wsp->getWebsites().end(); site_it++, numero++) {
         // seguranca para um numero exagerado de websites no vector
@@ -981,6 +990,7 @@ void Menu::listar_websites(){
                 tecnologias << site->getTecnologias()[0] << " e mais " << site->getTecnologias().size()-1;
 
             }
+            cout.setf(ios::fixed);
             cout << left
             << setw(ESPACO_MUITO_PEQUENO) << numero
             << setw(ESPACO_PEQUENO) << "Empresa"
@@ -1097,6 +1107,14 @@ void Menu::ordenaWebsitesCriterio(){
             wsp->ordenaWebsites("numero paginas descendente");
             listar_websites();
             return;
+            break;
+        case 5: // custo ascendente
+            wsp->ordenaWebsites("custo ascendente");
+            listar_websites();
+            break;
+        case 6: // custo descendente
+            wsp->ordenaWebsites("custo descendente");
+            listar_websites();
             break;
         default:
             break;
@@ -1278,6 +1296,125 @@ void Menu::pesquisaNosWebsites(){
                 }
                 break;
             }
+            case 5: // pesquisa custo
+            {
+                switch (escolhe(superior_ou_inferior, "Escolha como pretende pesquisar um custo")) {
+                    case 0: // cancelar
+                        break;
+                    case 1: // superior a um valor
+                    {
+                        float custo = pergunta<float>("Quer pesquisar um website com custo superior a? (0 cancela)");
+                        if (custo <= 0){
+                            cout << "Pesquisa cancelada." << endl;
+                            break;
+                        }
+                        while (true) {
+                            stringstream resultados_da_pesquisa;
+                            vector<Website*> resultados = wsp->pesquisaWebsite("custo superior a", custo);
+                            if (resultados.size() == 0) {
+                                cout << "Nao foram encontrados websites de custo superior a $" << custo<< endl;
+                                break;
+                            }
+                            resultados_da_pesquisa << "Os seguintes websites sao de custo superior a $" << custo << " Escolha um.";
+                            Website* escolha = escolhe(resultados, resultados_da_pesquisa.str());
+                            if (escolha == NULL) {
+                                break;
+                            }
+                            opcoes(escolha);
+                            // utilizador termina de mexer no site e regressa aqui
+                        }
+                        break;
+                    }
+                    case 2: // inferior a um valor
+                    {
+                        
+                        float custo = pergunta<float>("Quer pesquisar um website com custo inferior a? (0 cancela)");
+                        if (custo <= 0){
+                            cout << "Pesquisa cancelada." << endl;
+                            break;
+                        }
+                        while (true) {
+                            stringstream resultados_da_pesquisa;
+                            vector<Website*> resultados = wsp->pesquisaWebsite("custo inferior a", custo);
+                            if (resultados.size() == 0) {
+                                cout << "Nao foram encontrados websites de custo inferior a $" << custo << endl;
+                                break;
+                            }
+                            resultados_da_pesquisa << "Os seguintes websites sao de custo inferior a $" << custo << " Escolha um.";
+                            Website* escolha = escolhe(resultados, resultados_da_pesquisa.str());
+                            if (escolha == NULL) {
+                                break;
+                            }
+                            opcoes(escolha);
+                            // utilizador termina de mexer no site e regressa aqui
+                        }
+                        
+                        break;
+                    }
+                    default:
+                        break;
+                }
+                
+            }
+                
+                break;
+            case 6: // pesquisa numero de paginas
+                switch (escolhe(superior_ou_inferior, "Escolha como pretende pesquisar um numero de paginas")) {
+                    case 0: // cancelar
+                        break;
+                    case 1: // superior a um valor
+                    {
+                        unsigned int numero = pergunta<unsigned int>("Quer pesquisar um website com numero de paginas superior a? (0 cancela)");
+                        if (numero == 0){
+                            cout << "Pesquisa cancelada." << endl;
+                            break;
+                        }
+                        while (true) {
+                            stringstream resultados_da_pesquisa;
+                            vector<Website*> resultados = wsp->pesquisaWebsite("numero paginas superior a", numero);
+                            if (resultados.size() == 0) {
+                                cout << "Nao foram encontrados websites com numero de paginas superior a " <<numero<< endl;
+                                break;
+                            }
+                            resultados_da_pesquisa << "Os seguintes websites tem numero de paginas superior a " <<numero<< " Escolha um.";
+                            Website* escolha = escolhe(resultados, resultados_da_pesquisa.str());
+                            if (escolha == NULL) {
+                                break;
+                            }
+                            opcoes(escolha);
+                            // utilizador termina de mexer no site e regressa aqui
+                        }
+                        break;
+                    }
+                    case 2: // inferior a um valor
+                    {
+                        
+                        unsigned int numero = pergunta<unsigned int>("Quer pesquisar um website com numero de paginas inferior a? (0 cancela)");
+                        if (numero == 0){
+                            cout << "Pesquisa cancelada." << endl;
+                            break;
+                        }
+                        while (true) {
+                            stringstream resultados_da_pesquisa;
+                            vector<Website*> resultados = wsp->pesquisaWebsite("numero paginas inferior a", numero);
+                            if (resultados.size() == 0) {
+                                cout << "Nao foram encontrados websites com numero de paginas inferior a " << numero << endl;
+                                break;
+                            }
+                            resultados_da_pesquisa << "Os seguintes websites tem numero de paginas inferior a " << numero << " Escolha um.";
+                            Website* escolha = escolhe(resultados, resultados_da_pesquisa.str());
+                            if (escolha == NULL) {
+                                break;
+                            }
+                            opcoes(escolha);
+                            // utilizador termina de mexer no site e regressa aqui
+                        }
+                        
+                        break;
+                    }
+                    default:
+                        break;
+                }
                 
             default:
                 break;
@@ -1428,12 +1565,17 @@ Menu::Menu(){
     ordenar_websites.push_back("Identificador (alfabetico inverso)");
     ordenar_websites.push_back("Numero paginas (ascendente)");
     ordenar_websites.push_back("Numero paginas (descendente)");
+    ordenar_websites.push_back("Custo (ascendente)");
+    ordenar_websites.push_back("Custo (descendente)");
     
     pesquisa_websites.push_back("Cancelar");
     pesquisa_websites.push_back("Listar sites particulares");
     pesquisa_websites.push_back("Listar sites empresa");
     pesquisa_websites.push_back("Pesquisar identificador");
     pesquisa_websites.push_back("Pesquisar tecnologia");
+    pesquisa_websites.push_back("Pesquisar custo");
+    pesquisa_websites.push_back("Pesquisar numero de paginas");
+
 
     pesquisa_utilizadores.push_back("Cancelar");
     pesquisa_utilizadores.push_back("Nome");
@@ -1445,7 +1587,11 @@ Menu::Menu(){
     website_ou_utilizador.push_back("Cancelar");
     website_ou_utilizador.push_back("Websites");
     website_ou_utilizador.push_back("Utilizadores");
- 
+    
+    superior_ou_inferior.push_back("Cancelar");
+    superior_ou_inferior.push_back("Superior a um valor");
+    superior_ou_inferior.push_back("Inferior a um valor");
+
     wsp = new GestorWSP();
     cout << "Bem vindo ao gestor de website provider!" << endl;
     leDados();

@@ -76,6 +76,24 @@ class GestorWSP{
      * @return True se o numero de paginas do primeiro website for maior do que o segundo, False caso contrario
      */
     static bool numeroPaginasDescendente(Website* w1, Website* w2);
+    /**
+     * Compara dois custos de websites
+     *
+     * @param w1 O apontador para o primeiro website
+     * @param w2 O apontador para o segundo website
+     *
+     * @return True se o custo do primeiro website for menor do que o segundo, False caso contrario
+     */
+    static bool custoAscendente(Website* w1, Website* w2);
+    /**
+     * Compara dois custos de websites
+     *
+     * @param w1 O apontador para o primeiro website
+     * @param w2 O apontador para o segundo website
+     *
+     * @return True se o custo do primeiro website for maior do que o segundo, False caso contrario
+     */
+    static bool custoDescendente(Website* w1, Website* w2);
     
     /**
      * Compara dois nomes de utilizadores
@@ -206,7 +224,7 @@ public:
     
     /**
      * Lista so os websites que estao incluidos dentro do criterio indicado
-     * @param tipoCriterio O tipo de criterio a ser pesquisado. Ex: "numero paginas"
+     * @param tipoCriterio O tipo de criterio a ser pesquisado. Ex: "custo superior a", "paginas inferiores a"
      * @param criterio O numero a pesquisar
      *
      * @return O vector dos websites encontrados

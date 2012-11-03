@@ -35,7 +35,7 @@
 #define FIM_DE_STRING_OUTPUT " | "
 #define FICHEIRO "wsp.txt"
 #define CENTIMOS 2
-#define MAX_ELEMENTOS_LISTAGEM 2
+#define MAX_ELEMENTOS_LISTAGEM 50
 
 #include "gestorWSP.h"
 #include "utilizador.h"
@@ -66,6 +66,7 @@ class Menu{
     vector<string> pesquisa_utilizadores;
     vector<string> escolher_tecnologias;
     vector<string> website_ou_utilizador;
+    vector<string> superior_ou_inferior;
 public:
     Menu();
     /**
