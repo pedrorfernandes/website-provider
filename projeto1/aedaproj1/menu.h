@@ -35,6 +35,7 @@
 #define FIM_DE_STRING_OUTPUT " | "
 #define FICHEIRO "wsp.txt"
 #define CENTIMOS 2
+#define MAX_ELEMENTOS_LISTAGEM 2
 
 #include "gestorWSP.h"
 #include "utilizador.h"
@@ -181,6 +182,11 @@ public:
      * @return Void
      */
     void pesquisaNosUtilizadores();
+    
+    /**
+     * Funcao destinada para permitir o utilizador ler uma informacao importante e so depois de carregar no ENTER pode prosseguir para o menu seguinte
+     */
+    inline void pressEnter();
 
 };
 

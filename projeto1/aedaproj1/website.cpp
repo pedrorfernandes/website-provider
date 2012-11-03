@@ -57,7 +57,7 @@ vector<string> Website::getTecnologias() const{throw Erro("getTecnologias(): so 
 void Website::setTecnologias(const vector<string> &t){throw Erro("setTecnologias(): so acessivel a partir de SiteEmpresa");}
 vector<Utilizador *> & Website::getGestores(){throw Erro("getGestores(): so acessivel a partir de SiteEmpresa");}
 void Website::setGestores(const vector<Utilizador*> g){throw Erro("setGestores(): so acessivel a partir de SiteEmpresa");}
-bool Website::novaTecnologia(const string &tech){throw Erro("novaTecnologia(): so acessivel a partir de SiteEmpresa");}
+bool Website::novaTecnologia(string &tech){throw Erro("novaTecnologia(): so acessivel a partir de SiteEmpresa");}
 bool Website::retiraTecnologia(const string & tech){throw Erro("retiraTecnologia(): so acessivel a partir de SiteEmpresa");}
 void Website::novoGestor(Utilizador* u){throw Erro("novoGestor(): so acessivel a partir de SiteEmpresa");}
 bool Website::retiraGestor(Utilizador* u){throw Erro("novoGestor(): so acessivel a partir de SiteEmpresa");}

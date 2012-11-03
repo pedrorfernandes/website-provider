@@ -147,7 +147,7 @@ public:
      * @param tech A tecnologia a ser adicionada
      * @return True se a tecnologia foi adicionada com sucesso, False caso ja exista
      */
-    virtual bool novaTecnologia(const string &tech);
+    virtual bool novaTecnologia(string &tech);
     
     /**
      * Retira a tecnologia especificada do vector de tecnologias do website empresa

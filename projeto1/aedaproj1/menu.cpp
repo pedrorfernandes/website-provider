@@ -281,12 +281,26 @@ Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
     }
     cout << perg << endl;
     // Codigo igual ao da funcao listar_websites() ------------------
-    cout << left << setw(ESPACO_MUITO_PEQUENO) << "Numero" << setw(ESPACO_PEQUENO) << "Tipo" << setw(ESPACO_LISTAGEM) << "Identificador" << setw(ESPACO_LISTAGEM) << "Gestor(es)" << setw(ESPACO_LISTAGEM) << "Tecnologia(s)" << setw(ESPACO_PEQUENO) << "Paginas" << endl;
+    cout << left
+    << setw(ESPACO_MUITO_PEQUENO) << "Numero"
+    << setw(ESPACO_PEQUENO) << "Tipo"
+    << setw(ESPACO_LISTAGEM) << "Identificador"
+    << setw(ESPACO_LISTAGEM) << "Gestor(es)"
+    << setw(ESPACO_LISTAGEM) << "Tecnologia(s)"
+    << setw(ESPACO_PEQUENO) << "Paginas"
+    << setw(ESPACO_LISTAGEM) << "Custo" << endl;
     unsigned int numero = 1;
     for (vector<Website*>::iterator site_it = escolhas.begin(); site_it != escolhas.end(); site_it++, numero++) {
         Website* site = *site_it;
         SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(site);
         SiteParticular* particular = dynamic_cast< SiteParticular* >(site);
+        
+        // seguranca para um numero exagerado de websites no vector
+        if (numero > MAX_ELEMENTOS_LISTAGEM) {
+            cout << "Foram listados " << MAX_ELEMENTOS_LISTAGEM << " websites, mas existem " << escolhas.size() << " nesta listagem." << endl;
+            cout << "Se pretende encontrar um website, por favor utilize a pesquisa." << endl;
+            break;
+        }
         
         if (particular){// como listar as informacoes se o site for particular
             string nome;
@@ -295,8 +309,15 @@ Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
             } else {
                 nome = site->getGestor()->getNome();
             }
-            
-            cout << left << setw(ESPACO_MUITO_PEQUENO) << numero << setw(ESPACO_PEQUENO) <<  "Particular" << setw(ESPACO_LISTAGEM)<< site->getIdentificador() << setw(ESPACO_LISTAGEM) << nome << setw(ESPACO_LISTAGEM) << site->getTecnologia() << setw(ESPACO_LISTAGEM) << site->getNumeroPaginas() << endl;
+            cout.setf(ios::fixed);
+            cout << left
+            << setw(ESPACO_MUITO_PEQUENO) << numero
+            << setw(ESPACO_PEQUENO) <<  "Particular"
+            << setw(ESPACO_LISTAGEM)<< site->getIdentificador()
+            << setw(ESPACO_LISTAGEM) << nome
+            << setw(ESPACO_LISTAGEM) << site->getTecnologia()
+            << setw(ESPACO_PEQUENO) << site->getNumeroPaginas()
+            << "$" << setw(ESPACO_LISTAGEM) << setprecision(CENTIMOS) << site->getCusto() << endl;
         }
         if (empresa){ // como listar as informacoes se o site for de uma empresa
             stringstream gestores;
@@ -316,9 +337,17 @@ Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
                 tecnologias << site->getTecnologias()[0] << " e mais " << site->getTecnologias().size()-1;
                 
             }
-            cout << left << setw(ESPACO_MUITO_PEQUENO) << numero << setw(ESPACO_PEQUENO) << "Empresa" << setw(ESPACO_LISTAGEM) << site->getIdentificador() << setw(ESPACO_LISTAGEM) << gestores.str() << setw(ESPACO_LISTAGEM) << tecnologias.str() << setw(ESPACO_PEQUENO) << site->getNumeroPaginas() << endl;
+            cout << left
+            << setw(ESPACO_MUITO_PEQUENO) << numero
+            << setw(ESPACO_PEQUENO) << "Empresa"
+            << setw(ESPACO_LISTAGEM) << site->getIdentificador()
+            << setw(ESPACO_LISTAGEM) << gestores.str()
+            << setw(ESPACO_LISTAGEM) << tecnologias.str()
+            << setw(ESPACO_PEQUENO) << site->getNumeroPaginas()
+            << "$" << setw(ESPACO_LISTAGEM) << setprecision(CENTIMOS) << site->getCusto() << endl;
         }
     }
+
     //---------------------------------------------------
     unsigned int numero_escolha;
     cout << PROMPT;
@@ -347,7 +376,16 @@ Utilizador* Menu::escolhe(vector<Utilizador*> & escolhas, const string & perg){
     }
     cout << perg << endl;
     for (vector<Utilizador*>::iterator gestor_it = escolhas.begin(); gestor_it != escolhas.end() ; gestor_it++, i++) {
-        cout << i << " - " << setw(ESPACO_PEQUENO) << (*gestor_it)->getNome() << setw(ESPACO_PEQUENO) << (*gestor_it)->getNumIdentidade() << endl;
+        // seguranca para um numero exagerado de utilizadores no vector
+        if (i > MAX_ELEMENTOS_LISTAGEM) {
+            cout << "Foram listados " << MAX_ELEMENTOS_LISTAGEM << " utilizadores, mas existem " << escolhas.size() << " nesta listagem." << endl;
+            cout << "Se pretende encontrar um website, por favor utilize a pesquisa." << endl;
+            break;
+        }
+        
+        cout << i << " - "
+        << setw(ESPACO_PEQUENO) << (*gestor_it)->getNome()
+        << setw(ESPACO_PEQUENO) << (*gestor_it)->getNumIdentidade() << endl;
 
     }
     i--;
@@ -426,6 +464,13 @@ string pergunta(const string &perg)
     }
     return str;
 }
+
+inline void Menu::pressEnter(){
+    cout << "Pressione ENTER para continuar..." << endl;
+    getchar();
+    return;
+}
+
 
 Utilizador* Menu::criar_utilizador(){
     string nome;
@@ -507,13 +552,16 @@ Website* Menu::criar_website(){
             vector<string> tecnologias;
             vector<Utilizador*> gestores;
             
+            // Perguntar o identificador
             identificador = pergunta<string>("Escolha um identificador (URL) para o website");
             while (!wsp->identificadorValido(identificador)) {
                 identificador = pergunta<string>("Esse identificador ja pertence a outro website.\nPor favor escolha um identificador diferente");
             }
             
+            // Perguntar o numero de paginas
             numeroPaginas = pergunta<unsigned int>("Escolha um numero de paginas");
             
+            // Perguntar as tecnologias
             bool acabado = false;
             while (!acabado) {
                 if (tecnologias.size() > 0) { // escrever que tecnologias ja foram selecionadas
@@ -541,8 +589,9 @@ Website* Menu::criar_website(){
                         break;
                 }
             }
-
-            cout << "Agora pode escolher quais sao os gestores do seu website empresa" << endl;
+            
+            // Perguntar quem sao os gestores
+            cout << "Agora deve escolher quais sao os gestores do seu website empresa" << endl;
             cout << "NOTA: Escolha cancelar para terminar" << endl;
             acabado = false;
             while (!acabado) {
@@ -621,9 +670,11 @@ void Menu::opcoes(Website* site){
             cout.setf(ios::fixed);
             cout << "Numero de paginas: " << site->getNumeroPaginas() << " (max. " << SiteParticular::getLimitePaginas() << " / custo por pagina: " << setprecision(CENTIMOS) << SiteParticular::getCustoPorPagina() << " $)" << endl;
             cout << "Custo total do site: " << setprecision(CENTIMOS) << site->getCusto() << " $" <<  endl;
+            
+            // definir escolhas para alteracoes
             switch (escolhe(opcoes_website_particular, "Selecione uma opcao"))
             {
-                case 0:
+                case 0: // utilizador acaba alteracoes
                     acabado = true;
                     break;
                 case 1: // alterar o gestor
@@ -685,7 +736,7 @@ void Menu::opcoes(Website* site){
         bool acabado = false;
         while (!acabado)
         {
-            
+            // imprimir informacoes do website
             cout << "Informacoes do website empresa " << site->getIdentificador() << endl;
             
             if (site->getTecnologias().size() == 0) {
@@ -717,6 +768,7 @@ void Menu::opcoes(Website* site){
             cout << "Numero de paginas: " << site->getNumeroPaginas() << " (custo por pagina: " << setprecision(CENTIMOS) << SiteEmpresa::getCustoPorPagina() << " $)" << endl;
             cout << "Custo total do site: " << setprecision(CENTIMOS)<< site->getCusto() << " $" <<  endl;
             
+            // as escolhas para o utilizador fazer alteracoes
             switch (escolhe(opcoes_website_empresa, "Selecione uma opcao"))
             {
                 case 0: // utilizador termina as modificacoes
@@ -746,6 +798,11 @@ void Menu::opcoes(Website* site){
                     break;
                     
                 case 2: // Retirar gestor
+                    if (site->getGestores().size() == 1) {
+                        cout << "O site so possui um gestor. Este nao pode ser eliminado." << endl;
+                        pressEnter();
+                        break;
+                    }
                     site->retiraGestor(escolhe(site->getGestores(), "Escolha que gestor pretende retirar"));
                     break;
                 case 3: // Adicionar tecnologia
@@ -756,15 +813,23 @@ void Menu::opcoes(Website* site){
                             break;
                         else if ( site->novaTecnologia(tecnologia) )
                             break;
-                        else
-                            cout << "Tecnologia ja implementada no website" << endl;
+                        else {
+                            cout << "A tecnologia ja se encontra implementada no website" << endl;
+                            pressEnter();
+                        }
                     }
                     break;
                 }
                 case 4: // Retirar tecnologia
                 {
+                    if (site->getTecnologias().size() == 1) {
+                        cout << "O site so utiliza uma tecnologia. Esta nao pode ser eliminada." << endl;
+                        pressEnter();
+                        break;
+                    }
                     // e' necessario utilizar a funcao escolhe() para permitir cancelar com 0
                     vector<string> tecnologias = site->getTecnologias();
+                    cout << "0 - Cancelar"; // maneira simples para informar o utilizador que pode cancelar
                     unsigned int tech_pos = escolhe(tecnologias, "Escolhe que tecnologia pretende remover");
                     if (tech_pos == 0)
                         break;
@@ -774,7 +839,7 @@ void Menu::opcoes(Website* site){
                 }
                 case 5: // Alterar numero de paginas
                 {
-                    unsigned int numeroPaginas = pergunta<unsigned int>("Escolha um numero de paginas");
+                    unsigned int numeroPaginas = pergunta<unsigned int>("Escolha um numero de paginas (0 para cancelar)");
                     if (numeroPaginas == 0){
                         cout << "Operacao cancelada" << endl;
                         break;
@@ -844,7 +909,7 @@ void Menu::opcoes(Utilizador* gestor){
             case 3: // Aceder a um website responsavel
             {
                 vector<Website*> sites = gestor->getSitesResponsavel();
-                opcoes(escolhe(sites, "Escolha o website a que quer aceder"));
+                opcoes(escolhe(sites, "Escolha o website a que quer aceder (0 para cancelar)"));
                 cout << "A regressar para o utilizador..." << endl;
                 break;
             }
@@ -867,9 +932,16 @@ void Menu::listar_websites(){
         cout << "Nao existem websites na base de dados! Por favor crie um website primeiro." << endl;
         return;
     }
-    cout << left << setw(ESPACO_MUITO_PEQUENO) << "Numero" << setw(ESPACO_PEQUENO) << "Tipo" << setw(ESPACO_LISTAGEM) << "Identificador" << setw(ESPACO_LISTAGEM) << "Gestor(es)" << setw(ESPACO_LISTAGEM) << "Tecnologia(s)" << setw(ESPACO_PEQUENO) << "Paginas" << endl;
+    cout << left << setw(ESPACO_MUITO_PEQUENO) << "Numero" << setw(ESPACO_PEQUENO) << "Tipo" << setw(ESPACO_LISTAGEM) << "Identificador" << setw(ESPACO_LISTAGEM) << "Gestor(es)" << setw(ESPACO_LISTAGEM) << "Tecnologia(s)" << setw(ESPACO_PEQUENO) << "Paginas" << setw(ESPACO_LISTAGEM) << "Custo" << endl;
     unsigned int numero = 1;
     for (vector<Website*>::iterator site_it = wsp->getWebsites().begin(); site_it != wsp->getWebsites().end(); site_it++, numero++) {
+        // seguranca para um numero exagerado de websites no vector
+        if (numero > MAX_ELEMENTOS_LISTAGEM) {
+            cout << "Foram listados " << MAX_ELEMENTOS_LISTAGEM << " websites, mas existem no total " << wsp->getWebsites().size() << "." << endl;
+            cout << "Se pretende encontrar um website, por favor utilize a pesquisa." << endl;
+            break;
+        }
+        
         Website* site = *site_it;
         SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(site);
         SiteParticular* particular = dynamic_cast< SiteParticular* >(site);
@@ -881,8 +953,15 @@ void Menu::listar_websites(){
             } else {
                 nome = site->getGestor()->getNome();
             }
-            
-            cout << left << setw(ESPACO_MUITO_PEQUENO) << numero << setw(ESPACO_PEQUENO) <<  "Particular" << setw(ESPACO_LISTAGEM)<< site->getIdentificador() << setw(ESPACO_LISTAGEM) << nome << setw(ESPACO_LISTAGEM) << site->getTecnologia() << setw(ESPACO_LISTAGEM) << site->getNumeroPaginas() << endl;
+            cout.setf(ios::fixed);
+            cout << left
+            << setw(ESPACO_MUITO_PEQUENO) << numero
+            << setw(ESPACO_PEQUENO) <<  "Particular"
+            << setw(ESPACO_LISTAGEM)<< site->getIdentificador()
+            << setw(ESPACO_LISTAGEM) << nome
+            << setw(ESPACO_LISTAGEM) << site->getTecnologia()
+            << setw(ESPACO_PEQUENO) << site->getNumeroPaginas()
+            << "$" << setw(ESPACO_LISTAGEM) << setprecision(CENTIMOS) << site->getCusto() << endl;
         } 
         if (empresa){ // como listar as informacoes se o site for de uma empresa
             stringstream gestores;
@@ -902,11 +981,18 @@ void Menu::listar_websites(){
                 tecnologias << site->getTecnologias()[0] << " e mais " << site->getTecnologias().size()-1;
 
             }
-            cout << left << setw(ESPACO_MUITO_PEQUENO) << numero << setw(ESPACO_PEQUENO) << "Empresa" << setw(ESPACO_LISTAGEM) << site->getIdentificador() << setw(ESPACO_LISTAGEM) << gestores.str() << setw(ESPACO_LISTAGEM) << tecnologias.str() << setw(ESPACO_PEQUENO) << site->getNumeroPaginas() << endl;
+            cout << left
+            << setw(ESPACO_MUITO_PEQUENO) << numero
+            << setw(ESPACO_PEQUENO) << "Empresa"
+            << setw(ESPACO_LISTAGEM) << site->getIdentificador()
+            << setw(ESPACO_LISTAGEM) << gestores.str()
+            << setw(ESPACO_LISTAGEM) << tecnologias.str()
+            << setw(ESPACO_PEQUENO) << site->getNumeroPaginas()
+            << "$" << setw(ESPACO_LISTAGEM) << setprecision(CENTIMOS) << site->getCusto() << endl;
         }
     }
     Website* site = NULL;
-    site = escolheSemListagem(wsp->getWebsites(), "Escolha um website para ver as informacoes");
+    site = escolheSemListagem(wsp->getWebsites(), "Escolha um website para ver as informacoes (0 para cancelar)");
     if (site == NULL){ // se o utilizador cancelou, volta para o menu anterior
         return;
     } else{
@@ -922,14 +1008,27 @@ void Menu::listar_utilizadores(){
         return;
     }
     
-    cout << left << setw(ESPACO_MUITO_PEQUENO) << "Numero" << setw(ESPACO_LISTAGEM) << "Nome" << setw(ESPACO_PEQUENO) << "Numero de B.I." << endl;
+    cout << left
+    << setw(ESPACO_MUITO_PEQUENO) << "Numero"
+    << setw(ESPACO_LISTAGEM) << "Nome"
+    << setw(ESPACO_PEQUENO) << "Numero de B.I." << endl;
     unsigned int numero = 1;
     for (vector<Utilizador*>::iterator gestor_it = wsp->getGestores().begin(); gestor_it != wsp->getGestores().end(); gestor_it++, numero++)
     {
-        cout << left << setw(ESPACO_MUITO_PEQUENO) << numero << setw(ESPACO_LISTAGEM) << (*gestor_it)->getNome() << setw(ESPACO_PEQUENO) << (*gestor_it)->getNumIdentidade() << endl;
+        // seguranca para um numero exagerado de utilizadores no vector
+        if (numero > MAX_ELEMENTOS_LISTAGEM) {
+            cout << "Foram listados " << MAX_ELEMENTOS_LISTAGEM << " utilizadores, mas existem no total " << wsp->getWebsites().size() << "." << endl;
+            cout << "Se pretende encontrar um utilizador, por favor utilize a pesquisa." << endl;
+            break;
+        }
+        
+        cout << left
+        << setw(ESPACO_MUITO_PEQUENO)<< numero
+        << setw(ESPACO_LISTAGEM) << (*gestor_it)->getNome()
+        << setw(ESPACO_PEQUENO) << (*gestor_it)->getNumIdentidade() << endl;
     }
     Utilizador* gestor = NULL;
-    gestor = escolheSemListagem(wsp->getGestores(), "Escolha um gestor para aceder as informacoes");
+    gestor = escolheSemListagem(wsp->getGestores(), "Escolha um gestor para aceder as informacoes (0 para cancelar)");
     if (gestor == NULL){ // se o utilizador cancelou, volta para o menu anterior
         return;
     } else{
@@ -944,10 +1043,14 @@ void Menu::consultaCustos(){
     
     while (!acabado) {
         cout.setf(ios::fixed);
-        cout << "Custo por pagina para websites particulares: " << setprecision(CENTIMOS) << SiteParticular::getCustoPorPagina() << " $" << endl;
-        cout << "Custo por paginas para websites empresa: " << setprecision(CENTIMOS) << SiteEmpresa::getCustoPorPagina() << " $" << endl;
-        cout << "Limite de paginas para websites particulares: " << setprecision(CENTIMOS) << SiteParticular::getLimitePaginas() << endl;
-        cout << "Custo total de todos os websites: " << setprecision(CENTIMOS)<< wsp->calculoCustoTotal() << " $" << endl;
+        cout << "Custo por pagina para websites particulares: "
+        << setprecision(CENTIMOS) << SiteParticular::getCustoPorPagina() << " $" << endl;
+        cout << "Custo por paginas para websites empresa: "
+        << setprecision(CENTIMOS) << SiteEmpresa::getCustoPorPagina() << " $" << endl;
+        cout << "Limite de paginas para websites particulares: "
+        << setprecision(CENTIMOS) << SiteParticular::getLimitePaginas() << endl;
+        cout << "Custo total de todos os websites: "
+        << setprecision(CENTIMOS)<< wsp->calculoCustoTotal() << " $" << endl;
         
         switch (escolhe(consulta_custos, "Selecione uma opcao")) {
             case 0: // utilizador terminou

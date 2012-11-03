@@ -65,9 +65,13 @@ void SiteEmpresa::setCustoPorPagina(const float &custo){
     return;
 }
 
-bool SiteEmpresa::novaTecnologia(const string &tech){
+bool SiteEmpresa::novaTecnologia(string &tech){
+    transform(tech.begin(), tech.end(), tech.begin(), ::tolower);
+    string aux; // string auxiliar na pesquisa
     for (vector<string>::iterator tech_it = tecnologias.begin(); tech_it != tecnologias.end(); tech_it++) {
-        if ( (*tech_it) == tech){
+        aux = (*tech_it);
+        transform(aux.begin(), aux.end(), aux.begin(), ::tolower);
+        if ( aux == tech){
             return false;
             break;
         }
