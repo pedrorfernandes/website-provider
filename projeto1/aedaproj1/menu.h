@@ -45,8 +45,23 @@
 
 using namespace std;
 
+/**
+ * Funcao que faz uma pergunta e recebe o input do utilizador, devolvendo este mesmo.
+ * @param perg A pergunta a ser lancada
+ * @return O input do utilizador
+ */
 template<class T> T pergunta(const string &perg);
+/**
+ * Especializacao da a funcao pergunta() para strings. Nesta situacao, sera feito o getline do input do utilizador e devolvido este sob a forma de string
+ * @param perg A pergunta a ser lancada
+ * @return A string com o input do utilizador
+ */
 template<> string pergunta(const string &perg);
+/**
+ * Especializacao da a funcao pergunta() para unsigned ints. Nesta situacao, o numero sera gravado como int e sera feita a verificacao que e' positivo. Depois disto sera guardado como unsigned. Deste modo, sao evitados erros de overflow com o input
+ * @param perg A pergunta a ser lancada
+ * @return O numero inteiro sem sinal que o utilizador submeteu
+ */
 template<> unsigned int pergunta(const string &perg);
 
 
@@ -54,7 +69,7 @@ template<> unsigned int pergunta(const string &perg);
  * O menu trata de todos os outputs do programa, cria um GestorWSP e gere todas as introducoes de dados no WSP
  */
 class Menu{
-    GestorWSP* wsp;
+    GestorWSP* wsp; /**< O apontador para o gestor de website provider associado ao menu */
     vector<string> opcoes_inicio;
     vector<string> escolher_tipo_site;
     vector<string> escolher_utilizador;
@@ -71,6 +86,9 @@ class Menu{
     vector<string> superior_ou_inferior;
     vector<string> gestores_empresa;
 public:
+    /**
+     * Construtor de Menu. Neste construtor sao preenchidos os vectores com todos os menus que o utilizador ira visualizar, e' criado um objeto gestor de website provider, sao lidos e guardados todos os dados utilizados pelo website provider. Quando esta funcao termina, o programa tambem termina.
+     */
     Menu();
     /**
      * Funcao para aceder ao menu inicial do programa

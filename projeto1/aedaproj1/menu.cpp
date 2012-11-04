@@ -496,7 +496,7 @@ inline void Menu::pressEnter(){
 
 Utilizador* Menu::criar_utilizador(){
     string nome;
-    unsigned int numIdentidade;
+    unsigned int numIdentidade = 1;
     bool ok = false;
     Utilizador* u_pointer = NULL;
     while (!ok) {
@@ -507,11 +507,14 @@ Utilizador* Menu::criar_utilizador(){
             pressEnter();
             break;
         }
-        numIdentidade = pergunta<unsigned int>("Indique o numero do bilhete de identidade (Introduza 0 para cancelar");
-        if (numIdentidade == 0) {
-            cout << "Operacao cancelada." << endl;
-            pressEnter();
-            break;
+        numIdentidade = pergunta<unsigned int>("Indique o numero do bilhete de identidade, com 8 digitos (Introduza 0 para cancelar)");
+        while (numIdentidade <= 10000000 || numIdentidade >= 99999999) {
+            if (numIdentidade == 0) {
+                cout << "Operacao cancelada." << endl;
+                pressEnter();
+                return u_pointer;
+            }
+            numIdentidade = pergunta<unsigned int>("Numero invalido.\nPor favor indique um numero com 8 digitos (Introduza 0 para cancelar)");
         }
         u_pointer = new Utilizador(numIdentidade, nome);
         try {

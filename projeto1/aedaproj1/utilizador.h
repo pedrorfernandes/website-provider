@@ -33,11 +33,20 @@ using namespace std;
  * Um utilizador possui um nome, um numero de bilhete de identidade e um vector dos websites que e' responsavel
  */
 class Utilizador{
-    unsigned int numIdentidade;
-    string nome;
-    vector<Website*> sitesResponsavel;
+    unsigned int numIdentidade; /**< O numero de bilhete de identidade do utilizador (nao pode haver utilizadores com o mesmo numero) */
+    string nome; /**< O nome do utilizador (pode haver utilizadores com o mesmo nome) */
+    vector<Website*> sitesResponsavel; /**< O vector que contem apontadores para os sites que o utilizador assume gestao */
 public:
+    /**
+     * Construtor de um objeto Utilizador
+     * @param i O numero de bilhete de identidade
+     * @param n O nome do utilizador
+     */
     Utilizador(unsigned int i, string n);
+    
+    /**
+     * Destrutor de um utilizador. De notar que um website (empresa ou particular) contem o apontador para os seu(s) gestor(es). Logo o destrutor de um utilizador tem de percorrer os seus websites responsaveis e eliminar o seu apontador desses websites
+     */
     ~Utilizador();
     
     friend class SiteEmpresa;

@@ -28,6 +28,10 @@
  */
 class UtilizadorJaExistente: public Erro{
 public:
+    /**
+     * Cria uma excecao de um utilizador ja existente
+     * @param msg A messagem que deve identificar o bilhete de identidade do utilizador ja existente
+     */
     UtilizadorJaExistente(string msg): Erro(msg){};
 };
 
@@ -35,8 +39,8 @@ public:
  * O gestor de website provider contem o vector de utilizadores e de websites e as funcoes para gerir estes dois vectores.
  */
 class GestorWSP{
-    vector<Website*> websites;
-    vector<Utilizador*> gestores;
+    vector<Website*> websites; /**< O vector de apontadores para todos os websites */
+    vector<Utilizador*> gestores; /**< O vector de apontadores para todos os gestores */
     
     /**
      * Compara dois identificadores de websites
@@ -136,7 +140,13 @@ class GestorWSP{
     static bool numeroDescendente(Utilizador* u1, Utilizador* u2);
 
 public:
+    /**
+     * Construtor de um wsp
+     */
     GestorWSP();
+    /**
+     * Destrutor do wsp. Elimina todos os websites e utilizadores da memoria.
+     */
     ~GestorWSP();
     /**
      * Adiciona um novo website ao vector de websites 

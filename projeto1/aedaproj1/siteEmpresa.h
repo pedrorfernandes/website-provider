@@ -29,11 +29,22 @@ using namespace std;
  * O SiteEmpresa, para alem de um identificador e numero de paginas, possui um vector com as tecnologias que usa, um vector com os gestores do site e um custo por pagina para sites empresa
  */
 class SiteEmpresa : public Website{
-    vector<string> tecnologias;
-    vector<Utilizador* > gestores;
-    static float custoPorPagina;
+    vector<string> tecnologias; /**< O vector que contem as tecnologias usadas pelo website empresa */
+    vector<Utilizador* > gestores; /**< O vector que contem os apontadores para os gestores do website empresa */
+    static float custoPorPagina; /**< O custo por pagina para todos os websites empresa */
 public:
+    /**
+     * Construtor de um SiteEmpresa
+     * @param i O identificador do website
+     * @param n O numero de paginas
+     * @param tech O vector com as tecnologias utilizadas
+     * @param gest O vector com os apontadores para os gestores do website
+     */
     SiteEmpresa(string i, unsigned int n, vector<string> tech, vector<Utilizador*> gest);
+    
+    /**
+     * Destrutor de um SiteEmpresa. De notar que um utilizador tem apontadores para os websites de que e' gestor. Logo este destrutor tem de percorrer os seus gestores e eliminar o seu apontador
+     */
     ~SiteEmpresa();
     
     /**

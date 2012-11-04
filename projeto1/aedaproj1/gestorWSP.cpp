@@ -18,6 +18,9 @@ GestorWSP::~GestorWSP(){
     for (vector<Website*>::iterator it = websites.begin(); it != websites.end(); it++) {
         delete (*it);
     }
+    for (vector<Utilizador*>::iterator it = gestores.begin(); it != gestores.end(); it++) {
+        delete (*it);
+    }
 }
 
 
@@ -41,24 +44,6 @@ bool GestorWSP::novoSite(Website* w){
             return false;
         }
     }
-    
-    /*
-    // para descobrir se o site eh de uma empresa ou particular
-    SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(w);
-    SiteParticular* particular = dynamic_cast< SiteParticular* >(w);
-    
-    // adicionar automaticamente os gestores do site ao vector de utilizadores do WSP
-    if (empresa) {
-        for (vector<Utilizador*>::iterator it = empresa->getGestores().begin(); it != empresa->getGestores().end(); it++) {
-            adicionaGestor(*it);
-            
-        }
-    }
-    
-    if (particular) {
-        adicionaGestor(particular->getGestor() );
-    }
-     */
     websites.push_back(w);
     return true;
 }

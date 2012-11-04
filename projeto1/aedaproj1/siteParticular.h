@@ -28,8 +28,15 @@ using namespace std;
 
 class Utilizador;
 
+/**
+ * Classe para lancar excecoes quando se tenta criar ou alterar o numero de paginas de um website particular para um valor superior ao limite definido
+ */
 class LimiteDePaginasUltrapassado: public Erro{
 public:
+    /**
+     * Construtor de um erro LimiteDePaginasUltrapassado
+     * @param mensagem String que menciona o numero limite de paginas para websites particulares
+     */
     LimiteDePaginasUltrapassado(string mensagem): Erro(mensagem){}
 };
 
@@ -37,11 +44,18 @@ public:
  * O SiteParticular, para alem de um identificador e numero de paginas, possui um gestor, uma tecnologia e um limite no numero de paginas
  */
 class SiteParticular: public Website{
-    string tecnologia;
-    Utilizador* gestor;
-    static float custoPorPagina;
-    static unsigned int limitePaginas;
+    string tecnologia; /**< A tecnologia utilizada pelo website particular */
+    Utilizador* gestor; /**< O apontador para o gestor do website particular */
+    static float custoPorPagina; /**< O custo por pagina para todos os websites particulares */
+    static unsigned int limitePaginas; /**< O limite de paginas para todos os websites particulares */
 public:
+    /**
+     * Construtor de um objeto SiteParticular
+     * @param i O identificador do website
+     * @param n O numero de paginas
+     * @param tech A tecnologia utilizada
+     * @param gest O apontador para o gestor do website
+     */
     SiteParticular(string i, unsigned int n, string tech, Utilizador* gest);
     ~SiteParticular();
     

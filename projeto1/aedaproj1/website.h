@@ -21,10 +21,21 @@ using namespace std;
 
 class Utilizador; // pre declaracao
 
+/**
+ * Classe geral para a criacao de excecoes que detetam erros internos do funcionamento do website provider
+ */
 class Erro{
-    string msg;
+    string msg; /**< A mensagem que contem informacoes do erro */
 public:
+    /**
+     * Construtor de um objeto Erro.
+     * @param m A mensagem que descreve o erro
+     */
     Erro(string m): msg(m){}
+    /**
+     * Retorna a mensagem que caracteriza o erro
+     * @return A mensagem de erro
+     */
     string getMsg(){return msg;}
 };
 
@@ -33,9 +44,14 @@ public:
  */
 class Website{
 protected:
-    unsigned int numeroPaginas;
-    string identificador;
+    unsigned int numeroPaginas; /**< O numero total de paginas do website */
+    string identificador; /**< O identificador (URL) do website */
 public:
+    /**
+     * Construtor de um objeto Website
+     * @param i O identificador do website
+     * @param n O numero de paginas
+     */
     Website(string i, unsigned int n);
     virtual ~Website();
     
