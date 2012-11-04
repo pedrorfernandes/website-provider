@@ -47,6 +47,8 @@ using namespace std;
 
 template<class T> T pergunta(const string &perg);
 template<> string pergunta(const string &perg);
+template<> unsigned int pergunta(const string &perg);
+
 
 /**
  * O menu trata de todos os outputs do programa, cria um GestorWSP e gere todas as introducoes de dados no WSP

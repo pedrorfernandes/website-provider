@@ -469,6 +469,24 @@ string pergunta(const string &perg)
     return str;
 }
 
+// especializacao para evitar overflows (windows nao deteta cin.fail e faz overflow)
+template<>
+unsigned int pergunta(const string &perg){
+    cout << perg << endl << PROMPT;
+    int resposta;
+    cin >> resposta;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    while ( cin.fail() || resposta < 0 ) {
+        cout << "Resposta invalida. Tente outra vez." << endl << PROMPT;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin >> resposta;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    unsigned int resposta_unsigned = resposta;
+    return resposta_unsigned;
+}
+
 inline void Menu::pressEnter(){
     cout << "Pressione ENTER para continuar..." << endl;
     getchar();
