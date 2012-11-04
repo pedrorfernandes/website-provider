@@ -37,6 +37,22 @@ Utilizador::~Utilizador(){
      }
 }
 
+bool Utilizador::UtilizadorEliminavel(){
+    for (vector<Website*>::iterator site = sitesResponsavel.begin(); site != sitesResponsavel.end(); site++) {
+        SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(*site);
+        SiteParticular* particular = dynamic_cast< SiteParticular* >(*site);
+        if (empresa){
+            if (empresa->getGestores().size() == 1) {
+                return false;
+            }
+        }
+        if (particular){
+            return false;
+        }
+    }
+    return true;
+}
+
 unsigned int Utilizador::getNumIdentidade() const{
     return numIdentidade;
 }

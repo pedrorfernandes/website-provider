@@ -1003,8 +1003,12 @@ void Menu::opcoes(Utilizador* gestor){
                 break;
             }
             case 4:
-                wsp->eliminaCliente(gestor);
-                return;
+                if (!wsp->eliminaCliente(gestor) ){
+                    cout << "Existem websites cujo unico gestor e' o que pretende eliminar."<< endl;
+                    cout << "Por favor primeiro elimine esses websites ou atribuia-lhes um novo gestor" << endl;
+                    pressEnter();
+                } else
+                    return;
                 break;
             default:
                 break;

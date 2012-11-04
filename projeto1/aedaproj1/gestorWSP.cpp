@@ -73,9 +73,12 @@ bool GestorWSP::eliminaCliente(Utilizador *u){
     // eliminar um gestor elimina-o das listas dos sites de que sao responsaveis
     for (vector<Utilizador*>::iterator it = gestores.begin(); it != gestores.end(); it++) {
         if ( (*(*it)) == u) {
-            delete (*it);
-            it = gestores.erase(it);
-            return true;
+            if ( (*it)->UtilizadorEliminavel() ) {
+                delete (*it);
+                it = gestores.erase(it);
+                return true;
+            }
+            
         }
     }
     return false;

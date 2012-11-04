@@ -106,6 +106,12 @@ public:
     bool operator==(Utilizador* u) const;
     
     /**
+     * Verifica se o utilizador e' eliminavel. Ou seja, se ha websites cujo unico gestor e' o utilizador em causa.
+     * @return True se for eliminavel, false caso contrario
+     */
+    bool UtilizadorEliminavel();
+    
+    /**
      * Funcao para escrita de informacoes de um utilizador
      * @param out Onde vao ser colocadas as informacoes do utilizador
      * @param u O utilizador que contem as informacoes
