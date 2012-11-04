@@ -67,6 +67,7 @@ class Menu{
     vector<string> escolher_tecnologias;
     vector<string> website_ou_utilizador;
     vector<string> superior_ou_inferior;
+    vector<string> gestores_empresa;
 public:
     Menu();
     /**

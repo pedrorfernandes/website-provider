@@ -357,6 +357,7 @@ Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
     while ( cin.fail() || numero_escolha > i ) {
         cout << "Escolha invalida. Selecione uma opcao de 0 a " << i << "." << endl << PROMPT;
         cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cin >> numero_escolha;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
@@ -397,6 +398,7 @@ Utilizador* Menu::escolhe(vector<Utilizador*> & escolhas, const string & perg){
     while ( cin.fail() || numero_escolha > i ) {
         cout << "Escolha invalida. Selecione uma opcao de 0 a " << i << "." << endl << PROMPT;
         cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cin >> numero_escolha;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
@@ -421,6 +423,7 @@ T Menu::escolheSemListagem(vector<T> & escolhas, const string & perg){
     while ( cin.fail() || numero_escolha > i ) {
         cout << "Escolha invalida. Selecione uma opcao de 0 a " << i << "." << endl << PROMPT;
         cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cin >> numero_escolha;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
@@ -480,8 +483,18 @@ Utilizador* Menu::criar_utilizador(){
     Utilizador* u_pointer = NULL;
     while (!ok) {
         
-        nome = pergunta<string>("Escolha o nome do utilizador");
-        numIdentidade = pergunta<unsigned int>("Indique o numero do bilhete de identidade");
+        nome = pergunta<string>("Escolha o nome do utilizador (Introduza 0 para cancelar)");
+        if (nome == "0") {
+            cout << "Operacao cancelada." << endl;
+            pressEnter();
+            break;
+        }
+        numIdentidade = pergunta<unsigned int>("Indique o numero do bilhete de identidade (Introduza 0 para cancelar");
+        if (numIdentidade == 0) {
+            cout << "Operacao cancelada." << endl;
+            pressEnter();
+            break;
+        }
         u_pointer = new Utilizador(numIdentidade, nome);
         try {
             wsp->adicionaGestor(u_pointer);
@@ -496,7 +509,7 @@ Utilizador* Menu::criar_utilizador(){
 Website* Menu::criar_website(){
     string identificador;
     unsigned int numeroPaginas;
-    Website* site;
+    Website* site = NULL;
     bool ok = false;
     
     switch (escolhe(escolher_tipo_site, "Que tipo de website pretende criar?") ) {
@@ -508,12 +521,23 @@ Website* Menu::criar_website(){
             string tecnologia;
             Utilizador* gestor = NULL;
     
-            identificador = pergunta<string>("Escolha um identificador (URL) para o website");
+            identificador = pergunta<string>("Escolha um identificador (URL) para o website (Introduza 0 para cancelar)");
+            if (identificador == "0") {
+                cout << "Operacao cancelada." << endl;
+                pressEnter();
+                return site;
+            }
             while (!wsp->identificadorValido(identificador)) {
                 identificador = pergunta<string>("Esse identificador ja pertence a outro website.\nPor favor escolha um identificador diferente");
             }
             
-            tecnologia = pergunta<string>("Escolha a tecnologia que vai ser utilizada para o website");
+            tecnologia = pergunta<string>("Escolha a tecnologia que vai ser utilizada para o website (Introduza 0 para cancelar");
+            
+            if (tecnologia == "0") {
+                cout << "Operacao cancelada." << endl;
+                pressEnter();
+                return site;
+            }
             
             // escolher se quer criar um novo gestor ou escolher um do vector
             while (gestor == NULL) {
@@ -532,8 +556,13 @@ Website* Menu::criar_website(){
                 }
             }
             
-            numeroPaginas = pergunta<unsigned int>("Escolha um numero de paginas");
-                        
+            numeroPaginas = pergunta<unsigned int>("Escolha um numero de paginas (0 para cancelar)");
+            if (numeroPaginas == 0) {
+                cout << "Operacao cancelada." << endl;
+                pressEnter();
+                return site;
+            } 
+            
             while (!ok) {
                 try {
                     wsp->novoSite(site = new SiteParticular(identificador, numeroPaginas, tecnologia, gestor));
@@ -554,13 +583,23 @@ Website* Menu::criar_website(){
             vector<Utilizador*> gestores;
             
             // Perguntar o identificador
-            identificador = pergunta<string>("Escolha um identificador (URL) para o website");
+            identificador = pergunta<string>("Escolha um identificador (URL) para o website (Introduza 0 para cancelar)");
+            if (identificador == "0") {
+                cout << "Operacao cancelada." << endl;
+                pressEnter();
+                return site;
+            }
             while (!wsp->identificadorValido(identificador)) {
                 identificador = pergunta<string>("Esse identificador ja pertence a outro website.\nPor favor escolha um identificador diferente");
             }
             
             // Perguntar o numero de paginas
-            numeroPaginas = pergunta<unsigned int>("Escolha um numero de paginas");
+            numeroPaginas = pergunta<unsigned int>("Escolha um numero de paginas (0 para cancelar)");
+            if (numeroPaginas == 0) {
+                cout << "Operacao cancelada." << endl;
+                pressEnter();
+                return site;
+            }
             
             // Perguntar as tecnologias
             bool acabado = false;
@@ -593,10 +632,18 @@ Website* Menu::criar_website(){
             
             // Perguntar quem sao os gestores
             cout << "Agora deve escolher quais sao os gestores do seu website empresa" << endl;
-            cout << "NOTA: Escolha cancelar para terminar" << endl;
             acabado = false;
             while (!acabado) {
-                switch (escolhe(escolher_utilizador, "Defina como quer escolher o gestor")) {
+                if (gestores.size() > 0) {
+                    cout << "Gestores ja adicionados: ";
+                    for (vector<Utilizador*>::iterator gestor_it = gestores.begin(); gestor_it != gestores.end(); gestor_it++) {
+                        if (gestor_it == gestores.end()-1) {
+                            cout << (*gestor_it)->getNome() << "." << endl;
+                        } else
+                            cout << (*gestor_it)->getNome() << ", ";
+                    }
+                }
+                switch (escolhe(gestores_empresa, "Defina como quer escolher um gestor")) {
                     case 0: // utilizador cancelou
                         if (gestores.size() > 0) {
                             acabado = true;
@@ -605,8 +652,13 @@ Website* Menu::criar_website(){
                             cout << "Todos os websites devem ter no minimo um gestor!" << endl;
                         break;
                     case 1: // criar um novo utilizador
-                        gestores.push_back(criar_utilizador());
+                    {
+                        Utilizador* novo_gestor = criar_utilizador();
+                        if (novo_gestor != NULL) {
+                            gestores.push_back(novo_gestor);
+                        }
                         break;
+                    }
                     case 2: // escolher utilizador ja existente
                     {
                         Utilizador* gestor = NULL;
@@ -684,8 +736,13 @@ void Menu::opcoes(Website* site){
                     case 0: // utilizador cancelou
                         break;
                     case 1: // criar um novo utilizador
-                        site->setGestor(criar_utilizador());
+                    {
+                        Utilizador* novo_gestor = criar_utilizador();
+                        if (novo_gestor != NULL) {
+                            site->setGestor(novo_gestor);
+                        }
                         break;
+                    }
                     case 2: // escolher um gestor ja existente
                     {
                         Utilizador* gestor = escolhe(wsp->getGestores(), "Escolha um gestor");
@@ -781,8 +838,13 @@ void Menu::opcoes(Website* site){
                     case 0: // utilizador cancelou
                         break;
                     case 1: // criar um novo utilizador
-                        site->novoGestor(criar_utilizador());
+                    {
+                        Utilizador* novo_gestor = criar_utilizador();
+                        if (novo_gestor != NULL) {
+                            site->novoGestor(novo_gestor);
+                        }
                         break;
+                    }
                     case 2: // escolher um gestor ja existente que nao pertence ao website
                     {
                         vector<Utilizador*> gestores_que_nao_estao_no_site = wsp->getGestores() - empresa->getGestores();
@@ -910,6 +972,11 @@ void Menu::opcoes(Utilizador* gestor){
             case 3: // Aceder a um website responsavel
             {
                 vector<Website*> sites = gestor->getSitesResponsavel();
+                if (sites.size() == 0) {
+                    cout << "Este utilizador nao e' gestor de qualquer website na base de dados." << endl;
+                    pressEnter();
+                    break;
+                }
                 opcoes(escolhe(sites, "Escolha o website a que quer aceder (0 para cancelar)"));
                 cout << "A regressar para o utilizador..." << endl;
                 break;
@@ -1172,7 +1239,7 @@ void Menu::pesquisaNosUtilizadores(){
                         cout << "Nao foram encontrados resultados para a pesquisa \"" << pesquisa << "\""<< endl;
                         break;
                     }
-                    resultados_da_pesquisa << "A pesquisa do nome \"" << pesquisa << "\"" << " retornou os resultados abaixo. Escolha um utilizador";
+                    resultados_da_pesquisa << "A pesquisa do nome \"" << pesquisa << "\"" << " retornou os resultados abaixo. Escolha um utilizador (0 para cancelar)";
                     Utilizador* escolha = escolhe(resultados, resultados_da_pesquisa.str());
                     if (escolha == NULL) {
                         break;
@@ -1192,7 +1259,7 @@ void Menu::pesquisaNosUtilizadores(){
                         cout << "Nao foram encontrados resultados para a pesquisa \"" << pesquisa << "\""<< endl;
                         break;
                     }
-                    resultados_da_pesquisa << "A pesquisa do nome \"" << pesquisa << "\"" << " retornou os resultados abaixo. Escolha um utilizador";
+                    resultados_da_pesquisa << "A pesquisa do nome \"" << pesquisa << "\"" << " retornou os resultados abaixo. Escolha um utilizador (0 para cancelar)";
                     Utilizador* escolha = escolhe(resultados, resultados_da_pesquisa.str());
                     if (escolha == NULL) {
                         break;
@@ -1228,7 +1295,7 @@ void Menu::pesquisaNosWebsites(){
                         cout << "Nao existem ainda sites particulares" << endl;
                         break;
                     }
-                    Website* escolha = escolhe(resultados, "Escolhe um site particular");
+                    Website* escolha = escolhe(resultados, "Escolhe um site particular (0 para cancelar)");
                     if (escolha == NULL) {
                         break;
                     } else {
@@ -1246,7 +1313,7 @@ void Menu::pesquisaNosWebsites(){
                         cout << "Nao existem sites empresa" << endl;
                         break;
                     }
-                    Website* escolha = escolhe(resultados, "Escolhe um site empresa");
+                    Website* escolha = escolhe(resultados, "Escolhe um site empresa (0 para cancelar)");
                     if (escolha == NULL) {
                         break;
                     } else {
@@ -1266,7 +1333,7 @@ void Menu::pesquisaNosWebsites(){
                         cout << "Nao foram encontrados resultados da pesquisa \"" << pesquisa << "\""<< endl;
                         break;
                     }
-                    resultados_da_pesquisa << "A pesquisa \"" << pesquisa << "\"" << " retornou os resultados abaixo. Escolha um website";
+                    resultados_da_pesquisa << "A pesquisa \"" << pesquisa << "\"" << " retornou os resultados abaixo. Escolha um website (0 para cancelar)";
                     Website* escolha = escolhe(resultados, resultados_da_pesquisa.str());
                     if (escolha == NULL) {
                         break;
@@ -1303,7 +1370,7 @@ void Menu::pesquisaNosWebsites(){
                         break;
                     case 1: // superior a um valor
                     {
-                        float custo = pergunta<float>("Quer pesquisar um website com custo superior a? (0 cancela)");
+                        float custo = pergunta<float>("Quer pesquisar um website com custo superior a? (0 para cancelar)");
                         if (custo <= 0){
                             cout << "Pesquisa cancelada." << endl;
                             break;
@@ -1328,7 +1395,7 @@ void Menu::pesquisaNosWebsites(){
                     case 2: // inferior a um valor
                     {
                         
-                        float custo = pergunta<float>("Quer pesquisar um website com custo inferior a? (0 cancela)");
+                        float custo = pergunta<float>("Quer pesquisar um website com custo inferior a? (0 para cancelar)");
                         if (custo <= 0){
                             cout << "Pesquisa cancelada." << endl;
                             break;
@@ -1340,7 +1407,7 @@ void Menu::pesquisaNosWebsites(){
                                 cout << "Nao foram encontrados websites de custo inferior a $" << custo << endl;
                                 break;
                             }
-                            resultados_da_pesquisa << "Os seguintes websites sao de custo inferior a $" << custo << " Escolha um.";
+                            resultados_da_pesquisa << "Os seguintes websites sao de custo inferior a $" << custo << " Escolha um (0 para cancelar)";
                             Website* escolha = escolhe(resultados, resultados_da_pesquisa.str());
                             if (escolha == NULL) {
                                 break;
@@ -1376,7 +1443,7 @@ void Menu::pesquisaNosWebsites(){
                                 cout << "Nao foram encontrados websites com numero de paginas superior a " <<numero<< endl;
                                 break;
                             }
-                            resultados_da_pesquisa << "Os seguintes websites tem numero de paginas superior a " <<numero<< " Escolha um.";
+                            resultados_da_pesquisa << "Os seguintes websites tem numero de paginas superior a " <<numero<< " Escolha um (0 para cancelar)";
                             Website* escolha = escolhe(resultados, resultados_da_pesquisa.str());
                             if (escolha == NULL) {
                                 break;
@@ -1401,7 +1468,7 @@ void Menu::pesquisaNosWebsites(){
                                 cout << "Nao foram encontrados websites com numero de paginas inferior a " << numero << endl;
                                 break;
                             }
-                            resultados_da_pesquisa << "Os seguintes websites tem numero de paginas inferior a " << numero << " Escolha um.";
+                            resultados_da_pesquisa << "Os seguintes websites tem numero de paginas inferior a " << numero << " Escolha um (0 para cancelar)";
                             Website* escolha = escolhe(resultados, resultados_da_pesquisa.str());
                             if (escolha == NULL) {
                                 break;
@@ -1576,7 +1643,6 @@ Menu::Menu(){
     pesquisa_websites.push_back("Pesquisar custo");
     pesquisa_websites.push_back("Pesquisar numero de paginas");
 
-
     pesquisa_utilizadores.push_back("Cancelar");
     pesquisa_utilizadores.push_back("Nome");
     pesquisa_utilizadores.push_back("Numero de B.I.");
@@ -1591,6 +1657,10 @@ Menu::Menu(){
     superior_ou_inferior.push_back("Cancelar");
     superior_ou_inferior.push_back("Superior a um valor");
     superior_ou_inferior.push_back("Inferior a um valor");
+    
+    gestores_empresa.push_back("Terminar escolha dos gestores");
+    gestores_empresa.push_back("Criar um novo utilizador");
+    gestores_empresa.push_back("Escolher um utilizador ja existente");
 
     wsp = new GestorWSP();
     cout << "Bem vindo ao gestor de website provider!" << endl;

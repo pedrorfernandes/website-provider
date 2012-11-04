@@ -224,12 +224,21 @@ public:
     
     /**
      * Lista so os websites que estao incluidos dentro do criterio indicado
-     * @param tipoCriterio O tipo de criterio a ser pesquisado. Ex: "custo superior a", "paginas inferiores a"
+     * @param tipoCriterio O tipo de criterio a ser pesquisado. Ex: "paginas inferiores a"
      * @param criterio O numero a pesquisar
      *
      * @return O vector dos websites encontrados
      */
     vector<Website*> pesquisaWebsite(string tipoCriterio, unsigned int criterio);
+    /**
+     * Lista so os websites que estao incluidos dentro do criterio indicado
+     * @param tipoCriterio O tipo de criterio a ser pesquisado. Ex: "custo superior a"
+     * @param criterio O numero a pesquisar
+     *
+     * @return O vector dos websites encontrados
+     */
+    vector<Website*> pesquisaWebsite(string tipoCriterio, float criterio);
+
     
     /**
      * Lista so os gestores que estao incluidos dentro do criterio indicado
@@ -238,6 +247,7 @@ public:
      *
      * @return O vector dos gestores encontrados
      */
+    
     vector<Utilizador*> pesquisaUtilizador(string tipoCriterio, string criterio);
     
     /**

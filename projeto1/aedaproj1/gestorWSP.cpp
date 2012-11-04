@@ -258,19 +258,7 @@ vector<Website*> GestorWSP::pesquisaWebsite(string tipoCriterio, string criterio
 
 vector<Website*> GestorWSP::pesquisaWebsite(string tipoCriterio, unsigned int criterio){
     vector<Website*> resultados;
-    if (tipoCriterio == "custo superior a") {
-        for (vector<Website*>::iterator site_it = websites.begin(); site_it != websites.end(); site_it++) {
-            if ((*site_it)->getCusto() > criterio) {
-                resultados.push_back(*site_it);
-            }
-        }
-    } else if (tipoCriterio == "custo inferior a") {
-        for (vector<Website*>::iterator site_it = websites.begin(); site_it != websites.end(); site_it++) {
-            if ((*site_it)->getCusto() < criterio) {
-                resultados.push_back(*site_it);
-            }
-        }
-    } else if (tipoCriterio == "numero paginas superior a") {
+    if (tipoCriterio == "numero paginas superior a") {
         for (vector<Website*>::iterator site_it = websites.begin(); site_it != websites.end(); site_it++) {
             if ((*site_it)->getNumeroPaginas() > criterio) {
                 resultados.push_back(*site_it);
@@ -286,6 +274,26 @@ vector<Website*> GestorWSP::pesquisaWebsite(string tipoCriterio, unsigned int cr
     
     return resultados;
 }
+
+vector<Website*> GestorWSP::pesquisaWebsite(string tipoCriterio, float criterio){
+    vector<Website*> resultados;
+    if (tipoCriterio == "custo superior a") {
+        for (vector<Website*>::iterator site_it = websites.begin(); site_it != websites.end(); site_it++) {
+            if ((*site_it)->getCusto() > criterio) {
+                resultados.push_back(*site_it);
+            }
+        }
+    } else if (tipoCriterio == "custo inferior a") {
+        for (vector<Website*>::iterator site_it = websites.begin(); site_it != websites.end(); site_it++) {
+            if ((*site_it)->getCusto() < criterio) {
+                resultados.push_back(*site_it);
+            }
+        }
+    }
+    
+    return resultados;
+}
+
 
 
 vector<Utilizador*> GestorWSP::pesquisaUtilizador(string tipoCriterio, string criterio){
