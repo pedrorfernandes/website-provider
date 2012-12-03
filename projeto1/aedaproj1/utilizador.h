@@ -26,6 +26,8 @@
 
 
 class Website;
+class SiteParticular;
+class SiteEmpresa;
 
 using namespace std;
 

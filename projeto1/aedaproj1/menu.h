@@ -42,6 +42,7 @@
 #include "website.h"
 #include "siteParticular.h"
 #include "siteEmpresa.h"
+#include "catalogo.h"
 
 using namespace std;
 

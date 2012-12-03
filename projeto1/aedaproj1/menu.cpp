@@ -43,6 +43,10 @@ ostream & operator<<(ostream &out, SiteParticular* site){
     return out;
 }
 
+ostream & operator<<(ostream &out, Prototipo p){
+    out << p.tipo << " " << p.custo << " " << p.horas;
+    return out;
+}
 
 
 bool Menu::guardaDados(){
@@ -979,8 +983,13 @@ void Menu::opcoes(Utilizador* gestor){
             {
                 while (true) {
                     unsigned int numero = pergunta<unsigned int>("Selecione um novo numero de bilhete de identidade");
-                    if (numero == 0) {
-                        break;
+                    while (numero <= 10000000 || numero >= 99999999) {
+                        if (numero == 0) {
+                            cout << "Operacao cancelada." << endl;
+                            pressEnter();
+                            break;
+                        }
+                        numero = pergunta<unsigned int>("Numero invalido.\nPor favor indique um numero com 8 digitos (Introduza 0 para cancelar)");
                     }
                     if (wsp->numeroIdentidadeValido(numero) ){
                         gestor->setNumIdentidade(numero);
@@ -1687,11 +1696,50 @@ Menu::Menu(){
     gestores_empresa.push_back("Criar um novo utilizador");
     gestores_empresa.push_back("Escolher um utilizador ja existente");
 
+    /*
     wsp = new GestorWSP();
     cout << "Bem vindo ao gestor de website provider!" << endl;
     leDados();
     while (inicio() != 1) {
         guardaDados();
     }
+    */
+    
+    Catalogo c;
+    list<string> techs;
+    techs.push_back("c++");
+    Prototipo professor("professor", 500, 100, techs );
+    Prototipo Faculdade("Faculdade", 10000, 1000, techs );
+    Prototipo empresaConstrutora("Empresa Construtora", 100, 50, techs );
+    Prototipo livraria("livraria", 50, 20, techs );
+    Prototipo hotel("hotel", 5000, 1000, techs );
+    
+    c.adicionar(professor); c.adicionar(Faculdade); c.adicionar(empresaConstrutora);
+    c.adicionar(livraria); c.adicionar(hotel);
+    
+    try {
+        cout << c.consulta("prof").getCusto() << endl;
+    } catch (PrototipoNaoExistente &e) {
+        cout << "anterior: " << e.getAntes() << " depois: " << e.getDepois() << endl;
+    }
+    /*
+    if ( c.elimina("Professor") )
+        cout << "eliminado " << endl;
+    else
+        cout << "nao eliminado " << endl;
+    
+    if ( c.elimina("professor") )
+        cout << "eliminado "<< endl;
+    else
+        cout << "nao eliminado ";
+     */
+    
+    if ( c.alteraTipo("ProFEssOr", "trolol") ){
+        cout << "good" << endl;
+    }
+    
+    c.getPrototipos().printTree();
+     
+    
     cout << "A terminar aplicacao..." << endl;
 }
