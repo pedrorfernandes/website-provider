@@ -176,13 +176,12 @@ float GestorWSP::calculoCustoTotal(){
 
 void GestorWSP::ajustarNumeroPaginasParaParticulares(){
     for (vector<Website*>::iterator site_it = websites.begin(); site_it != websites.end(); site_it++) {
-        SiteParticular* particular = dynamic_cast< SiteParticular* >(*site_it);
-        if (particular) {
+        if((*site_it)->getTipo() == Website::particular)
             if ((*site_it)->getNumeroPaginas() > SiteParticular::getLimitePaginas()) {
                 (*site_it)->setNumeroPaginas(SiteParticular::getLimitePaginas());
             }
-        }
     }
+    
     return;
 }
 
@@ -201,24 +200,20 @@ vector<Website*> GestorWSP::pesquisaWebsite(string tipoCriterio, string criterio
         }
     } else if (tipoCriterio == "particulares") {
         for (vector<Website*>::iterator site_it = websites.begin(); site_it != websites.end(); site_it++) {
-            SiteParticular* particular = dynamic_cast< SiteParticular* >(*site_it);
-            if (particular) {
+            if ((*site_it)->getTipo() == Website::particular) {
                 resultados.push_back(*site_it);
             }
         }
         
     } else if (tipoCriterio == "empresas") {
         for (vector<Website*>::iterator site_it = websites.begin(); site_it != websites.end(); site_it++) {
-            SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(*site_it);
-            if (empresa) {
+            if ((*site_it)->getTipo() == Website::empresa) {
                 resultados.push_back(*site_it);
             }
         }
     } else if (tipoCriterio == "tecnologia") {
         for (vector<Website*>::iterator site_it = websites.begin(); site_it != websites.end(); site_it++) {
-            SiteParticular* particular = dynamic_cast< SiteParticular* >(*site_it);
-            SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(*site_it);
-            if (particular) {
+            if ((*site_it)->getTipo() == Website::particular) {
                 aux = (*site_it)->getTecnologia();
                 transform(aux.begin(), aux.end(), aux.begin(), ::tolower);
                 if (string::npos != aux.find(criterio))
@@ -226,7 +221,7 @@ vector<Website*> GestorWSP::pesquisaWebsite(string tipoCriterio, string criterio
                     resultados.push_back(*site_it);
                 }
             }
-            if (empresa) {
+            if ((*site_it)->getTipo() == Website::empresa) {
                 for (vector<string>::iterator tech_it = (*site_it)->getTecnologias().begin(); tech_it != (*site_it)->getTecnologias().end(); tech_it++) {
                     aux = (*tech_it);
                     transform(aux.begin(), aux.end(), aux.begin(), ::tolower);

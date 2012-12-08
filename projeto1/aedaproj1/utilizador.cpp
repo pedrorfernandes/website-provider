@@ -19,34 +19,20 @@ Utilizador::Utilizador(unsigned int i, string n): numIdentidade(i), nome(n){}
 Utilizador::~Utilizador(){
     // para cada site responsavel, o utilizador sera eliminado da lista de gestores desse site
      for (vector<Website*>::iterator site = sitesResponsavel.begin(); site != sitesResponsavel.end(); site++) {
-         SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(*site);
-         SiteParticular* particular = dynamic_cast< SiteParticular* >(*site);
-         
-         if (empresa){
-             for (vector<Utilizador*>::iterator utilizador = empresa->getGestores().begin() ; utilizador != empresa->getGestores().end() ; utilizador++) {
-                 if ( *(*utilizador) == this){
-                     utilizador = empresa->getGestores().erase(utilizador);
-                     break;
-                 }
-             }
-         }
-         
-         if (particular){
-             particular->setGestor(NULL); 
+         if ((*site)->getTipo() == Website::empresa){
+             (*site)->retiraGestor(this);
          }
      }
 }
 
 bool Utilizador::UtilizadorEliminavel(){
     for (vector<Website*>::iterator site = sitesResponsavel.begin(); site != sitesResponsavel.end(); site++) {
-        SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(*site);
-        SiteParticular* particular = dynamic_cast< SiteParticular* >(*site);
-        if (empresa){
-            if (empresa->getGestores().size() == 1) {
+        if ((*site)->getTipo() == Website::empresa){
+            if ((*site)->getGestores().size() == 1) {
                 return false;
             }
         }
-        if (particular){
+        if ((*site)->getTipo() == Website::particular){
             return false;
         }
     }
@@ -106,5 +92,18 @@ vector<Utilizador*> operator-(const vector<Utilizador*> vec1, const vector<Utili
     }
     return vec3;
 }
+
+bool Utilizador::retiraWebsiteResponsavel(Website* w){
+    //vector<Website*> & sites = (*gestor_it)->sitesResponsavel;
+    
+    for (vector<Website*>::iterator site_it = sitesResponsavel.begin(); site_it != sitesResponsavel.end() ; site_it++) {
+        if ( (*(*site_it)) == w ){
+            site_it = sitesResponsavel.erase(site_it);
+            return true;
+        }
+    }
+    return false;
+}
+
 
 

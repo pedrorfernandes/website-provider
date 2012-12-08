@@ -12,12 +12,13 @@
 
 #ifndef main_h
 #define main_h
-
+/*
 #include "gestorWSP.h"
 #include "website.h"
 #include "siteEmpresa.h"
 #include "siteParticular.h"
 #include "utilizador.h"
+ */
 #include "menu.h"
 
 

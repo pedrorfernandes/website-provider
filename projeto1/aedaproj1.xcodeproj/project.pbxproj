@@ -15,6 +15,7 @@
 		EB6B2EA0162EFA08004D0E08 /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB6B2E9E162EFA08004D0E08 /* menu.cpp */; };
 		EB6B2EA7162F05FF004D0E08 /* siteEmpresa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB6B2EA5162F05FF004D0E08 /* siteEmpresa.cpp */; };
 		EB6B2EAA162F0653004D0E08 /* siteParticular.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB6B2EA8162F0653004D0E08 /* siteParticular.cpp */; };
+		EBA9BED9166F6AFB003794C1 /* catalogo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBA9BED7166F6AFB003794C1 /* catalogo.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,6 +48,9 @@
 		EB6B2EA6162F05FF004D0E08 /* siteEmpresa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = siteEmpresa.h; sourceTree = "<group>"; };
 		EB6B2EA8162F0653004D0E08 /* siteParticular.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = siteParticular.cpp; sourceTree = "<group>"; };
 		EB6B2EA9162F0653004D0E08 /* siteParticular.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = siteParticular.h; sourceTree = "<group>"; };
+		EBA9BED6166F6AFB003794C1 /* BST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BST.h; sourceTree = "<group>"; };
+		EBA9BED7166F6AFB003794C1 /* catalogo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = catalogo.cpp; sourceTree = "<group>"; };
+		EBA9BED8166F6AFB003794C1 /* catalogo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = catalogo.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +98,9 @@
 				EB6B2E9C162EF8CF004D0E08 /* utilizador.h */,
 				EB6B2E9E162EFA08004D0E08 /* menu.cpp */,
 				EB6B2E9F162EFA08004D0E08 /* menu.h */,
+				EBA9BED6166F6AFB003794C1 /* BST.h */,
+				EBA9BED7166F6AFB003794C1 /* catalogo.cpp */,
+				EBA9BED8166F6AFB003794C1 /* catalogo.h */,
 			);
 			path = aedaproj1;
 			sourceTree = "<group>";
@@ -156,6 +163,7 @@
 				EB6B2EA0162EFA08004D0E08 /* menu.cpp in Sources */,
 				EB6B2EA7162F05FF004D0E08 /* siteEmpresa.cpp in Sources */,
 				EB6B2EAA162F0653004D0E08 /* siteParticular.cpp in Sources */,
+				EBA9BED9166F6AFB003794C1 /* catalogo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

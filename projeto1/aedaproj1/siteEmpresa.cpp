@@ -14,23 +14,22 @@
 
 float SiteEmpresa::custoPorPagina = CUSTOEMPRESA_PREDEFINIDO;
 
+Website::Tipo SiteEmpresa::tipo = empresa;
+
+Website::Tipo SiteEmpresa::getTipo() const{
+    return this->tipo;
+}
+
 SiteEmpresa::SiteEmpresa(string i, unsigned int n, vector<string> tech, vector<Utilizador*> gest): Website(i, n), tecnologias(tech), gestores(gest)
 {
     for (vector<Utilizador*>::iterator it = gestores.begin(); it != gestores.end(); it++) {
         atribuiGestao(*it);
     }
-
 }
 
 SiteEmpresa::~SiteEmpresa(){ // e' necessario eliminar os sites dos gestores
     for (vector<Utilizador*>::iterator gestor_it = gestores.begin(); gestor_it != gestores.end(); gestor_it++) {
-        vector<Website*> & sites = (*gestor_it)->sitesResponsavel;
-        for (vector<Website*>::iterator site_it = sites.begin(); site_it != sites.end() ; site_it++) {
-            if ( (*site_it) == this ){
-                site_it = sites.erase(site_it);
-                break;
-            }
-        }
+        (*gestor_it)->retiraWebsiteResponsavel(this);
     }
 }
 

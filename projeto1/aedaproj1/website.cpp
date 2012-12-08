@@ -62,3 +62,5 @@ bool Website::retiraTecnologia(const string & tech){throw Erro("retiraTecnologia
 void Website::novoGestor(Utilizador* u){throw Erro("novoGestor(): so acessivel a partir de SiteEmpresa");}
 bool Website::retiraGestor(Utilizador* u){throw Erro("novoGestor(): so acessivel a partir de SiteEmpresa");}
 
+Website::Tipo Website::getTipo() const{throw Erro("getTipo(): nao acessivel por Website");}
+

@@ -32,6 +32,7 @@ class SiteEmpresa : public Website{
     vector<string> tecnologias; /**< O vector que contem as tecnologias usadas pelo website empresa */
     vector<Utilizador* > gestores; /**< O vector que contem os apontadores para os gestores do website empresa */
     static float custoPorPagina; /**< O custo por pagina para todos os websites empresa */
+    static Website::Tipo tipo;
 public:
     /**
      * Construtor de um SiteEmpresa
@@ -125,18 +126,8 @@ public:
      * @return True se o gestor foi removido com sucesso, False caso nao exista
      */
     bool retiraGestor(Utilizador* u);
-
-    /**
-     * Funcao para escrita de informacoes de um website empresa
-     *
-     * @param out Onde vao ser colocadas as informacoes do website
-     * @param site O website empresa que contem as informacoes
-     *
-     * @return Devolve out modificado
-     */
-    friend ostream & operator<<(ostream &out, SiteEmpresa* site);
     
-    
+    Website::Tipo getTipo() const;
 };
 
 #endif

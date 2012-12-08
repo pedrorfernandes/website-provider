@@ -48,6 +48,7 @@ class SiteParticular: public Website{
     Utilizador* gestor; /**< O apontador para o gestor do website particular */
     static float custoPorPagina; /**< O custo por pagina para todos os websites particulares */
     static unsigned int limitePaginas; /**< O limite de paginas para todos os websites particulares */
+    static Website::Tipo tipo;
 public:
     /**
      * Construtor de um objeto SiteParticular
@@ -124,15 +125,7 @@ public:
      */
     float getCusto();
     
-    /**
-     * Funcao para escrita de informacoes de um website particular
-     * @param out Onde vao ser colocadas as informacoes do website particular
-     * @param site O website que contem as informacoes
-     * @return Devolve out modificado
-     */
-    friend ostream & operator<<(ostream &out, SiteParticular* site);
-    
-    
+    Website::Tipo getTipo() const;
 };
 
 #endif

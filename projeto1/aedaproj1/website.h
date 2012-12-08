@@ -14,7 +14,7 @@
 #define website_h
 
 #include <iostream>
-
+//#include "main.h"
 #include "utilizador.h"
 
 using namespace std;
@@ -47,6 +47,9 @@ protected:
     unsigned int numeroPaginas; /**< O numero total de paginas do website */
     string identificador; /**< O identificador (URL) do website */
 public:
+    enum Tipo {
+        particular, empresa
+    };
     /**
      * Construtor de um objeto Website
      * @param i O identificador do website
@@ -205,7 +208,7 @@ public:
      */
     friend ostream & operator<<(ostream &out, Website* w);
 
-    
+    virtual Website::Tipo getTipo() const;
 };
 
 #endif

@@ -51,9 +51,6 @@ public:
      */
     ~Utilizador();
     
-    friend class SiteEmpresa;
-    friend class SiteParticular;
-    
     /**
      * Retorna o numero do bilhete de identidade do utilizador
      * @return O numero do B.I.
@@ -126,6 +123,8 @@ public:
      * @return O vector vec3
      */
     friend vector<Utilizador*> operator-(const vector<Utilizador*> vec1, const vector<Utilizador*> vec2);
+    
+    bool retiraWebsiteResponsavel(Website* w);
 
 };
 

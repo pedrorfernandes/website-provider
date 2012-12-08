@@ -16,6 +16,12 @@ float SiteParticular::custoPorPagina = CUSTOPARTICULAR_PREDEFINIDO;
 
 unsigned int SiteParticular::limitePaginas = LIMITEPAGINAS_PREDEFINIDO;
 
+Website::Tipo SiteParticular::tipo = particular;
+
+Website::Tipo SiteParticular::getTipo() const{
+    return this->tipo;
+}
+
 SiteParticular::SiteParticular(string i, unsigned int n, string tech, Utilizador* gest): Website(i, n), tecnologia(tech), gestor(gest)
 {
     if (n > limitePaginas) {
@@ -28,13 +34,7 @@ SiteParticular::SiteParticular(string i, unsigned int n, string tech, Utilizador
 }
 
 SiteParticular::~SiteParticular(){ // eliminar do gestor este site
-    vector<Website*> & sites = gestor->sitesResponsavel;
-    for (vector<Website*>::iterator site_it = sites.begin(); site_it != sites.end() ; ++site_it) {
-        if ( (*(*site_it)) == this) {
-            site_it = sites.erase(site_it);
-            break;
-        }
-    }
+    gestor->retiraWebsiteResponsavel(this);
 }
 
 string SiteParticular::getTecnologia() const{

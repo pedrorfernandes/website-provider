@@ -17,31 +17,30 @@ ostream & operator<<(ostream &os, Utilizador* u){
     return os;
 }
 
-ostream & operator<<(ostream &out, Website* w){
-    out << w->identificador;
-    return out;
+ostream & operator<<(ostream &out, Website* site){
+    if (site->getTipo() == Website::empresa) {
+        out << site->getIdentificador() << " " << site->getNumeroPaginas() << " ";
+        out << site->getTecnologias().size() << " ";
+        for (vector<string>::iterator tech_it = site->getTecnologias().begin(); tech_it != site->getTecnologias().end() ; tech_it++) {
+            out << (*tech_it) << FIM_DE_STRING_OUTPUT;
+        }
+        out << site->getGestores().size() << " ";
+        for (vector<Utilizador*>::iterator gestor_it = site->getGestores().begin(); gestor_it != site->getGestores().end(); gestor_it++) {
+            if (gestor_it == site->getGestores().end()-1) {
+                out << (*gestor_it);
+            } else
+                out << (*gestor_it) << " ";
+        }
+        return out;
+    } else if (site->getTipo() == Website::particular){
+        out << site->getIdentificador() << " " << site->getNumeroPaginas() << " " << site->getTecnologia() << FIM_DE_STRING_OUTPUT << site->getGestor();
+        return out;
+    } else {
+        out << site->identificador;
+        return out;
+    }
 }
 
-ostream & operator<<(ostream &out, SiteEmpresa* site){
-    out << site->getIdentificador() << " " << site->getNumeroPaginas() << " ";
-    out << site->tecnologias.size() << " ";
-    for (vector<string>::iterator tech_it = site->tecnologias.begin(); tech_it != site->tecnologias.end() ; tech_it++) {
-        out << (*tech_it) << FIM_DE_STRING_OUTPUT;
-    }
-    out << site->gestores.size() << " ";
-    for (vector<Utilizador*>::iterator gestor_it = site->gestores.begin(); gestor_it != site->gestores.end(); gestor_it++) {
-        if (gestor_it == site->gestores.end()-1) {
-            out << (*gestor_it);
-        } else
-            out << (*gestor_it) << " ";
-    }
-    return out;
-}
-
-ostream & operator<<(ostream &out, SiteParticular* site){
-    out << site->getIdentificador() << " " << site->getNumeroPaginas() << " " << site->tecnologia << FIM_DE_STRING_OUTPUT << site->gestor;
-    return out;
-}
 
 ostream & operator<<(ostream &out, Prototipo p){
     out << p.tipo << " " << p.custo << " " << p.horas;
@@ -70,13 +69,11 @@ bool Menu::guardaDados(){
     }
     
     for (vector<Website*>::iterator site_it = wsp->getWebsites().begin(); site_it != wsp->getWebsites().end(); site_it++) {
-        SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(*site_it);
-        SiteParticular* particular = dynamic_cast< SiteParticular* >(*site_it);
-        if (empresa){
-            ficheiro << TAG_EMPRESA << " " << empresa << endl;
+        if ((*site_it)->getTipo() == Website::empresa){
+            ficheiro << TAG_EMPRESA << " " << (*site_it) << endl;
         }
-        if (particular) {
-            ficheiro << TAG_PARTICULAR << " " << particular << endl;
+        if ((*site_it)->getTipo() == Website::particular) {
+            ficheiro << TAG_PARTICULAR << " " << (*site_it) << endl;
         }
     }
     ficheiro.setf(ios::fixed);
@@ -296,9 +293,7 @@ Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
     unsigned int numero = 1;
     for (vector<Website*>::iterator site_it = escolhas.begin(); site_it != escolhas.end(); site_it++, numero++) {
         Website* site = *site_it;
-        SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(site);
-        SiteParticular* particular = dynamic_cast< SiteParticular* >(site);
-        
+
         // seguranca para um numero exagerado de websites no vector
         if (numero > MAX_ELEMENTOS_LISTAGEM) {
             cout << "Foram listados " << MAX_ELEMENTOS_LISTAGEM << " websites, mas existem " << escolhas.size() << " nesta listagem." << endl;
@@ -306,7 +301,7 @@ Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
             break;
         }
         
-        if (particular){// como listar as informacoes se o site for particular
+        if ((*site_it)->getTipo() == Website::particular){// como listar as informacoes se o site for particular
             string nome;
             if (site->getGestor() == NULL) { // verificar se existe gestor
                 nome = "Nenhum";
@@ -323,7 +318,7 @@ Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
             << setw(ESPACO_PEQUENO) << site->getNumeroPaginas()
             << "$" << setw(ESPACO_LISTAGEM) << setprecision(CENTIMOS) << site->getCusto() << endl;
         }
-        if (empresa){ // como listar as informacoes se o site for de uma empresa
+        if ((*site_it)->getTipo() == Website::empresa){ // como listar as informacoes se o site for de uma empresa
             stringstream gestores;
             if (site->getGestores().size() == 0) {
                 gestores << "Nenhum";
@@ -719,10 +714,8 @@ Website* Menu::criar_website(){
 }
 
 void Menu::opcoes(Website* site){
-    SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(site);
-    SiteParticular* particular = dynamic_cast< SiteParticular* >(site);
     
-    if (particular)
+    if (site->getTipo() == Website::particular)
     {
         bool acabado = false;
         while (!acabado)
@@ -814,7 +807,7 @@ void Menu::opcoes(Website* site){
         }
     }
     
-    if (empresa)
+    if (site->getTipo() == Website::empresa)
     {
         bool acabado = false;
         while (!acabado)
@@ -872,7 +865,7 @@ void Menu::opcoes(Website* site){
                     }
                     case 2: // escolher um gestor ja existente que nao pertence ao website
                     {
-                        vector<Utilizador*> gestores_que_nao_estao_no_site = wsp->getGestores() - empresa->getGestores();
+                        vector<Utilizador*> gestores_que_nao_estao_no_site = wsp->getGestores() - site->getGestores();
                         Utilizador* gestor = escolhe(gestores_que_nao_estao_no_site, "Escolha um gestor");
                         if (gestor == NULL) {
                             break;
@@ -1053,10 +1046,8 @@ void Menu::listar_websites(){
         }
         
         Website* site = *site_it;
-        SiteEmpresa* empresa = dynamic_cast< SiteEmpresa* >(site);
-        SiteParticular* particular = dynamic_cast< SiteParticular* >(site);
         
-        if (particular){// como listar as informacoes se o site for particular
+        if (site->getTipo() == Website::particular){// como listar as informacoes se o site for particular
             string nome;
             if (site->getGestor() == NULL) { // verificar se existe gestor
                 nome = "Nenhum";
@@ -1073,7 +1064,7 @@ void Menu::listar_websites(){
             << setw(ESPACO_PEQUENO) << site->getNumeroPaginas()
             << "$" << setw(ESPACO_LISTAGEM) << setprecision(CENTIMOS) << site->getCusto() << endl;
         } 
-        if (empresa){ // como listar as informacoes se o site for de uma empresa
+        if (site->getTipo() == Website::empresa){ // como listar as informacoes se o site for de uma empresa
             stringstream gestores;
             if (site->getGestores().size() == 0) {
                 gestores << "Nenhum";
@@ -1696,15 +1687,15 @@ Menu::Menu(){
     gestores_empresa.push_back("Criar um novo utilizador");
     gestores_empresa.push_back("Escolher um utilizador ja existente");
 
-    /*
+    
     wsp = new GestorWSP();
     cout << "Bem vindo ao gestor de website provider!" << endl;
     leDados();
     while (inicio() != 1) {
         guardaDados();
     }
-    */
     
+    /*
     Catalogo c;
     list<string> techs;
     techs.push_back("c++");
@@ -1722,7 +1713,6 @@ Menu::Menu(){
     } catch (PrototipoNaoExistente &e) {
         cout << "anterior: " << e.getAntes() << " depois: " << e.getDepois() << endl;
     }
-    /*
     if ( c.elimina("Professor") )
         cout << "eliminado " << endl;
     else
@@ -1732,14 +1722,13 @@ Menu::Menu(){
         cout << "eliminado "<< endl;
     else
         cout << "nao eliminado ";
-     */
     
     if ( c.alteraTipo("ProFEssOr", "trolol") ){
         cout << "good" << endl;
     }
     
     c.getPrototipos().printTree();
-     
+     */
     
     cout << "A terminar aplicacao..." << endl;
 }
