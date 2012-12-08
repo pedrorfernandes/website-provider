@@ -21,11 +21,11 @@ ostream & operator<<(ostream &out, Website* site){
     if (site->getTipo() == Website::empresa) {
         out << site->getIdentificador() << " " << site->getNumeroPaginas() << " ";
         out << site->getTecnologias().size() << " ";
-        for (vector<string>::iterator tech_it = site->getTecnologias().begin(); tech_it != site->getTecnologias().end() ; tech_it++) {
+        for (vector<string>::const_iterator tech_it = site->getTecnologias().begin(); tech_it != site->getTecnologias().end() ; tech_it++) {
             out << (*tech_it) << FIM_DE_STRING_OUTPUT;
         }
         out << site->getGestores().size() << " ";
-        for (vector<Utilizador*>::iterator gestor_it = site->getGestores().begin(); gestor_it != site->getGestores().end(); gestor_it++) {
+        for (vector<Utilizador*>::const_iterator gestor_it = site->getGestores().begin(); gestor_it != site->getGestores().end(); gestor_it++) {
             if (gestor_it == site->getGestores().end()-1) {
                 out << (*gestor_it);
             } else
@@ -64,11 +64,11 @@ bool Menu::guardaDados(){
     ofstream ficheiro;
     ficheiro.open(FICHEIRO);
     
-    for (vector<Utilizador*>::iterator gestor_it = wsp->getGestores().begin(); gestor_it != wsp->getGestores().end() ; gestor_it++) {
+    for (vector<Utilizador*>::const_iterator gestor_it = wsp->getGestores().begin(); gestor_it != wsp->getGestores().end() ; gestor_it++) {
         ficheiro << TAG_UTILIZADOR << " " << (*gestor_it) << endl;
     }
     
-    for (vector<Website*>::iterator site_it = wsp->getWebsites().begin(); site_it != wsp->getWebsites().end(); site_it++) {
+    for (vector<Website*>::const_iterator site_it = wsp->getWebsites().begin(); site_it != wsp->getWebsites().end(); site_it++) {
         if ((*site_it)->getTipo() == Website::empresa){
             ficheiro << TAG_EMPRESA << " " << (*site_it) << endl;
         }
@@ -253,10 +253,10 @@ bool Menu::leDados(){
     return true;
 }
 
-unsigned int Menu::escolhe(vector<string> & escolhas, const string &perg){
+unsigned int Menu::escolhe(const vector<string> & escolhas, const string &perg){
     unsigned int i = 0;
     cout << perg << endl;
-    for (vector<string>::iterator opcao = escolhas.begin(); opcao != escolhas.end() ; opcao++, i++) {
+    for (vector<string>::const_iterator opcao = escolhas.begin(); opcao != escolhas.end() ; opcao++, i++) {
         cout << i << " - " << *opcao << endl;
     }
     i--;
@@ -274,7 +274,7 @@ unsigned int Menu::escolhe(vector<string> & escolhas, const string &perg){
     return escolha;
 }
 
-Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
+Website* Menu::escolhe(const vector<Website*> & escolhas, const string & perg){
     unsigned long i = escolhas.size();
     if (escolhas.size() == 0) {
         cout << "Nao existem websites na base de dados!" << endl;
@@ -291,7 +291,7 @@ Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
     << setw(ESPACO_PEQUENO) << "Paginas"
     << setw(ESPACO_LISTAGEM) << "Custo" << endl;
     unsigned int numero = 1;
-    for (vector<Website*>::iterator site_it = escolhas.begin(); site_it != escolhas.end(); site_it++, numero++) {
+    for (vector<Website*>::const_iterator site_it = escolhas.begin(); site_it != escolhas.end(); site_it++, numero++) {
         Website* site = *site_it;
 
         // seguranca para um numero exagerado de websites no vector
@@ -369,14 +369,14 @@ Website* Menu::escolhe(vector<Website*> & escolhas, const string & perg){
     return escolha;
 }
 
-Utilizador* Menu::escolhe(vector<Utilizador*> & escolhas, const string & perg){
+Utilizador* Menu::escolhe(const vector<Utilizador*> & escolhas, const string & perg){
     unsigned int i = 1;
     if (escolhas.size() == 0) {
         cout << "Nao existem utilizadores na base de dados!" << endl;
         return NULL;
     }
     cout << perg << endl;
-    for (vector<Utilizador*>::iterator gestor_it = escolhas.begin(); gestor_it != escolhas.end() ; gestor_it++, i++) {
+    for (vector<Utilizador*>::const_iterator gestor_it = escolhas.begin(); gestor_it != escolhas.end() ; gestor_it++, i++) {
         // seguranca para um numero exagerado de utilizadores no vector
         if (i > MAX_ELEMENTOS_LISTAGEM) {
             cout << "Foram listados " << MAX_ELEMENTOS_LISTAGEM << " utilizadores, mas existem " << escolhas.size() << " nesta listagem." << endl;
@@ -412,7 +412,7 @@ Utilizador* Menu::escolhe(vector<Utilizador*> & escolhas, const string & perg){
 
 
 template<class T>
-T Menu::escolheSemListagem(vector<T> & escolhas, const string & perg){
+T Menu::escolheSemListagem(const vector<T> & escolhas, const string & perg){
     unsigned long i = escolhas.size();
     cout << perg << endl;
     unsigned int numero_escolha;
@@ -626,7 +626,7 @@ Website* Menu::criar_website(){
             while (!acabado) {
                 if (tecnologias.size() > 0) { // escrever que tecnologias ja foram selecionadas
                     cout << "Tecnologias ja adicionadas: ";
-                    for (vector<string>::iterator tech_it = tecnologias.begin(); tech_it != tecnologias.end(); tech_it++) {
+                    for (vector<string>::const_iterator tech_it = tecnologias.begin(); tech_it != tecnologias.end(); tech_it++) {
                         if (tech_it == tecnologias.end()-1) {
                             cout << (*tech_it) << "." << endl;
                         } else
@@ -656,7 +656,7 @@ Website* Menu::criar_website(){
             while (!acabado) {
                 if (gestores.size() > 0) {
                     cout << "Gestores ja adicionados: ";
-                    for (vector<Utilizador*>::iterator gestor_it = gestores.begin(); gestor_it != gestores.end(); gestor_it++) {
+                    for (vector<Utilizador*>::const_iterator gestor_it = gestores.begin(); gestor_it != gestores.end(); gestor_it++) {
                         if (gestor_it == gestores.end()-1) {
                             cout << (*gestor_it)->getNome() << "." << endl;
                         } else
@@ -819,7 +819,7 @@ void Menu::opcoes(Website* site){
                 cout << "Este site nao utiliza qualquer tecnologia!" << endl;
             } else {
                 cout << "Tecnologias utilizadas: ";
-                for (vector<string>::iterator tecnologia = site->getTecnologias().begin(); tecnologia != site->getTecnologias().end(); tecnologia++) {
+                for (vector<string>::const_iterator tecnologia = site->getTecnologias().begin(); tecnologia != site->getTecnologias().end(); tecnologia++) {
                     if (tecnologia == site->getTecnologias().end()-1) {
                         cout << *tecnologia << "." << endl;
                     } else
@@ -831,7 +831,7 @@ void Menu::opcoes(Website* site){
                 cout << "Este site nao tem gestores!" << endl;
             } else {
                 cout << "Gestores: ";
-                for (vector<Utilizador*>::iterator gestor = site->getGestores().begin(); gestor != site->getGestores().end() ; gestor++)
+                for (vector<Utilizador*>::const_iterator gestor = site->getGestores().begin(); gestor != site->getGestores().end() ; gestor++)
                 {
                     if (gestor == site->getGestores().end()-1 )
                     {
@@ -1037,7 +1037,7 @@ void Menu::listar_websites(){
     << setw(ESPACO_LISTAGEM) << "Custo"
     << endl;
     unsigned int numero = 1;
-    for (vector<Website*>::iterator site_it = wsp->getWebsites().begin(); site_it != wsp->getWebsites().end(); site_it++, numero++) {
+    for (vector<Website*>::const_iterator site_it = wsp->getWebsites().begin(); site_it != wsp->getWebsites().end(); site_it++, numero++) {
         // seguranca para um numero exagerado de websites no vector
         if (numero > MAX_ELEMENTOS_LISTAGEM) {
             cout << "Foram listados " << MAX_ELEMENTOS_LISTAGEM << " websites, mas existem no total " << wsp->getWebsites().size() << "." << endl;
@@ -1115,7 +1115,7 @@ void Menu::listar_utilizadores(){
     << setw(ESPACO_LISTAGEM) << "Nome"
     << setw(ESPACO_PEQUENO) << "Numero de B.I." << endl;
     unsigned int numero = 1;
-    for (vector<Utilizador*>::iterator gestor_it = wsp->getGestores().begin(); gestor_it != wsp->getGestores().end(); gestor_it++, numero++)
+    for (vector<Utilizador*>::const_iterator gestor_it = wsp->getGestores().begin(); gestor_it != wsp->getGestores().end(); gestor_it++, numero++)
     {
         // seguranca para um numero exagerado de utilizadores no vector
         if (numero > MAX_ELEMENTOS_LISTAGEM) {

@@ -171,14 +171,14 @@ public:
      *
      * @return Referencia do vector de apontadores para websites
      */
-    vector<Website*> & getWebsites();
+    const vector<Website*> & getWebsites() const;
     
     /**
      * Retorna a referencia do vector de utilizadores
      *
      * @return Referencia do vector de apontadores para utilizadores
      */
-    vector<Utilizador*> & getGestores();
+    const vector<Utilizador*> & getGestores() const;
     
     /**
      * Elimina um website do vector de websites

@@ -138,7 +138,7 @@ public:
      * @param perg A pergunta a ser lancada
      * @return O valor da posicao da escolha no vector, ou 0
      */
-    unsigned int escolhe(vector<string> & escolhas, const string &perg);
+    unsigned int escolhe(const vector<string> & escolhas, const string &perg);
     
     /**
      * Faz uma pergunta, lista um vector de websites que sao as escolhas possiveis e retorna o website que foi escolhido pelo utilizador do programa
@@ -146,7 +146,7 @@ public:
      * @param perg A pergunta a ser lancada
      * @return O apontador para o website escolhido
      */
-    Website* escolhe(vector<Website*> & escolhas, const string & perg);
+    Website* escolhe(const vector<Website*> & escolhas, const string & perg);
     
     /**
      * Faz uma pergunta, lista um vector de gestores que sao as escolhas possiveis e retorna o gestor que foi escolhido pelo utilizador do programa
@@ -154,7 +154,7 @@ public:
      * @param perg A pergunta a ser lancada
      * @return O apontador para o gestor escolhido
      */
-    Utilizador* escolhe(vector<Utilizador*> & escolhas, const string & perg);
+    Utilizador* escolhe(const vector<Utilizador*> & escolhas, const string & perg);
     
     /**
      * Faz uma pergunta e retorna uma escolha do vector de escolhas possiveis. Util para escolher gestores ou websites quando foi previamente feita a listagem destes
@@ -162,7 +162,7 @@ public:
      * @param perg A pergunta a ser lancada
      * @return A escolha
      */
-    template<class T> T escolheSemListagem(vector<T> & escolhas, const string & perg);
+    template<class T> T escolheSemListagem(const vector<T> & escolhas, const string & perg);
     
     /**
      * Funcao que guarda todos os dados do WSP para um ficheiro .txt, segundo uma formatacao especial

@@ -33,7 +33,7 @@ SiteEmpresa::~SiteEmpresa(){ // e' necessario eliminar os sites dos gestores
     }
 }
 
-vector<string> SiteEmpresa::getTecnologias() const{
+const vector<string> SiteEmpresa::getTecnologias() const{
     return tecnologias;
 }
 
@@ -42,13 +42,10 @@ void SiteEmpresa::setTecnologias(const vector<string> &t){
     return;
 }
 
-vector<Utilizador *> & SiteEmpresa::getGestores(){
+const vector<Utilizador *> & SiteEmpresa::getGestores() const{
     return gestores;
 }
 
-const vector<Utilizador *> SiteEmpresa::getConstGestores(){
-    return gestores;
-}
 
 void SiteEmpresa::setGestores(const vector<Utilizador*> &g){
     gestores = g;

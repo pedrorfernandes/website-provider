@@ -52,7 +52,7 @@ public:
      * Retorna o vector de tecnologias do website empresa
      * @return O vector de tecnologias (strings)
      */
-    vector<string> getTecnologias() const;
+    const vector<string> getTecnologias() const;
     
     /**
      * Modifica o vector de tecnologias do website empresa
@@ -65,13 +65,7 @@ public:
      * Retorna o vector de utilizadores que sao gestores website empresa
      * @return O vector de gestores
      */
-    vector<Utilizador *> & getGestores();  // endereco de memoria, assim da para ordenar o vector
-    
-    /**
-     * Retorna um vector imutavel de utilizadores que sao gestores website empresa
-     * @return O vector constante de gestores
-     */
-    const vector<Utilizador *> getConstGestores();
+    const vector<Utilizador *> & getGestores() const;
     
     /**
      * Modifica o vector de gestores do website empresa

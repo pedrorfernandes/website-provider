@@ -140,7 +140,7 @@ public:
      * Retorna o vector de tecnologias do website empresa
      * @return O vector de tecnologias (strings)
      */
-    virtual vector<string> getTecnologias() const;
+    virtual const vector<string> getTecnologias() const;
     
     /**
      * Modifica o vector de tecnologias do website empresa
@@ -153,7 +153,7 @@ public:
      * Retorna o vector de utilizadores que sao gestores website empresa
      * @return O vector de gestores
      */
-    virtual vector<Utilizador *> & getGestores();
+    virtual const vector<Utilizador *> & getGestores() const;
     
     /**
      * Retorna um vector imutavel de utilizadores que sao gestores website empresa

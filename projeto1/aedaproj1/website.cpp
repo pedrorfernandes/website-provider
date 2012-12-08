@@ -53,9 +53,9 @@ Utilizador* Website::getGestor() const{throw Erro("getGestor(): so acessivel a p
 void Website::setGestor(Utilizador* u){throw Erro("setGestor(): so acessivel a partir de SiteParticular");}
 
 // membros funcao para aceder aos dados da filha siteEmpresa
-vector<string> Website::getTecnologias() const{throw Erro("getTecnologias(): so acessivel a partir de SiteEmpresa");}
+const vector<string> Website::getTecnologias() const{throw Erro("getTecnologias(): so acessivel a partir de SiteEmpresa");}
 void Website::setTecnologias(const vector<string> &t){throw Erro("setTecnologias(): so acessivel a partir de SiteEmpresa");}
-vector<Utilizador *> & Website::getGestores(){throw Erro("getGestores(): so acessivel a partir de SiteEmpresa");}
+const vector<Utilizador *> & Website::getGestores() const{throw Erro("getGestores(): so acessivel a partir de SiteEmpresa");}
 void Website::setGestores(const vector<Utilizador*> g){throw Erro("setGestores(): so acessivel a partir de SiteEmpresa");}
 bool Website::novaTecnologia(string &tech){throw Erro("novaTecnologia(): so acessivel a partir de SiteEmpresa");}
 bool Website::retiraTecnologia(const string & tech){throw Erro("retiraTecnologia(): so acessivel a partir de SiteEmpresa");}

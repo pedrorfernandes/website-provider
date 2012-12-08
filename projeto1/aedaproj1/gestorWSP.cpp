@@ -49,10 +49,10 @@ bool GestorWSP::novoSite(Website* w){
 }
 
 
-vector<Website*> & GestorWSP::getWebsites(){
+const vector<Website*> & GestorWSP::getWebsites() const{
     return websites;
 }
-vector<Utilizador*> & GestorWSP::getGestores(){
+const vector<Utilizador*> & GestorWSP::getGestores() const{
     return gestores;
 }
 
@@ -222,7 +222,7 @@ vector<Website*> GestorWSP::pesquisaWebsite(string tipoCriterio, string criterio
                 }
             }
             if ((*site_it)->getTipo() == Website::empresa) {
-                for (vector<string>::iterator tech_it = (*site_it)->getTecnologias().begin(); tech_it != (*site_it)->getTecnologias().end(); tech_it++) {
+                for (vector<string>::const_iterator tech_it = (*site_it)->getTecnologias().begin(); tech_it != (*site_it)->getTecnologias().end(); tech_it++) {
                     aux = (*tech_it);
                     transform(aux.begin(), aux.end(), aux.begin(), ::tolower);
                     if (string::npos != aux.find(criterio))
