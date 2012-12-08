@@ -10,7 +10,7 @@
 //
 
 #ifndef catalogo_h
-#define _catalogo_h
+#define catalogo_h
 
 #include <iostream>
 #include "BST.h"
@@ -44,6 +44,7 @@ public:
 class Catalogo {
 private:
     BST<Prototipo> prototipos;
+    int numPrototipos;
 public:
     Catalogo();
     ~Catalogo();
@@ -55,6 +56,8 @@ public:
     bool alteraTipo(string prototipo, string tipo);
     bool elimina(string prototipo);
     Prototipo consulta(const string prototipo) const;
+    int getNumPrototipos() const;
+    friend ostream & operator<<(ostream &out, Catalogo c);
 };
 
 class PrototipoNaoExistente{

@@ -37,6 +37,8 @@
 #define CENTIMOS 2
 #define MAX_ELEMENTOS_LISTAGEM 50
 
+#define TAG_PROTOTIPO "*PROTOTIPO*"
+
 #include "gestorWSP.h"
 #include "utilizador.h"
 #include "website.h"
@@ -86,6 +88,7 @@ class Menu{
     vector<string> website_ou_utilizador;
     vector<string> superior_ou_inferior;
     vector<string> gestores_empresa;
+    vector<string> consulta_catalogo;
 public:
     /**
      * Construtor de Menu. Neste construtor sao preenchidos os vectores com todos os menus que o utilizador ira visualizar, e' criado um objeto gestor de website provider, sao lidos e guardados todos os dados utilizados pelo website provider. Quando esta funcao termina, o programa tambem termina.
@@ -210,6 +213,11 @@ public:
      * Funcao destinada para permitir o utilizador ler uma informacao importante e so depois de carregar no ENTER pode prosseguir para o menu seguinte
      */
     inline void pressEnter();
+    
+    void consultaCatalogo();
+    
+    Prototipo escolhe(const BST<Prototipo> & escolhas, const string & perg);
+
 
 };
 

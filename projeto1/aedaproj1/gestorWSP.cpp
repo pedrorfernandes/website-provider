@@ -335,5 +335,8 @@ bool GestorWSP::numeroIdentidadeValido(unsigned int numero){
     return true;
 }
 
+Catalogo & GestorWSP::getCatalogo(){
+    return this->catalogo;
+}
 
 

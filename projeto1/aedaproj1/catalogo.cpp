@@ -64,17 +64,10 @@ void Prototipo::setTecnologias(const list<string> & tech){
 }
 
 bool Prototipo::operator < (const Prototipo &p1) const{
-    /*
-    cout << this->tipo << " < " << p1.tipo << ": ";
-    if (tipo < p1.tipo ) cout << "true";
-    else cout << "false";
-    cout << endl;
-     */
     string str1 = tipo; string str2 = p1.tipo;
     transform(str1.begin(), str1.end(),str1.begin(), ::toupper);
     transform(str2.begin(), str2.end(),str2.begin(), ::toupper);
     return str1 < str2;
-	//return tipo < p1.tipo;
 }
 
 bool Prototipo::operator ==(const Prototipo &p1) const{
@@ -82,12 +75,11 @@ bool Prototipo::operator ==(const Prototipo &p1) const{
     transform(str1.begin(), str1.end(),str1.begin(), ::toupper);
     transform(str2.begin(), str2.end(),str2.begin(), ::toupper);
     return str1 == str2;
-	//return tipo == p1.tipo;
 }
 
 // --------- Funcoes classe Catalogo ---------
 
-Catalogo::Catalogo(): prototipos(Prototipo() ){};
+Catalogo::Catalogo(): prototipos(Prototipo() ), numPrototipos(0){};
 
 Catalogo::~Catalogo(){};
 
@@ -97,6 +89,7 @@ BST<Prototipo> Catalogo::getPrototipos() const{
 
 void Catalogo::adicionar(Prototipo &p){
     prototipos.insert(p);
+    numPrototipos++;
     return;
 }
 
@@ -160,6 +153,7 @@ bool Catalogo::elimina(string prototipo){
         return false; // nao foi encontrado
     } else {
         prototipos.remove(encontrado);
+        numPrototipos--;
         return true;
     }
         
@@ -186,6 +180,10 @@ Prototipo Catalogo::consulta(const string prototipo) const{
     }
     else
         return encontrado;
+}
+
+int Catalogo::getNumPrototipos() const{
+    return numPrototipos;
 }
 
 
