@@ -178,7 +178,7 @@ elementAt( BinaryNode<Comparable> *t ) const
     return t->element;
 }
 
-
+/*
 template <class Comparable>
 void BST<Comparable>::
 insert( const Comparable & x, BinaryNode<Comparable> * & t ) const
@@ -192,7 +192,47 @@ insert( const Comparable & x, BinaryNode<Comparable> * & t ) const
   else
     ;  // Duplicate; do nothing
 }
+ */
 
+// MODIFICADA 
+template <class Comparable>
+void BST<Comparable>::
+insert( const Comparable & x, BinaryNode<Comparable> * & t ) const
+{
+    if( t == NULL )
+        t = new BinaryNode<Comparable>( x, NULL, NULL );
+    else if( (*x) < *(t->element) )
+        insert( x, t->left );
+    else if( *(t->element) < (*x) )
+        insert( x, t->right );
+    else
+        ;  // Duplicate; do nothing
+}
+
+template <class Comparable>
+void BST<Comparable>::
+remove( const Comparable & x, BinaryNode<Comparable> * & t ) const
+{
+    if( t == NULL )
+        return;   // Item not found; do nothing
+    if( (*x) < *(t->element) )
+        remove( x, t->left );
+    else if( *(t->element) < (*x) )
+        remove( x, t->right );
+    else if( t->left != NULL && t->right != NULL ) // Two children
+    {
+        t->element = findMin( t->right )->element;
+        remove( t->element, t->right );
+    }
+    else
+    {
+        BinaryNode<Comparable> *oldNode = t;
+        t = ( t->left != NULL ) ? t->left : t->right;
+        delete oldNode;
+    }
+}
+
+/* // ORIGINAL
 template <class Comparable>
 void BST<Comparable>::
 remove( const Comparable & x, BinaryNode<Comparable> * & t ) const
@@ -215,6 +255,7 @@ remove( const Comparable & x, BinaryNode<Comparable> * & t ) const
       delete oldNode;
     }
 }
+ */
 
 template <class Comparable>
 BinaryNode<Comparable> *
@@ -243,6 +284,22 @@ BinaryNode<Comparable> *
 BST<Comparable>::
 find( const Comparable & x, BinaryNode<Comparable> *t ) const
 {
+    if( t == NULL )
+        return NULL;
+    else if( (*x) < *(t->element) )
+        return find( x, t->left );
+    else if( *(t->element) < (*x) )
+        return find( x, t->right );
+    else
+        return t;    // Match
+}
+
+/* // ORIGINAL
+template <class Comparable>
+BinaryNode<Comparable> *
+BST<Comparable>::
+find( const Comparable & x, BinaryNode<Comparable> *t ) const
+{
   if( t == NULL )
     return NULL;
   else if( x < t->element )
@@ -252,6 +309,7 @@ find( const Comparable & x, BinaryNode<Comparable> *t ) const
   else
     return t;    // Match
 }
+ */
 /****** NONRECURSIVE VERSION*************************
         template <class Comparable>
         BinaryNode<Comparable> *

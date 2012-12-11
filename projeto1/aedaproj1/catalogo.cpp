@@ -63,14 +63,29 @@ void Prototipo::setTecnologias(const list<string> & tech){
     return;
 }
 
-bool Prototipo::operator < (const Prototipo &p1) const{
+bool Prototipo::operator < (const Prototipo & p1) const{
     string str1 = tipo; string str2 = p1.tipo;
+    transform(str1.begin(), str1.end(),str1.begin(), ::toupper);
+    transform(str2.begin(), str2.end(),str2.begin(), ::toupper);
+    return str1 < str2;
+     
+}
+
+bool Prototipo::operator < (const Prototipo * p1) const{
+    string str1 = tipo; string str2 = p1->tipo;
     transform(str1.begin(), str1.end(),str1.begin(), ::toupper);
     transform(str2.begin(), str2.end(),str2.begin(), ::toupper);
     return str1 < str2;
 }
 
-bool Prototipo::operator ==(const Prototipo &p1) const{
+bool Prototipo::operator ==(const Prototipo * p1) const{
+    string str1 = tipo; string str2 = p1->tipo;
+    transform(str1.begin(), str1.end(),str1.begin(), ::toupper);
+    transform(str2.begin(), str2.end(),str2.begin(), ::toupper);
+    return str1 == str2;
+}
+
+bool Prototipo::operator ==(const Prototipo & p1) const{
     string str1 = tipo; string str2 = p1.tipo;
     transform(str1.begin(), str1.end(),str1.begin(), ::toupper);
     transform(str2.begin(), str2.end(),str2.begin(), ::toupper);
@@ -79,15 +94,22 @@ bool Prototipo::operator ==(const Prototipo &p1) const{
 
 // --------- Funcoes classe Catalogo ---------
 
-Catalogo::Catalogo(): prototipos(Prototipo() ), numPrototipos(0){};
+Catalogo::Catalogo(): prototipos(new Prototipo() ), numPrototipos(0){};
 
-Catalogo::~Catalogo(){};
+Catalogo::~Catalogo(){
+    BSTItrIn<Prototipo*> it(prototipos);
+    while (!it.isAtEnd()) {
+        delete (it.retrieve());
+        it.advance();
+    }
 
-BST<Prototipo> Catalogo::getPrototipos() const{
+};
+
+BST<Prototipo*> Catalogo::getPrototipos() const{
     return prototipos;
 }
 
-void Catalogo::adicionar(Prototipo &p){
+void Catalogo::adicionar(Prototipo* p){
     prototipos.insert(p);
     numPrototipos++;
     return;
@@ -95,11 +117,11 @@ void Catalogo::adicionar(Prototipo &p){
 
 bool Catalogo::alteraCusto(string prototipo, float custo){
     Prototipo p1(prototipo, 0, 0);
-    BSTItrIn<Prototipo> it(prototipos);
-    while (!it.isAtEnd() && it.retrieve()<p1)
+    BSTItrIn<Prototipo*> it(prototipos);
+    while (!it.isAtEnd() && (*it.retrieve()) < p1)
         it.advance();
-    if (!it.isAtEnd() && it.retrieve()==p1) {
-        it.retrieve().setCusto(custo);
+    if (!it.isAtEnd() && (*it.retrieve())==p1) {
+        it.retrieve()->setCusto(custo);
         return true;
     }
     return false;
@@ -107,11 +129,11 @@ bool Catalogo::alteraCusto(string prototipo, float custo){
 
 bool Catalogo::alteraHoras(string prototipo, unsigned int horas){
     Prototipo p1(prototipo, 0, 0);
-    BSTItrIn<Prototipo> it(prototipos);
-    while (!it.isAtEnd() && it.retrieve()<p1)
+    BSTItrIn<Prototipo*> it(prototipos);
+    while (!it.isAtEnd() && (*it.retrieve()) < p1)
         it.advance();
-    if (!it.isAtEnd() && it.retrieve()==p1) {
-        it.retrieve().setHoras(horas);
+    if (!it.isAtEnd() && (*it.retrieve()) == p1) {
+        it.retrieve()->setHoras(horas);
         return true;
     }
     return false;
@@ -119,67 +141,79 @@ bool Catalogo::alteraHoras(string prototipo, unsigned int horas){
 
 bool Catalogo::alteraTecnologias(string prototipo, list<string> tecnologias){
     Prototipo p1(prototipo, 0, 0);
-    BSTItrIn<Prototipo> it(prototipos);
-    while (!it.isAtEnd() && it.retrieve()<p1)
+    BSTItrIn<Prototipo*> it(prototipos);
+    while (!it.isAtEnd() && (*it.retrieve()) < p1)
         it.advance();
-    if (!it.isAtEnd() && it.retrieve()==p1) {
-        it.retrieve().setTecnologias(tecnologias);
+    if (!it.isAtEnd() && (*it.retrieve()) == p1) {
+        it.retrieve()->setTecnologias(tecnologias);
         return true;
     }
     return false;
 }
 
+void Catalogo::imprimePrototipos() const{
+    BSTItrIn<Prototipo*> it(prototipos);
+    while (!it.isAtEnd()) {
+        cout << *(it.retrieve()) << endl;
+        it.advance();
+    }
+    return;
+}
+
 bool Catalogo::alteraTipo(string prototipo, string tipo){
     Prototipo p1(prototipo, 0, 0);
-    BSTItrIn<Prototipo> it(prototipos);
-    while (!it.isAtEnd() && it.retrieve()<p1)
+    BSTItrIn<Prototipo*> it(prototipos);
+    while (!it.isAtEnd() && (*it.retrieve()) < p1)
         it.advance();
-    if (!it.isAtEnd() && it.retrieve()==p1) {
-        p1 = it.retrieve();
-        prototipos.remove(p1);
-        p1.setTipo(tipo);
-        prototipos.insert(p1);
+    if (!it.isAtEnd() && (*it.retrieve()) == p1) {
+        Prototipo* alterado = it.retrieve();
+        prototipos.remove(alterado);
+        alterado->setTipo(tipo);
+        prototipos.insert(alterado);
         return true;
     }
     return false;
 }
 
 bool Catalogo::elimina(string prototipo){
-    Prototipo p1(prototipo, 0, 0);
-    Prototipo encontrado = prototipos.find(p1);
-    Prototipo pNotFound;
-    if (encontrado == pNotFound)
+    Prototipo p1 (prototipo, 0, 0);
+    Prototipo* encontrado = prototipos.find(&p1);
+    Prototipo pNotFound = Prototipo();
+    if (encontrado == &pNotFound )
     {
         return false; // nao foi encontrado
     } else {
         prototipos.remove(encontrado);
+        delete encontrado;
         numPrototipos--;
         return true;
     }
         
 }
 
-Prototipo Catalogo::consulta(const string prototipo) const{
+Prototipo* Catalogo::consulta(const string prototipo) const{
     Prototipo p1(prototipo,0,0);
-    Prototipo encontrado = prototipos.find(p1);
-    Prototipo pNotFound;
-    if (encontrado == pNotFound)
+    Prototipo* encontrado = prototipos.find(&p1);
+    Prototipo pNotFound = Prototipo();
+    if ((*encontrado) == pNotFound )
     {
-        BSTItrIn<Prototipo> it(prototipos);
-        Prototipo antes, depois;
-        while (!it.isAtEnd() && it.retrieve() < p1 )
+        BSTItrIn<Prototipo*> it(prototipos);
+        Prototipo* antes = NULL;
+        Prototipo* depois = NULL;
+        while (!it.isAtEnd() && (*it.retrieve()) < p1 )
         {
         	antes = it.retrieve();
             it.advance();
         }
         if (!it.isAtEnd())
         {
-        	depois=it.retrieve();
+        	depois = it.retrieve();
         }
         throw PrototipoNaoExistente(antes,depois);
     }
-    else
+    else {
         return encontrado;
+    }
 }
 
 int Catalogo::getNumPrototipos() const{

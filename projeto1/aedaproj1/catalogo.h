@@ -35,38 +35,43 @@ public:
     void setHoras(const unsigned int &h);
     list<string> getTecnologias() const;
     void setTecnologias(const list<string> & tech);
-    bool operator < (const Prototipo &p1) const;
-    bool operator ==(const Prototipo &p1) const;
+    bool operator < (const Prototipo * p1) const;
+    bool operator < (const Prototipo & p1) const;
+    bool operator ==(const Prototipo * p1) const;
+    bool operator ==(const Prototipo & p1) const;
+
     friend ostream & operator<<(ostream &out, Prototipo p);
     
 };
 
 class Catalogo {
 private:
-    BST<Prototipo> prototipos;
+    BST<Prototipo*> prototipos;
     int numPrototipos;
 public:
     Catalogo();
     ~Catalogo();
-    BST<Prototipo> getPrototipos() const;
-    void adicionar(Prototipo &p);
+    BST<Prototipo*> getPrototipos() const;
+    void adicionar(Prototipo* p);
     bool alteraCusto(string prototipo, float custo);
     bool alteraHoras(string prototipo, unsigned int horas);
     bool alteraTecnologias(string prototipo, list<string> tecnologias);
     bool alteraTipo(string prototipo, string tipo);
     bool elimina(string prototipo);
-    Prototipo consulta(const string prototipo) const;
+    Prototipo* consulta(const string prototipo) const;
     int getNumPrototipos() const;
     friend ostream & operator<<(ostream &out, Catalogo c);
+    void imprimePrototipos() const;
 };
 
 class PrototipoNaoExistente{
 private:
-    Prototipo antes, depois;
+    Prototipo* antes;
+    Prototipo* depois;
 public:
-    PrototipoNaoExistente(Prototipo a, Prototipo d): antes(a), depois(d){}
-    Prototipo getAntes() const {return antes;}
-    Prototipo getDepois() const {return depois;}
+    PrototipoNaoExistente(Prototipo* a, Prototipo* d): antes(a), depois(d){}
+    Prototipo* getAntes() {return antes;}
+    Prototipo* getDepois() {return depois;}
 
 };
 

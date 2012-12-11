@@ -55,9 +55,9 @@ ostream & operator<<(ostream &out, Prototipo p){
 }
 
 ostream & operator<<(ostream &out, Catalogo c){
-    BSTItrIn<Prototipo> it(c.prototipos);
+    BSTItrIn<Prototipo*> it(c.prototipos);
     while (!it.isAtEnd()){
-        out << TAG_PROTOTIPO << " " << it.retrieve() << endl;
+        out << TAG_PROTOTIPO << " " << (*it.retrieve()) << endl;
         it.advance();
     }
     return out;
@@ -295,7 +295,7 @@ bool Menu::leDados(){
                 }
                 tecnologias.push_back(tecnologia);
             }
-            Prototipo p(tipo, custo, horas, tecnologias);
+            Prototipo* p = new Prototipo (tipo, custo, horas, tecnologias);
             wsp->getCatalogo().adicionar(p);
         }
         
@@ -1572,21 +1572,39 @@ void Menu::pesquisaNosWebsites(){
 }
 
 
-Prototipo Menu::escolhe(const BST<Prototipo> & escolhas, const string & perg){
-    cout << perg << endl;
-    Prototipo notFound = Prototipo();
-    BSTItrIn<Prototipo> it(escolhas);
+Prototipo* Menu::escolhe(const BST<Prototipo*> & escolhas, const string & perg){
+    //Prototipo notFound = Prototipo();
+    BSTItrIn<Prototipo*> it(escolhas);
     int counter = 0;
-    vector<Prototipo> vecEscolhas;
+    vector<Prototipo*> vecEscolhas;
+    cout << left
+    << setw(ESPACO_MUITO_PEQUENO) << "Numero"
+    << setw(ESPACO_LISTAGEM) << "Tipo"
+    << setw(ESPACO_LISTAGEM) << "Custo"
+    << setw(ESPACO_PEQUENO) << "Tempo prod."
+    << setw(ESPACO_LISTAGEM) << "Tecnologia(s)" << endl;
     while (!it.isAtEnd() ){
         vecEscolhas.push_back(it.retrieve());
         counter++;
-        cout << it.retrieve() << endl;
+        Prototipo* p = it.retrieve();
+        cout.setf(ios::fixed);
+        cout << left
+        << setw(ESPACO_MUITO_PEQUENO) << counter
+        << setw(ESPACO_LISTAGEM) << p->getTipo()
+        << "$" << setw(ESPACO_LISTAGEM) << setprecision(CENTIMOS) << p->getCusto()
+        << setw(ESPACO_PEQUENO) << p->getHoras();
+        if (p->getTecnologias().size() == 1) {
+            cout << setw(ESPACO_LISTAGEM) << p->getTecnologias().front() << endl;
+        } else {
+            stringstream tecnologias;
+            tecnologias << p->getTecnologias().front() << " e mais " << p->getTecnologias().size() -1;
+            cout << setw(ESPACO_LISTAGEM) << tecnologias.str() << endl;
+        }
         it.advance();
     }
     
     unsigned int numero_escolha;
-    cout << PROMPT;
+    cout << perg << endl << PROMPT;
     cin >> numero_escolha;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     while ( cin.fail() || numero_escolha > counter ) {
@@ -1596,14 +1614,103 @@ Prototipo Menu::escolhe(const BST<Prototipo> & escolhas, const string & perg){
         cin >> numero_escolha;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
-    Prototipo escolha;
+    Prototipo* escolha;
     if (numero_escolha == 0) {
-        escolha = notFound;
+        //escolha = notFound;
+        escolha = NULL;
     } else{
         escolha = vecEscolhas.at(numero_escolha-1);
     }
     return escolha;
 
+}
+
+void Menu::opcoes(Prototipo * proto){
+    while (true) {
+        // imprimir as informacoes do prototipo
+        cout.setf(ios::fixed);
+        cout << "Prototipo para uma pagina do tipo: " << proto->getTipo() << endl;
+        cout << "Custo de producao: " << "$" << setprecision(CENTIMOS) << proto->getCusto() << endl;
+        cout << "Horas de desenvolvimento necessarias: " << proto->getHoras() << endl;
+        cout << "Tecnologias implementadas: ";
+        list<string> tecnologias = proto->getTecnologias();
+        for (list<string>::iterator it = tecnologias.begin(); it!= tecnologias.end(); it++) {
+            if ( (*it) == tecnologias.back() ) {
+                cout << (*it) << "." << endl;
+            } else {
+                cout << (*it) << ", ";
+            }
+        }
+        switch (escolhe(opcoes_prototipo, "Selecione uma opcao") ) {
+            case 0: // voltar atras
+                return;
+                break;
+            case 1: // modificar o tipo
+            {
+                string tipo;
+                tipo = pergunta<string>("Qual o novo nome do tipo prototipo? (introduza 0 para cancelar)");
+                
+                if (tipo == "0") break;
+                
+                wsp->getCatalogo().alteraTipo(proto->getTipo(), tipo); // modificar o tipo
+
+                break;
+            }
+            case 2: // modificar o custo
+            {
+                float custo;
+                custo = pergunta<float>("Qual sera o custo de um website deste prototipo? (0 para cancelar)");
+                
+                if (custo < 0) {
+                    custo = pergunta<float>("Custo invalido. Por favor escolha um custo superior a 0");
+                } else if (custo == 0) break;
+                
+                wsp->getCatalogo().alteraCusto(proto->getTipo(), custo);
+                
+                break;
+            }
+            case 3: // modificar o tempo de desenvolvimento
+            {
+                unsigned int horas;
+                horas = pergunta<unsigned int>("Qual sera o custo de um website deste prototipo? (0 para cancelar)");
+                
+                if (horas == 0) break;
+                
+                wsp->getCatalogo().alteraHoras(proto->getTipo(), horas);
+                break;
+            }
+            case 4: // modificar as tecnologias
+            {
+                string tecnologia;
+                list<string> tecnologias;
+                tecnologia = pergunta<string>("Que tecnologia um website deste prototipo implementa?");
+                tecnologias.push_back(tecnologia);
+                
+                while (true) {
+                    tecnologia = pergunta<string>("Que outra tecnologia implementa? (introduza 0 para terminar)");
+                    if (tecnologia == "0"){
+                        break;
+                    } else {
+                        tecnologias.push_back(tecnologia);
+                    }
+                }
+                
+                wsp->getCatalogo().alteraTecnologias(proto->getTipo(), tecnologias);
+
+                break;
+            }
+            case 5: // eliminar proto
+            {
+                cout << "O prototipo " << proto->getTipo() << " foi eliminado!" << endl;
+                pressEnter();
+                wsp->getCatalogo().elimina(proto->getTipo());
+                return;
+                break;
+            }
+            default:
+                break;
+        }
+    }
 }
 
 void Menu::consultaCatalogo(){
@@ -1614,26 +1721,36 @@ void Menu::consultaCatalogo(){
                 return;
                 break;
             case 1: // listar
-                wsp->getCatalogo().getPrototipos().printTree();
+            {
+                Prototipo* escolha = escolhe(wsp->getCatalogo().getPrototipos(), "Escolha um prototipo (0 para cancelar)");
+                if (escolha == NULL )
+                    break;
+                opcoes(escolha);
                 break;
-            case 2: // consultar um proto
+            }
+            case 2: // pesquisar um proto
             {
                 string tipo;
-                tipo = pergunta<string>("Indique o tipo do prototipo que procura");
+                tipo = pergunta<string>("Indique o tipo do prototipo que pretende pesquisar");
                 try {
-                    cout << wsp->getCatalogo().consulta(tipo);
+                    opcoes(wsp->getCatalogo().consulta(tipo));
                 } catch (PrototipoNaoExistente &e) {
                     cout << "Esse tipo de prototipo nao existe no catalogo." << endl;
-                    Prototipo notFound = Prototipo();
-                    BST<Prototipo> outrosResultados (notFound);
-                    if ( !(e.getAntes() == notFound) ){
+                    Prototipo* notFound = new Prototipo();
+                    BST<Prototipo*> outrosResultados (notFound);
+                    if ( e.getAntes() != NULL ){
                         outrosResultados.insert(e.getAntes() );
                     }
-                    if ( !(e.getDepois() == notFound) ){
+                    if ( e.getDepois() != NULL ){
                         outrosResultados.insert(e.getDepois() );
                     }
-                    Prototipo escolha = escolhe(outrosResultados, "Foram encontrados os seguintes resultados:");
-                    //  TO DO
+                    Prototipo* escolha = escolhe(outrosResultados, "");
+                    if (escolha == NULL) {
+                        break;
+                    }
+                    
+                    opcoes(escolha);
+                    
                 }
                 
                 break;
@@ -1646,15 +1763,18 @@ void Menu::consultaCatalogo(){
                 list<string> tecnologias;
                 string tecnologia;
                 
-                tipo = pergunta<string>("O prototipo sera de que tipo de pagina? (Ex: Faculdade, Livraria)");
+                tipo = pergunta<string>("O prototipo sera de que tipo de pagina? (Ex: Faculdade, Livraria / 0 para cancelar)");
                 
-                custo = pergunta<float>("Qual sera o custo de um website deste prototipo?");
+                if (tipo == "0") break;
                 
-                if (custo <= 0) {
+                custo = pergunta<float>("Qual sera o custo de um website deste prototipo? (0 para cancelar)");
+                
+                if (custo < 0) {
                     custo = pergunta<float>("Custo invalido. Por favor escolha um custo superior a 0");
-                }
+                } else if (custo == 0) break;
                 
-                horas = pergunta<unsigned int>("Quantas horas demora a criar um website baseado neste prototipo?");
+                horas = pergunta<unsigned int>("Quantas horas demora a criar um website baseado neste prototipo? (0 para cancelar)");
+                if (horas == 0) break;
                 
                 tecnologia = pergunta<string>("Que tecnologia um website deste prototipo implementa?");
                 tecnologias.push_back(tecnologia);
@@ -1668,54 +1788,13 @@ void Menu::consultaCatalogo(){
                     }
                 }
                 
-                Prototipo p(tipo, custo, horas, tecnologias);
+                Prototipo* p = new Prototipo(tipo, custo, horas, tecnologias);
                 wsp->getCatalogo().adicionar(p);
                 
                 break;
 
             }
-            case 4: // modificar proto
-                break;
-            case 5: // eliminar proto
-                break;
-                
-                /*
-                 list<string> techs;
-                 techs.push_back("c++");
-                 Prototipo professor("professor", 500, 100, techs );
-                 Prototipo Faculdade("Faculdade", 10000, 1000, techs );
-                 Prototipo empresaConstrutora("Empresa Construtora", 100, 50, techs );
-                 Prototipo livraria("livraria", 50, 20, techs );
-                 Prototipo hotel("hotel", 5000, 1000, techs );
-                 
-                 wsp->getCatalogo().adicionar(professor); wsp->getCatalogo().adicionar(Faculdade);
-                 wsp->getCatalogo().adicionar(empresaConstrutora); wsp->getCatalogo().adicionar(livraria);
-                 wsp->getCatalogo().adicionar(hotel);
-                 
-                 try {
-                 cout << wsp->getCatalogo().consulta("prof").getCusto() << endl;
-                 } catch (PrototipoNaoExistente &e) {
-                 cout << "anterior: " << e.getAntes() << " depois: " << e.getDepois() << endl;
-                 }
-                 
-                 if ( wsp->getCatalogo().elimina("Professor") )
-                 cout << "eliminado " << endl;
-                 else
-                 cout << "nao eliminado " << endl;
-                 
-                 if ( wsp->getCatalogo().elimina("professor") )
-                 cout << "eliminado "<< endl;
-                 else
-                 cout << "nao eliminado ";
-                 
-                 if ( wsp->getCatalogo().alteraTipo("ProFEssOr", "trolol") ){
-                 cout << "good" << endl;
-                 }
-                 
-                 wsp->getCatalogo().getPrototipos().printTree();
-                 // */
-                
-                
+            
             default:
                 break;
         }
@@ -1901,13 +1980,17 @@ Menu::Menu(){
     
     consulta_catalogo.push_back("Voltar ao menu anterior");
     consulta_catalogo.push_back("Listar catalogo");
-    consulta_catalogo.push_back("Consultar um prototipo de website");
-    consulta_catalogo.push_back("Adicionar um prototipo");
-    consulta_catalogo.push_back("Modificar um prototipo");
-    consulta_catalogo.push_back("Eliminar um prototipo");
+    consulta_catalogo.push_back("Pesquisar um prototipo de website");
+    consulta_catalogo.push_back("Adicionar um prototipo de website");
+
+    opcoes_prototipo.push_back("Voltar ao menu anterior");
+    opcoes_prototipo.push_back("Modificar tipo");
+    opcoes_prototipo.push_back("Modificar custo");
+    opcoes_prototipo.push_back("Modificar tempo de desenvolvimento");
+    opcoes_prototipo.push_back("Modificar tecnologias");
+    opcoes_prototipo.push_back("Eliminar prototipo");
 
 
-    
     wsp = new GestorWSP();
     cout << "Bem vindo ao gestor de website provider!" << endl;
     leDados();
