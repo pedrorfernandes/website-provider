@@ -10,8 +10,6 @@
 //  ei11122 - Pedro Fernandes
 //
 
-#include <iostream>
-
 #include "main.h"
 
 using namespace std;

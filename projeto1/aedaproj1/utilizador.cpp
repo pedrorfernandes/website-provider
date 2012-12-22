@@ -11,8 +11,6 @@
 //
 
 #include "utilizador.h"
-#include "siteParticular.h"
-#include "siteEmpresa.h"
 
 Utilizador::Utilizador(unsigned int i, string n): numIdentidade(i), nome(n){}
 

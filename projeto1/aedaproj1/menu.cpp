@@ -1997,5 +1997,6 @@ Menu::Menu(){
     while (inicio() != 1) {
         guardaDados();
     }
+    delete wsp;
     cout << "A terminar aplicacao..." << endl;
 }
