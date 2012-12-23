@@ -23,6 +23,7 @@
 #include "siteEmpresa.h"
 #include "siteParticular.h"
 #include "catalogo.h"
+#include "exClientes.h"
 
 /**
  * Uma classe de erro para identificar utilizadores que ja existem no gestorWSP
@@ -44,6 +45,8 @@ class GestorWSP{
     vector<Utilizador*> gestores; /**< O vector de apontadores para todos os gestores */
     
     Catalogo catalogo;
+    ExClientes exclientes;
+    
     
     /**
      * Compara dois identificadores de websites
@@ -299,6 +302,8 @@ public:
     bool numeroIdentidadeValido(unsigned int numero);
     
     Catalogo & getCatalogo();
+    
+    ExClientes & getExClientes();
     
 };
 

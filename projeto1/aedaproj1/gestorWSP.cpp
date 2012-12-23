@@ -74,8 +74,10 @@ bool GestorWSP::eliminaCliente(Utilizador *u){
     for (vector<Utilizador*>::iterator it = gestores.begin(); it != gestores.end(); it++) {
         if ( (*(*it)) == u) {
             if ( (*it)->UtilizadorEliminavel() ) {
-                delete (*it);
-                it = gestores.erase(it);
+                // O cliente a ser eliminado passa a fazer parte da tabela de Exclientes!
+                exclientes.insereExcliente(*it);
+				//delete (*it);
+				it = gestores.erase(it);            
                 return true;
             }
             
@@ -337,6 +339,10 @@ bool GestorWSP::numeroIdentidadeValido(unsigned int numero){
 
 Catalogo & GestorWSP::getCatalogo(){
     return this->catalogo;
+}
+
+ExClientes & GestorWSP::getExClientes(){
+    return this->exclientes;
 }
 
 

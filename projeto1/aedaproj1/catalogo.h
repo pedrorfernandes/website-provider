@@ -12,7 +12,6 @@
 #ifndef catalogo_h
 #define catalogo_h
 
-#include <iostream>
 #include "BST.h"
 #include "website.h"
 #include <list>
@@ -39,7 +38,6 @@ public:
     bool operator < (const Prototipo & p1) const;
     bool operator ==(const Prototipo * p1) const;
     bool operator ==(const Prototipo & p1) const;
-
     friend ostream & operator<<(ostream &out, Prototipo p);
     
 };

@@ -38,6 +38,7 @@
 #define MAX_ELEMENTOS_LISTAGEM 50
 
 #define TAG_PROTOTIPO "*PROTOTIPO*"
+#define TAG_EXCLIENTE "*EXCLIENTE*"
 
 #include "gestorWSP.h"
 #include "utilizador.h"
@@ -90,6 +91,9 @@ class Menu{
     vector<string> gestores_empresa;
     vector<string> consulta_catalogo;
     vector<string> opcoes_prototipo;
+    vector<string> consulta_exclientes;
+    vector<string> opcoes_excliente;
+
 public:
     /**
      * Construtor de Menu. Neste construtor sao preenchidos os vectores com todos os menus que o utilizador ira visualizar, e' criado um objeto gestor de website provider, sao lidos e guardados todos os dados utilizados pelo website provider. Quando esta funcao termina, o programa tambem termina.
@@ -220,6 +224,10 @@ public:
     Prototipo* escolhe(const BST<Prototipo*> & escolhas, const string & perg);
     
     void opcoes(Prototipo* proto);
+    
+    void consultaExClientes();
+    
+    Utilizador* escolhe(const HashClientes & exclientes, const string & perg);
 
 
 };

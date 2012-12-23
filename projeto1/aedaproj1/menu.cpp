@@ -45,9 +45,9 @@ ostream & operator<<(ostream &out, Website* site){
 ostream & operator<<(ostream &out, Prototipo p){
     out.setf(ios::fixed);
     out << p.tipo << FIM_DE_STRING_OUTPUT
-        << setprecision(CENTIMOS) << p.custo << " "
-        << p.horas << " "
-        << p.tecnologias.size() << " ";
+    << setprecision(CENTIMOS) << p.custo << " "
+    << p.horas << " "
+    << p.tecnologias.size() << " ";
     for (list<string>::const_iterator it = p.tecnologias.begin() ; it != p.tecnologias.end() ; it++) {
         out << (*it) << FIM_DE_STRING_OUTPUT;
     }
@@ -63,6 +63,17 @@ ostream & operator<<(ostream &out, Catalogo c){
     return out;
 }
 
+ostream & operator<<(ostream &out, ExClientes &ex){
+    HashClientes::const_iterator it;    
+    for (it = ex.exclientes.begin(); it != ex.exclientes.end(); it++) {
+        if ((*it) != NULL){
+            out << TAG_EXCLIENTE << " " << (*it) << endl;
+        }
+    }
+    return out;
+}
+
+
 
 bool Menu::guardaDados(){
     /*
@@ -73,6 +84,7 @@ bool Menu::guardaDados(){
      *SITEPARTICULAR* www.blog.com 10 Ruby | Pedro | 12345
      *SITEEMPRESA* www.google.com 100 2 c++ | java | 2 Pedro | 12345 Ze | 123
      *PROTOTIPO* Faculdade | 100.00 20 2 Python | Ruby |
+     *EXCLIENTE* Armindo | 456
      *CUSTOPARTICULAR_PREDEFINIDO* 10
      *CUSTOEMPRESA_PREDEFINIDO* 100
      *LIMITEPAGINAS_PREDEFINIDO* 50
@@ -97,6 +109,8 @@ bool Menu::guardaDados(){
     
     ficheiro << wsp->getCatalogo();
     
+    ficheiro << wsp->getExClientes();
+    
     ficheiro << TAG_CUSTO_PARTICULAR << " " << setprecision(CENTIMOS) << SiteParticular::getCustoPorPagina() << endl;
     
     ficheiro << TAG_CUSTO_EMPRESA << " " << setprecision(CENTIMOS) << SiteEmpresa::getCustoPorPagina() << endl;
@@ -106,7 +120,7 @@ bool Menu::guardaDados(){
     
     ficheiro.close();
     return true;
-
+    
 }
 
 
@@ -119,6 +133,7 @@ bool Menu::leDados(){
      *SITEPARTICULAR* www.blog.com 10 Ruby | Pedro | 12345
      *SITEEMPRESA* www.google.com 100 2 c++ | java | 2 Pedro | 12345 Ze | 123
      *PROTOTIPO* Faculdade | 100.00 20 2 Python | Ruby |
+     *EXCLIENTE* Armindo | 456
      *CUSTOPARTICULAR_PREDEFINIDO* 10
      *CUSTOEMPRESA_PREDEFINIDO* 100
      *LIMITEPAGINAS_PREDEFINIDO* 50
@@ -262,7 +277,7 @@ bool Menu::leDados(){
             
             Website* site = new SiteEmpresa(identificador, numeroPaginas, tecnologias, gestores);
             wsp->novoSite(site);
-
+            
             ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
         }
         
@@ -299,9 +314,26 @@ bool Menu::leDados(){
             wsp->getCatalogo().adicionar(p);
         }
         
+        if (ficheiro.good() && str == TAG_EXCLIENTE) {
+            string nome;
+            string str; // string auxiliar para o nome
+            unsigned int numero;
+            ficheiro >> nome;
+            ficheiro >> str;
+            while (str != FIM_DE_STRING) {
+                nome += " ";
+                nome += str;
+                ficheiro >> str;
+            }
+            ficheiro >> numero;
+            ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
+            wsp->getExClientes().insereExcliente(new Utilizador(numero,nome));
+        }
+
+        
         ficheiro >> str;
     }
-
+    
     ficheiro.close();
     
     cout << "Ficheiro de texto encontrado e lido com sucesso!" << endl;
@@ -349,7 +381,7 @@ Website* Menu::escolhe(const vector<Website*> & escolhas, const string & perg){
     unsigned int numero = 1;
     for (vector<Website*>::const_iterator site_it = escolhas.begin(); site_it != escolhas.end(); site_it++, numero++) {
         Website* site = *site_it;
-
+        
         // seguranca para um numero exagerado de websites no vector
         if (numero > MAX_ELEMENTOS_LISTAGEM) {
             cout << "Foram listados " << MAX_ELEMENTOS_LISTAGEM << " websites, mas existem " << escolhas.size() << " nesta listagem." << endl;
@@ -403,7 +435,7 @@ Website* Menu::escolhe(const vector<Website*> & escolhas, const string & perg){
             << "$" << setw(ESPACO_LISTAGEM) << setprecision(CENTIMOS) << site->getCusto() << endl;
         }
     }
-
+    
     //---------------------------------------------------
     unsigned int numero_escolha;
     cout << PROMPT;
@@ -443,7 +475,7 @@ Utilizador* Menu::escolhe(const vector<Utilizador*> & escolhas, const string & p
         cout << i << " - "
         << setw(ESPACO_PEQUENO) << (*gestor_it)->getNome()
         << setw(ESPACO_PEQUENO) << (*gestor_it)->getNumIdentidade() << endl;
-
+        
     }
     i--;
     unsigned int numero_escolha;
@@ -596,7 +628,7 @@ Website* Menu::criar_website(){
         {
             string tecnologia;
             Utilizador* gestor = NULL;
-    
+            
             identificador = pergunta<string>("Escolha um identificador (URL) para o website (Introduza 0 para cancelar)");
             if (identificador == "0") {
                 cout << "Operacao cancelada." << endl;
@@ -637,7 +669,7 @@ Website* Menu::criar_website(){
                 cout << "Operacao cancelada." << endl;
                 pressEnter();
                 return site;
-            } 
+            }
             
             while (!ok) {
                 try {
@@ -843,8 +875,8 @@ void Menu::opcoes(Website* site){
                                 cout << "Operacao cancelada" << endl;
                                 break;
                             } else {
-                            site->setNumeroPaginas(numeroPaginas);
-                            ok = true;
+                                site->setNumeroPaginas(numeroPaginas);
+                                ok = true;
                             }
                         } catch (LimiteDePaginasUltrapassado &e) {
                             cout << e.getMsg() << endl;
@@ -1060,7 +1092,7 @@ void Menu::opcoes(Utilizador* gestor){
                 cout << "A regressar para o utilizador..." << endl;
                 break;
             }
-            case 4:
+            case 4: // eliminar o utilizador
                 if (!wsp->eliminaCliente(gestor) ){
                     cout << "Existem websites cujo unico gestor e' o que pretende eliminar."<< endl;
                     cout << "Por favor primeiro elimine esses websites ou atribuia-lhes um novo gestor" << endl;
@@ -1119,7 +1151,7 @@ void Menu::listar_websites(){
             << setw(ESPACO_LISTAGEM) << site->getTecnologia()
             << setw(ESPACO_PEQUENO) << site->getNumeroPaginas()
             << "$" << setw(ESPACO_LISTAGEM) << setprecision(CENTIMOS) << site->getCusto() << endl;
-        } 
+        }
         if (site->getTipo() == Website::empresa){ // como listar as informacoes se o site for de uma empresa
             stringstream gestores;
             if (site->getGestores().size() == 0) {
@@ -1136,7 +1168,7 @@ void Menu::listar_websites(){
                 tecnologias << site->getTecnologias()[0];
             } else {
                 tecnologias << site->getTecnologias()[0] << " e mais " << site->getTecnologias().size()-1;
-
+                
             }
             cout.setf(ios::fixed);
             cout << left
@@ -1268,7 +1300,7 @@ void Menu::ordenaWebsitesCriterio(){
             break;
     }
     return;
-
+    
 }
 
 
@@ -1350,7 +1382,7 @@ void Menu::pesquisaNosUtilizadores(){
                 }
                 break;
             }
-
+                
                 
             default:
                 break;
@@ -1622,7 +1654,7 @@ Prototipo* Menu::escolhe(const BST<Prototipo*> & escolhas, const string & perg){
         escolha = vecEscolhas.at(numero_escolha-1);
     }
     return escolha;
-
+    
 }
 
 void Menu::opcoes(Prototipo * proto){
@@ -1653,7 +1685,7 @@ void Menu::opcoes(Prototipo * proto){
                 if (tipo == "0") break;
                 
                 wsp->getCatalogo().alteraTipo(proto->getTipo(), tipo); // modificar o tipo
-
+                
                 break;
             }
             case 2: // modificar o custo
@@ -1696,7 +1728,7 @@ void Menu::opcoes(Prototipo * proto){
                 }
                 
                 wsp->getCatalogo().alteraTecnologias(proto->getTipo(), tecnologias);
-
+                
                 break;
             }
             case 5: // eliminar proto
@@ -1778,7 +1810,7 @@ void Menu::consultaCatalogo(){
                 
                 tecnologia = pergunta<string>("Que tecnologia um website deste prototipo implementa?");
                 tecnologias.push_back(tecnologia);
-                                
+                
                 while (true) {
                     tecnologia = pergunta<string>("Que outra tecnologia implementa? (introduza 0 para terminar)");
                     if (tecnologia == "0"){
@@ -1792,15 +1824,99 @@ void Menu::consultaCatalogo(){
                 wsp->getCatalogo().adicionar(p);
                 
                 break;
-
+                
             }
-            
+                
             default:
                 break;
         }
     }
 }
 
+Utilizador* Menu::escolhe(const HashClientes & escolhas, const string & perg){
+    unsigned int i = 1;
+    if (escolhas.size() == 0) {
+        cout << "Nao existem Ex-Clientes na base de dados!" << endl;
+        return NULL;
+    }
+    
+    cout << left
+    << setw(ESPACO_MUITO_PEQUENO) << "Numero"
+    << setw(ESPACO_LISTAGEM) << "Nome"
+    << setw(ESPACO_PEQUENO) << "Numero de B.I." << endl;
+    HashClientes::const_iterator gestor_it;
+    for (gestor_it = escolhas.begin(); gestor_it != escolhas.end() ; gestor_it++, i++) {
+        // seguranca para um numero exagerado de utilizadores no vector
+        if (i > MAX_ELEMENTOS_LISTAGEM) {
+            cout << "Foram listados " << MAX_ELEMENTOS_LISTAGEM << " ex-clientes, mas existem no total " << wsp->getWebsites().size() << "." << endl;
+            cout << "Se pretende encontrar um ex-cliente, por favor utilize a pesquisa." << endl;
+            break;
+        }
+        
+        cout << left
+        << setw(ESPACO_MUITO_PEQUENO)<< i
+        << setw(ESPACO_LISTAGEM) << (*gestor_it)->getNome()
+        << setw(ESPACO_PEQUENO) << (*gestor_it)->getNumIdentidade() << endl;
+        
+    }
+    i--;
+    cout << perg << endl;
+    unsigned int numero_escolha;
+    cout << PROMPT;
+    cin >> numero_escolha;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    while ( cin.fail() || numero_escolha > i ) {
+        cout << "Escolha invalida. Selecione uma opcao de 0 a " << i << "." << endl << PROMPT;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin >> numero_escolha;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    Utilizador* escolha;
+    if (numero_escolha == 0) {
+        escolha = NULL;
+    } else{
+        //escolha = escolhas.at(numero_escolha-1);
+        unsigned int contador = 1;
+        gestor_it = escolhas.begin();
+        while (contador < numero_escolha) {
+            gestor_it++;
+        }
+        escolha = (*gestor_it);
+    }
+    return escolha;
+}
+
+void Menu::consultaExClientes(){
+    while (true) {
+        cout << "Numero de ex-clientes: " << wsp->getExClientes().getNumeroExclientes() << endl;
+        switch (escolhe(consulta_exclientes, "Escolha uma operacao")) {
+            case 0: // voltar ao menu anterior
+                return;
+                break;
+            case 1: // listar a tabela inteira
+            {
+                escolhe(wsp->getExClientes().getHashClientes(), "Escolha um ex-cliente (0 para cancelar)");
+                break;
+            }
+            case 2: // pesquisar um excliente
+            {
+                
+                
+                break;
+            }
+            case 3: // inserir excliente manualmente
+            {
+                
+                break;
+            }
+                
+            default:
+                break;
+        }
+    }
+    
+}
 
 int Menu::inicio(){
     cout << "--------- Menu Principal ---------" << endl;
@@ -1884,8 +2000,12 @@ int Menu::inicio(){
             consultaCustos();
             return 0;
             break;
-        case 6:
+        case 6: // consultar o catalogo de prototipos (BST)
             consultaCatalogo();
+            return 0;
+            break;
+        case 7: // consultar os exclientes (Hash table)
+            consultaExClientes();
             return 0;
             break;
         default:
@@ -1903,6 +2023,8 @@ Menu::Menu(){
     opcoes_inicio.push_back("Ordernar");
     opcoes_inicio.push_back("Consultar custos");
     opcoes_inicio.push_back("Catalogo de Prototipos");
+    opcoes_inicio.push_back("Ex-Clientes");
+    
     
     escolher_tipo_site.push_back("Cancelar");
     escolher_tipo_site.push_back("Site para particular");
@@ -1917,7 +2039,7 @@ Menu::Menu(){
     opcoes_website_particular.push_back("Alterar a tecnologia usada pelo website");
     opcoes_website_particular.push_back("Alterar o numero de paginas do website");
     opcoes_website_particular.push_back("Eliminar o website");
-
+    
     opcoes_website_empresa.push_back("Voltar ao menu anterior");
     opcoes_website_empresa.push_back("Adicionar gestor");
     opcoes_website_empresa.push_back("Retirar gestor");
@@ -1958,7 +2080,7 @@ Menu::Menu(){
     pesquisa_websites.push_back("Pesquisar tecnologia");
     pesquisa_websites.push_back("Pesquisar custo");
     pesquisa_websites.push_back("Pesquisar numero de paginas");
-
+    
     pesquisa_utilizadores.push_back("Cancelar");
     pesquisa_utilizadores.push_back("Nome");
     pesquisa_utilizadores.push_back("Numero de B.I.");
@@ -1982,15 +2104,24 @@ Menu::Menu(){
     consulta_catalogo.push_back("Listar catalogo");
     consulta_catalogo.push_back("Pesquisar um prototipo de website");
     consulta_catalogo.push_back("Adicionar um prototipo de website");
-
+    
     opcoes_prototipo.push_back("Voltar ao menu anterior");
     opcoes_prototipo.push_back("Modificar tipo");
     opcoes_prototipo.push_back("Modificar custo");
     opcoes_prototipo.push_back("Modificar tempo de desenvolvimento");
     opcoes_prototipo.push_back("Modificar tecnologias");
     opcoes_prototipo.push_back("Eliminar prototipo");
-
-
+    
+    consulta_exclientes.push_back("Voltar ao menu anterior");
+    consulta_exclientes.push_back("Listar tabela de exclientes");
+    consulta_exclientes.push_back("Pesquisar exclientes");
+    consulta_exclientes.push_back("Inserir excliente (manualmente)");
+    
+    opcoes_excliente.push_back("Voltar ao menu anterior");
+    opcoes_excliente.push_back("Alterar nome");
+    opcoes_excliente.push_back("Alterar numero do bilhete de identidade");
+    opcoes_excliente.push_back("Eliminar excliente");
+    
     wsp = new GestorWSP();
     cout << "Bem vindo ao gestor de website provider!" << endl;
     leDados();
@@ -1998,5 +2129,6 @@ Menu::Menu(){
         guardaDados();
     }
     delete wsp;
+    
     cout << "A terminar aplicacao..." << endl;
 }
