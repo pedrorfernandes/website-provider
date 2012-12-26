@@ -40,7 +40,9 @@ public:
     void adicionaPedidoParticular(SiteParticular* site);
     bool retiraPedido(Website* site);
     void atualizaPrioridades();
-    
+    unsigned int getNumPedidos() const;
+    vector<Website*> getPedidosEmpresas() const;
+    vector<Website*> getPedidosParticulares() const;
     
     void imprimeEmpresas();
     void imprimeParticulares();

@@ -59,6 +59,29 @@ void Tesouraria::atualizaPrioridades(){
     empresas = tmp;
 }
 
+unsigned int Tesouraria::getNumPedidos() const{
+    return (int)(particulares.size() + empresas.size() );
+}
+
+vector<Website*> Tesouraria::getPedidosEmpresas() const{
+    HEAP_EMPRESAS tmp = empresas;
+    vector<Website*> pedidosEmpresas;
+    while ( !tmp.empty() ) {
+        pedidosEmpresas.push_back(tmp.top() );
+        tmp.pop();
+    }
+    return pedidosEmpresas;
+}
+vector<Website*> Tesouraria::getPedidosParticulares() const{
+    queue<SiteParticular*> tmp = particulares;
+    vector<Website*> pedidosParticulares;
+    while ( !tmp.empty() ) {
+        pedidosParticulares.push_back(tmp.front() );
+        tmp.pop();
+    }
+    return pedidosParticulares;
+}
+
 void Tesouraria::imprimeEmpresas(){
     HEAP_EMPRESAS tmp = empresas;
     while (!tmp.empty() ) {

@@ -61,6 +61,7 @@ bool GestorWSP::eliminaSite(Website* w){
     // eliminar um site nao elimina os gestores
     for (vector<Website*>::iterator it = websites.begin(); it != websites.end(); it++) {
         if ( (*(*it)) == w) {
+            tesouraria.retiraPedido(*it);
             delete (*it);
             it = websites.erase(it);
             return true;

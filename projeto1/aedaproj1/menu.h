@@ -40,6 +40,12 @@
 #define TAG_PROTOTIPO "*PROTOTIPO*"
 #define TAG_EXCLIENTE "*EXCLIENTE*"
 
+#define TITULO_MENU         "--------- Menu Principal ---------"
+#define TITULO_TESOURARIA   "----------- Tesouraria -----------"
+#define TITULO_PROTOTIPOS   "----- Catalogo de Prototipos -----"
+#define TITULO_EXCLIENTES   "---------- Ex-Clientes -----------"
+
+
 #include "gestorWSP.h"
 #include "utilizador.h"
 #include "website.h"
@@ -68,6 +74,9 @@ template<> string pergunta(const string &perg);
  */
 template<> unsigned int pergunta(const string &perg);
 
+template<> bool pergunta(const string &perg);
+
+
 
 /**
  * O menu trata de todos os outputs do programa, cria um GestorWSP e gere todas as introducoes de dados no WSP
@@ -93,6 +102,7 @@ class Menu{
     vector<string> opcoes_prototipo;
     vector<string> consulta_exclientes;
     vector<string> opcoes_excliente;
+    vector<string> consulta_tesouraria;
 
 public:
     /**
@@ -233,7 +243,7 @@ public:
     
     Utilizador* criar_excliente();
 
-
+    void consultaTesouraria();
 
 };
 

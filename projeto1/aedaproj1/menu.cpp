@@ -574,6 +574,28 @@ unsigned int pergunta(const string &perg){
     return resposta_unsigned;
 }
 
+template<>
+bool pergunta(const string &perg){
+    cout << perg << endl << PROMPT;
+    
+    char resposta;
+    cin.clear();
+    cin >> resposta;
+    cin.ignore(numeric_limits<streamsize>::max(),'\n');
+    
+    while (cin.fail() || ( toupper(resposta) != 'S' && toupper(resposta) != 'N') ) {
+        cout << "Confirmacao invalida. Por favor introduza 's' ou 'n' " << endl << PROMPT;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin >> resposta;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    
+    if (toupper(resposta) == 'S') {
+        return true;
+    } else return false;
+}
+
 inline void Menu::pressEnter(){
     cout << "Pressione ENTER para continuar..." << endl;
     getchar();
@@ -1752,6 +1774,7 @@ void Menu::opcoes(Prototipo * proto){
 
 void Menu::consultaCatalogo(){
     while (true) {
+        cout << TITULO_PROTOTIPOS << endl;
         cout << "Numero de prototipos de websites: " << wsp->getCatalogo().getNumPrototipos() << endl;
         switch (escolhe(consulta_catalogo, "Escolha uma operacao")) {
             case 0: // voltar ao menu anterior
@@ -1992,10 +2015,9 @@ Utilizador* Menu::criar_excliente(){
     return u_pointer;
 }
 
-
-
 void Menu::consultaExClientes(){
     while (true) {
+        cout << TITULO_EXCLIENTES << endl;
         cout << "Numero de ex-clientes: " << wsp->getExClientes().getNumeroExclientes() << endl;
         switch (escolhe(consulta_exclientes, "Escolha uma operacao")) {
             case 0: // voltar ao menu anterior
@@ -2031,15 +2053,80 @@ void Menu::consultaExClientes(){
                 break;
         }
     }
-    
+}
+
+void Menu::consultaTesouraria(){
+    while (true) {
+        cout << TITULO_TESOURARIA << endl;
+        cout << "Para adicionar um pedido, crie um website. O pedido será adicionado automaticamente." << endl;
+        cout << "Pode eliminar um pedido (o website esta considerado feito e pago), e o website permanece na base de dados." << endl;
+        cout << "Numero de pedidos atuais: " << wsp->getTesouraria().getNumPedidos() << endl;
+        switch (escolhe(consulta_tesouraria, "Escolha uma operacao")) {
+            case 0: // voltar ao menu anterior
+                return;
+                break;
+            case 1: // listar pedidos empresas
+            {
+                Website* site = escolhe(wsp->getTesouraria().getPedidosEmpresas(), "Escolha um dos pedidos para ver as informacoes (0 para cancelar)");
+                if (site != NULL) {
+                    opcoes(site);
+                    wsp->getTesouraria().atualizaPrioridades();
+                }
+                break;
+            }
+            case 2: // listar pedidos particulares
+            {
+                Website* site = escolhe(wsp->getTesouraria().getPedidosParticulares(), "Escolha um dos pedidos para ver as informacoes (0 para cancelar)");
+                if (site != NULL) {
+                    opcoes(site);
+                }
+                break;
+            }
+            case 3: // eliminar pedido empresa
+            {
+                Website* escolha = escolhe(wsp->getTesouraria().getPedidosEmpresas(), "Escolha um dos pedidos para retirar (0 para cancelar)");
+                if (escolha == NULL) {
+                    break;
+                } else {
+                    stringstream perg;
+                    perg << "Deseja retirar o pedido do website " << escolha->getIdentificador() << " ? (S/N)";
+                    bool decisao = pergunta<bool>(perg.str());
+                    if (decisao == true) {
+                        wsp->getTesouraria().retiraPedido(escolha);
+                        cout << "O pedido do website " << escolha->getIdentificador() << " foi retirado!" << endl;
+                        pressEnter();
+                    }
+                }
+                break;
+
+            }
+            case 4: // eliminar pedido particular
+            {
+                Website* escolha = escolhe(wsp->getTesouraria().getPedidosParticulares(), "Escolha um dos pedidos para retirar (0 para cancelar)");
+                if (escolha == NULL) {
+                    break;
+                } else {
+                    stringstream perg;
+                    perg << "Deseja retirar o pedido do website " << escolha->getIdentificador() << " ? (S/N)";
+                    bool decisao = pergunta<bool>(perg.str());
+                    if (decisao == true) {
+                        wsp->getTesouraria().retiraPedido(escolha);
+                        cout << "O pedido do website " << escolha->getIdentificador() << " foi retirado!" << endl;
+                        pressEnter();
+                    }
+                }
+                break;
+            }
+                
+            default:
+                break;
+        }
+    }
+
 }
 
 int Menu::inicio(){
-    cout << "--------- Menu Principal ---------" << endl;
-    //Website* site = wsp->getWebsites()[0];
-    //wsp->getTesouraria().retiraPedido(site);
-    //wsp->getTesouraria().imprimeEmpresas();
-    //wsp->getTesouraria().imprimeParticulares();
+    cout << TITULO_MENU << endl;
 
     switch (escolhe(opcoes_inicio, "Selecione uma opcao")) {
         case 0: // Terminar aplicacao
@@ -2129,6 +2216,10 @@ int Menu::inicio(){
             consultaExClientes();
             return 0;
             break;
+        case 8: // consultar os pedidos da tesouraria (queues / priority queues)
+            consultaTesouraria();
+            return 0;
+            break;
         default:
             return 0;
             break;
@@ -2145,6 +2236,7 @@ Menu::Menu(){
     opcoes_inicio.push_back("Consultar custos");
     opcoes_inicio.push_back("Catalogo de Prototipos");
     opcoes_inicio.push_back("Ex-Clientes");
+    opcoes_inicio.push_back("Tesouraria");
     
     escolher_tipo_site.push_back("Cancelar");
     escolher_tipo_site.push_back("Site para particular");
@@ -2241,6 +2333,14 @@ Menu::Menu(){
     opcoes_excliente.push_back("Alterar nome");
     opcoes_excliente.push_back("Alterar numero do bilhete de identidade");
     opcoes_excliente.push_back("Eliminar excliente");
+    
+    consulta_tesouraria.push_back("Voltar ao menu anterior");
+    consulta_tesouraria.push_back("Listar pedidos de empresas");
+    consulta_tesouraria.push_back("Listar pedidos de particulares");
+    consulta_tesouraria.push_back("Eliminar pedido de empresa");
+    consulta_tesouraria.push_back("Eliminar pedido de particular");
+
+
     
     wsp = new GestorWSP();
     cout << "Bem vindo ao gestor de website provider!" << endl;
