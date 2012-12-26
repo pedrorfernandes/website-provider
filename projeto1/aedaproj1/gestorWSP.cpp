@@ -345,4 +345,30 @@ ExClientes & GestorWSP::getExClientes(){
     return this->exclientes;
 }
 
+Tesouraria & GestorWSP::getTesouraria(){
+    return this->tesouraria;
+}
+
+
+bool GestorWSP::novoSite(SiteEmpresa* w){
+    for (vector<Website*>::iterator it = websites.begin(); it != websites.end(); it++) {
+        if ( (*(*it)) == w) {
+            return false;
+        }
+    }
+    tesouraria.adicionaPedidoEmpresa(w);
+    websites.push_back(w);
+    return true;
+}
+
+bool GestorWSP::novoSite(SiteParticular* w){
+    for (vector<Website*>::iterator it = websites.begin(); it != websites.end(); it++) {
+        if ( (*(*it)) == w) {
+            return false;
+        }
+    }
+    tesouraria.adicionaPedidoParticular(w);
+    websites.push_back(w);
+    return true;
+}
 

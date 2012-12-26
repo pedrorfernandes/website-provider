@@ -9,8 +9,8 @@
 //  ei11122 - Pedro Fernandes
 //
 
-#ifndef ExCLiente_h
-#define ExCliente_h
+#ifndef exCLiente_h
+#define exCliente_h
 
 
 #include <tr1/unordered_set>

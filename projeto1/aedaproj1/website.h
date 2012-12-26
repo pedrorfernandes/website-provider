@@ -95,7 +95,7 @@ public:
      *
      * @return O valor do custo do website
      */
-    virtual float getCusto() = 0;
+    virtual float getCusto() const = 0;
     
     /**
      * Adiciona o proprio website ao vector de sites responsaveis do novo gestor

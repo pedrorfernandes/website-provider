@@ -51,7 +51,7 @@ void SiteParticular::setGestor(Utilizador* u){
     return;
 }
 
-float SiteParticular::getCusto(){
+float SiteParticular::getCusto() const{
     return custoPorPagina*numeroPaginas;
 }
 

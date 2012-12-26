@@ -227,7 +227,7 @@ bool Menu::leDados(){
             ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
             Utilizador* gestor = wsp->getGestorPointer(Utilizador(numeroGestor, nomeGestor));
             if (gestor != NULL) {
-                Website* site = new SiteParticular(identificador, numeroPaginas, tecnologia, gestor);
+                SiteParticular* site = new SiteParticular(identificador, numeroPaginas, tecnologia, gestor);
                 wsp->novoSite(site);
             }
         }
@@ -275,7 +275,7 @@ bool Menu::leDados(){
                 }
             }
             
-            Website* site = new SiteEmpresa(identificador, numeroPaginas, tecnologias, gestores);
+            SiteEmpresa* site = new SiteEmpresa(identificador, numeroPaginas, tecnologias, gestores);
             wsp->novoSite(site);
             
             ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -674,12 +674,14 @@ Website* Menu::criar_website(){
             
             while (!ok) {
                 try {
-                    wsp->novoSite(site = new SiteParticular(identificador, numeroPaginas, tecnologia, gestor));
+                    SiteParticular* site = new SiteParticular(identificador, numeroPaginas, tecnologia, gestor);
+                    wsp->novoSite(site);
                     ok = true;
                     
                 } catch (LimiteDePaginasUltrapassado &e) {
                     cout << e.getMsg() << endl;
                     numeroPaginas = pergunta<unsigned int>("Escolha um numero de paginas");
+                    delete site;
                 }
             }
             cout << "O website " << identificador << " foi criado com sucesso!" << endl;
@@ -784,10 +786,12 @@ Website* Menu::criar_website(){
             }
             while (!ok) {
                 try {
-                    wsp->novoSite(site = new SiteEmpresa(identificador, numeroPaginas, tecnologias, gestores));
+                    SiteEmpresa* site = new SiteEmpresa(identificador, numeroPaginas, tecnologias, gestores);
+                    wsp->novoSite(site);
                     ok = true;
                 } catch (...) {
                     cout << "Erro. Nao foi possivel adicionar o website empresa." << endl;
+                    delete site;
                     break;
                 }
             }
@@ -2032,6 +2036,11 @@ void Menu::consultaExClientes(){
 
 int Menu::inicio(){
     cout << "--------- Menu Principal ---------" << endl;
+    //Website* site = wsp->getWebsites()[0];
+    //wsp->getTesouraria().retiraPedido(site);
+    //wsp->getTesouraria().imprimeEmpresas();
+    //wsp->getTesouraria().imprimeParticulares();
+
     switch (escolhe(opcoes_inicio, "Selecione uma opcao")) {
         case 0: // Terminar aplicacao
             return 1;

@@ -91,7 +91,7 @@ public:
      * Retorna o custo do website empresa. O custo e' calculado atraves da multiplicacao do numero de paginas do website com o custo por paginas
      * @return O valor do custo total do website empresa
      */
-    float getCusto();
+    float getCusto() const;
     
     /**
      * Adiciona uma nova tecnologia ao vector de tecnologias do website empresa
@@ -122,6 +122,7 @@ public:
     bool retiraGestor(Utilizador* u);
     
     Website::Tipo getTipo() const;
+
 };
 
 #endif

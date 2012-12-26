@@ -123,7 +123,7 @@ public:
      * Retorna o custo do website. O custo e' calculado multiplicando o numero de paginas pelo custo por pagina
      * @return O valor do custo do website particular
      */
-    float getCusto();
+    float getCusto() const;
     
     Website::Tipo getTipo() const;
 };

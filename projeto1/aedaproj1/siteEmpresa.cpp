@@ -52,7 +52,7 @@ void SiteEmpresa::setGestores(const vector<Utilizador*> &g){
     return;
 }
 
-float SiteEmpresa::getCusto(){
+float SiteEmpresa::getCusto() const{
     return custoPorPagina*numeroPaginas;
 }
 
@@ -104,4 +104,3 @@ void SiteEmpresa::novoGestor(Utilizador* u){
 float SiteEmpresa::getCustoPorPagina(){
     return custoPorPagina;
 }
-
