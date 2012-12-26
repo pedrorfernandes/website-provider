@@ -609,6 +609,7 @@ Utilizador* Menu::criar_utilizador(){
             ok = true;
         } catch (UtilizadorJaExistente &e) {
             cout << "O utilizador com B.I. " << e.getMsg() << " ja existe. Por favor selecione um novo." << endl;
+            delete u_pointer;
         }
     }
     return u_pointer;
@@ -1881,11 +1882,113 @@ Utilizador* Menu::escolhe(const HashClientes & escolhas, const string & perg){
         gestor_it = escolhas.begin();
         while (contador < numero_escolha) {
             gestor_it++;
+            contador++;
         }
         escolha = (*gestor_it);
     }
     return escolha;
 }
+
+void Menu::opcoesExcliente(Utilizador* gestor){
+    bool acabado = false;
+    while (!acabado)
+    {
+        cout << "Nome do excliente: " << gestor->getNome() << endl;
+        cout << "Numero de identidade: " << gestor->getNumIdentidade() << endl;
+        
+        switch (escolhe(opcoes_excliente, "Selecione uma opcao")) {
+            case 0: // cancelar
+                acabado = true;
+                break;
+            case 1: // Alterar o nome do utilizador
+            {
+                string nome = pergunta<string>("Selecione um novo nome de utilizador");
+                wsp->getExClientes().alteraDadosExclienteNome(nome, gestor);
+                break;
+            }
+            case 2: // Alterar o numero do BI
+            {
+                while (true) {
+                    unsigned int numero = pergunta<unsigned int>("Selecione um novo numero de bilhete de identidade");
+                    while (numero <= 10000000 || numero >= 99999999) {
+                        if (numero == 0) {
+                            cout << "Operacao cancelada." << endl;
+                            pressEnter();
+                            break;
+                        }
+                        numero = pergunta<unsigned int>("Numero invalido.\nPor favor indique um numero com 8 digitos (Introduza 0 para cancelar)");
+                    }
+                    if (wsp->numeroIdentidadeValido(numero) ){
+                        wsp->getExClientes().alteraDadosExclienteNumBI(numero, gestor);
+                        break;
+                    }
+                    cout << "Numero de bilhete de identidade ja existente." << endl;
+                }
+                break;
+            }
+            case 3: // eliminar o ex cliente da tabela
+            {
+                string nome = gestor->getNome();
+                if (wsp->getExClientes().removeExcliente(gestor) ){
+                    cout << "O ex-cliente " << nome << " foi eliminado da tabela com sucesso!" << endl;
+                    pressEnter();
+                    return;
+                } else
+                    break;
+            }
+            default:
+                break;
+        }
+        
+    }
+    
+    return;
+}
+
+Utilizador* Menu::criar_excliente(){
+    string nome;
+    unsigned int numIdentidade = 1;
+    bool ok = false;
+    Utilizador* u_pointer = NULL;
+    while (!ok) {
+        
+        nome = pergunta<string>("Escolha o nome do ex-cliente (Introduza 0 para cancelar)");
+        if (nome == "0") {
+            cout << "Operacao cancelada." << endl;
+            pressEnter();
+            break;
+        }
+        numIdentidade = pergunta<unsigned int>("Indique o numero do bilhete de identidade, com 8 digitos (Introduza 0 para cancelar)");
+        while (numIdentidade <= 10000000 || numIdentidade >= 99999999) {
+            if (numIdentidade == 0) {
+                cout << "Operacao cancelada." << endl;
+                pressEnter();
+                return u_pointer;
+            }
+            numIdentidade = pergunta<unsigned int>("Numero invalido.\nPor favor indique um numero com 8 digitos (Introduza 0 para cancelar)");
+        }
+        u_pointer = new Utilizador(numIdentidade, nome);
+        
+        try {
+            wsp->getExClientes().getExCliente(numIdentidade,nome);
+            cout << "Esse ex-cliente ja se encontra na tabela! A operacao foi cancelada." << endl;
+            pressEnter();
+            delete u_pointer;
+        } catch (ExClienteNaoExistente &e) {
+            // verificar se alguem tem o BI igual a alguem na tabela
+            if (wsp->getExClientes().getExCliente(numIdentidade) != NULL){
+                cout << "Um ex-cliente com esse numero de bilhete de identidade ja existe na tabela.\n A operacao foi cancelada." << endl;
+                pressEnter();
+                delete u_pointer;
+            } else
+                ok = true;
+        }
+        
+    }
+    return u_pointer;
+}
+
+
 
 void Menu::consultaExClientes(){
     while (true) {
@@ -1896,18 +1999,27 @@ void Menu::consultaExClientes(){
                 break;
             case 1: // listar a tabela inteira
             {
-                escolhe(wsp->getExClientes().getHashClientes(), "Escolha um ex-cliente (0 para cancelar)");
+                Utilizador* escolha = escolhe(wsp->getExClientes().getHashClientes(), "Escolha um ex-cliente (0 para cancelar)");
+                if (escolha == NULL )
+                    break;
+                opcoesExcliente(escolha);
                 break;
             }
             case 2: // pesquisar um excliente
             {
-                
-                
+                string pesquisa = pergunta<string>("Que nome pretende pesquisar?");
+                Utilizador* escolha = escolhe(wsp->getExClientes().pesquisaExClientes(pesquisa), "Foram encontrados os seuintes resultados.\n Escolha um ex-cliente (0 para cancelar)");
+                if (escolha == NULL )
+                    break;
+                opcoesExcliente(escolha);
                 break;
             }
             case 3: // inserir excliente manualmente
             {
-                
+                Utilizador * excliente = criar_excliente();
+                if (excliente != NULL) {
+                    wsp->getExClientes().insereExcliente(excliente);
+                }
                 break;
             }
                 
@@ -2024,7 +2136,6 @@ Menu::Menu(){
     opcoes_inicio.push_back("Consultar custos");
     opcoes_inicio.push_back("Catalogo de Prototipos");
     opcoes_inicio.push_back("Ex-Clientes");
-    
     
     escolher_tipo_site.push_back("Cancelar");
     escolher_tipo_site.push_back("Site para particular");

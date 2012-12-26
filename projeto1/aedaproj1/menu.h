@@ -228,6 +228,11 @@ public:
     void consultaExClientes();
     
     Utilizador* escolhe(const HashClientes & exclientes, const string & perg);
+    
+    void opcoesExcliente(Utilizador* gestor);
+    
+    Utilizador* criar_excliente();
+
 
 
 };
