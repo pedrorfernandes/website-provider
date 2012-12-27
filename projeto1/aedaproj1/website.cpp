@@ -13,7 +13,7 @@
 #include "website.h"
 
 
-Website::Website(string i, unsigned int n): numeroPaginas(n), identificador(i){}
+Website::Website(string i, unsigned int n): numeroPaginas(n), identificador(i), pedidoFinalizado(false){}
 
 Website::~Website(){}
 
@@ -64,3 +64,12 @@ bool Website::retiraGestor(Utilizador* u){throw Erro("novoGestor(): so acessivel
 
 Website::Tipo Website::getTipo() const{throw Erro("getTipo(): nao acessivel por Website");}
 
+Website::Website(string i, unsigned int n, bool pedido): identificador(i), numeroPaginas(n), pedidoFinalizado(pedido){}
+
+bool Website::getPedidoFinalizado() const{
+    return pedidoFinalizado;
+}
+
+void Website::setPedidoFinalizado(bool status){
+    this->pedidoFinalizado = status;
+}

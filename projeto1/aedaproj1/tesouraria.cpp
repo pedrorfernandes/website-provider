@@ -14,11 +14,18 @@
 Tesouraria::Tesouraria(){}
 
 void Tesouraria::adicionaPedidoEmpresa(SiteEmpresa* site){
-    empresas.push(site);
+    if (site->getPedidoFinalizado() == false) {
+        // o pedido nao foi finalizado, deve estar na fila
+        empresas.push(site);
+    } else
+        pedidosRetirados.push_back(site);
 }
 
 void Tesouraria::adicionaPedidoParticular(SiteParticular* site){
-    particulares.push(site);
+    if (site->getPedidoFinalizado() == false) {
+        particulares.push(site);
+    } else
+        pedidosRetirados.push_back(site);
 }
 
 bool Tesouraria::retiraPedido(Website* site){
@@ -27,6 +34,8 @@ bool Tesouraria::retiraPedido(Website* site){
         bool found = false;
         while ( !empresas.empty() ) {
             if ((*empresas.top() ) == site) {
+                site->setPedidoFinalizado(true);
+                pedidosRetirados.push_back(site);
                 found = true;
             } else
                 tmp.push(empresas.top() );
@@ -39,6 +48,8 @@ bool Tesouraria::retiraPedido(Website* site){
         bool found = false;
         while ( !particulares.empty() ) {
             if ((*particulares.front()) == site) {
+                site->setPedidoFinalizado(true);
+                pedidosRetirados.push_back(site);
                 found = true;
             } else
                 tmp.push(particulares.front() );
@@ -82,6 +93,10 @@ vector<Website*> Tesouraria::getPedidosParticulares() const{
     return pedidosParticulares;
 }
 
+const vector<Website*> & Tesouraria::getPedidosRetirados() const{
+    return pedidosRetirados;
+}
+
 void Tesouraria::imprimeEmpresas(){
     HEAP_EMPRESAS tmp = empresas;
     while (!tmp.empty() ) {
@@ -96,4 +111,23 @@ void Tesouraria::imprimeParticulares(){
         cout << tmp.front() << endl;
         tmp.pop();
     }
+}
+
+void Tesouraria::adicionaPedidoRetirado(Website* site){
+    site->setPedidoFinalizado(false);
+    if (site->getTipo() == Website::empresa) {
+        SiteEmpresa * empresa = static_cast<SiteEmpresa*>(site);
+        this->adicionaPedidoEmpresa(empresa);
+    } else if (site->getTipo() == Website::particular){
+        SiteParticular * particular = static_cast<SiteParticular*>(site);
+        this->adicionaPedidoParticular(particular);
+    }
+    vector<Website*>::iterator it;
+    for (it = pedidosRetirados.begin(); it != pedidosRetirados.end(); it++) {
+        if ((*(*it)) == site ) {
+            it = pedidosRetirados.erase(it);
+            break;
+        }
+    }
+    return;
 }

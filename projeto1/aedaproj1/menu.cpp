@@ -31,9 +31,11 @@ ostream & operator<<(ostream &out, Website* site){
             } else
                 out << (*gestor_it) << " ";
         }
+        out << " " << boolalpha << site->getPedidoFinalizado();
         return out;
     } else if (site->getTipo() == Website::particular){
         out << site->getIdentificador() << " " << site->getNumeroPaginas() << " " << site->getTecnologia() << FIM_DE_STRING_OUTPUT << site->getGestor();
+        out << " " << boolalpha << site->getPedidoFinalizado();
         return out;
     } else {
         out << site->identificador;
@@ -207,6 +209,7 @@ bool Menu::leDados(){
             string nomeGestor;
             string str = ""; // string auxiliar
             unsigned int numeroGestor;
+            bool statusPedido;
             ficheiro >> identificador;
             ficheiro >> numeroPaginas;
             ficheiro >> tecnologia;
@@ -224,12 +227,14 @@ bool Menu::leDados(){
                 ficheiro >> str;
             }
             ficheiro >> numeroGestor;
-            ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
+            ficheiro >> boolalpha >> statusPedido;
             Utilizador* gestor = wsp->getGestorPointer(Utilizador(numeroGestor, nomeGestor));
             if (gestor != NULL) {
                 SiteParticular* site = new SiteParticular(identificador, numeroPaginas, tecnologia, gestor);
+                site->setPedidoFinalizado(statusPedido);
                 wsp->novoSite(site);
             }
+            ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
         }
         
         if (ficheiro.good() && str == TAG_EMPRESA) {
@@ -244,6 +249,7 @@ bool Menu::leDados(){
             unsigned int numeroGestor;
             Utilizador* gestor;
             vector<Utilizador*> gestores;
+            bool statusPedido;
             //*SiteEmpresa* www.google.com 100 2 c++ | java | 2 Pedro | 12345 Ze | 123
             ficheiro >> identificador;
             ficheiro >> numeroPaginas;
@@ -274,8 +280,9 @@ bool Menu::leDados(){
                     gestores.push_back(gestor);
                 }
             }
-            
+            ficheiro >> boolalpha >> statusPedido;
             SiteEmpresa* site = new SiteEmpresa(identificador, numeroPaginas, tecnologias, gestores);
+            site->setPedidoFinalizado(statusPedido);
             wsp->novoSite(site);
             
             ficheiro.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -2117,6 +2124,23 @@ void Menu::consultaTesouraria(){
                 }
                 break;
             }
+            case 5: // adicionar um pedido
+            {
+                if (wsp->getTesouraria().getPedidosRetirados().size() == 0) {
+                    cout << "Nao ha websites sem pedidos associados.\nPor favor crie um novo website para adicionar esse pedido." << endl;
+                    pressEnter();
+                    break;
+                }
+                Website* escolha = escolhe(wsp->getTesouraria().getPedidosRetirados(), "Escolha um dos pedidos para adicionar (0 para cancelar)");
+                if (escolha == NULL) {
+                    break;
+                } else {
+                    wsp->getTesouraria().adicionaPedidoRetirado(escolha);
+                    cout << "O pedido do website " << escolha->getIdentificador() << " foi adicionado com sucesso!" << endl;
+                    pressEnter();
+                }
+                break;
+            }
                 
             default:
                 break;
@@ -2127,7 +2151,6 @@ void Menu::consultaTesouraria(){
 
 int Menu::inicio(){
     cout << TITULO_MENU << endl;
-
     switch (escolhe(opcoes_inicio, "Selecione uma opcao")) {
         case 0: // Terminar aplicacao
             return 1;
@@ -2339,6 +2362,7 @@ Menu::Menu(){
     consulta_tesouraria.push_back("Listar pedidos de particulares");
     consulta_tesouraria.push_back("Eliminar pedido de empresa");
     consulta_tesouraria.push_back("Eliminar pedido de particular");
+    consulta_tesouraria.push_back("Adicionar um pedido");
 
 
     

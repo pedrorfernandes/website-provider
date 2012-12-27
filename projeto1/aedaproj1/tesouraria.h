@@ -34,6 +34,7 @@ typedef priority_queue<SiteEmpresa*, vector<SiteEmpresa*>, ComparaEmpresas> HEAP
 class Tesouraria{
     queue<SiteParticular*> particulares;
     HEAP_EMPRESAS empresas;
+    vector<Website*> pedidosRetirados;
 public:
     Tesouraria();
     void adicionaPedidoEmpresa(SiteEmpresa* site);
@@ -43,6 +44,8 @@ public:
     unsigned int getNumPedidos() const;
     vector<Website*> getPedidosEmpresas() const;
     vector<Website*> getPedidosParticulares() const;
+    const vector<Website*> & getPedidosRetirados() const;
+    void adicionaPedidoRetirado(Website* site);
     
     void imprimeEmpresas();
     void imprimeParticulares();

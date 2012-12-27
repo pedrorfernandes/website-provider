@@ -46,6 +46,7 @@ class Website{
 protected:
     unsigned int numeroPaginas; /**< O numero total de paginas do website */
     string identificador; /**< O identificador (URL) do website */
+    bool pedidoFinalizado;
 public:
     enum Tipo {
         particular, empresa
@@ -209,6 +210,12 @@ public:
     friend ostream & operator<<(ostream &out, Website* w);
 
     virtual Website::Tipo getTipo() const;
+    
+    Website(string i, unsigned int n, bool pedido);
+    
+    bool getPedidoFinalizado() const;
+    
+    void setPedidoFinalizado(bool status);
 };
 
 #endif
