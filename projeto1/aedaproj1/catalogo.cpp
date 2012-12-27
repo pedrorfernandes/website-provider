@@ -105,7 +105,7 @@ Catalogo::~Catalogo(){
 
 };
 
-BST<Prototipo*> Catalogo::getPrototipos() const{
+BST<Prototipo*> & Catalogo::getPrototipos(){
     return prototipos;
 }
 

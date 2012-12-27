@@ -49,7 +49,7 @@ private:
 public:
     Catalogo();
     ~Catalogo();
-    BST<Prototipo*> getPrototipos() const;
+    BST<Prototipo*> & getPrototipos();
     void adicionar(Prototipo* p);
     bool alteraCusto(string prototipo, float custo);
     bool alteraHoras(string prototipo, unsigned int horas);
@@ -58,7 +58,7 @@ public:
     bool elimina(string prototipo);
     Prototipo* consulta(const string prototipo) const;
     int getNumPrototipos() const;
-    friend ostream & operator<<(ostream &out, Catalogo c);
+    friend ostream & operator<<(ostream &out, Catalogo &c);
     void imprimePrototipos() const;
 };
 

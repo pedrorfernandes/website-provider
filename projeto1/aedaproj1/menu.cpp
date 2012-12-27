@@ -54,7 +54,7 @@ ostream & operator<<(ostream &out, Prototipo p){
     return out;
 }
 
-ostream & operator<<(ostream &out, Catalogo c){
+ostream & operator<<(ostream &out, Catalogo &c){
     BSTItrIn<Prototipo*> it(c.prototipos);
     while (!it.isAtEnd()){
         out << TAG_PROTOTIPO << " " << (*it.retrieve()) << endl;
