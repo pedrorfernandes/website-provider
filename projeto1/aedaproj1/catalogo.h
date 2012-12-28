@@ -60,6 +60,10 @@ public:
     int getNumPrototipos() const;
     friend ostream & operator<<(ostream &out, Catalogo &c);
     void imprimePrototipos() const;
+    vector<Prototipo*> pesquisaHoras(int horas, string criterio);
+    vector<Prototipo*> pesquisaCusto(float custo, string criterio);
+    vector<Prototipo*> pesquisaTecnologias(string pesquisa);
+
 };
 
 class PrototipoNaoExistente{

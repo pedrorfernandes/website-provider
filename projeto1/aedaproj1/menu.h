@@ -103,6 +103,7 @@ class Menu{
     vector<string> consulta_exclientes;
     vector<string> opcoes_excliente;
     vector<string> consulta_tesouraria;
+    vector<string> pesquisa_prototipos;
 
 public:
     /**
@@ -233,6 +234,8 @@ public:
     
     Prototipo* escolhe(const BST<Prototipo*> & escolhas, const string & perg);
     
+    Prototipo* escolhe(const vector<Prototipo*> & escolhas, const string & perg);
+    
     void opcoes(Prototipo* proto);
     
     void consultaExClientes();
@@ -244,6 +247,10 @@ public:
     Utilizador* criar_excliente();
 
     void consultaTesouraria();
+    
+    void pesquisaNosPrototipos();
+
+    
 
 };
 

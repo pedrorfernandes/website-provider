@@ -220,6 +220,74 @@ int Catalogo::getNumPrototipos() const{
     return numPrototipos;
 }
 
+vector<Prototipo*> Catalogo::pesquisaHoras(int horas, string criterio){
+    vector<Prototipo*> resultados;
+    BSTItrIn<Prototipo*> it(prototipos);
+    if (criterio == "superior") {
+        while (!it.isAtEnd()){
+            Prototipo* p = it.retrieve();
+            if (p->getHoras() > horas){
+                resultados.push_back(p);
+            }
+            it.advance();
+        }
+    } else if (criterio == "inferior"){
+        while (!it.isAtEnd()){
+            Prototipo* p = it.retrieve();
+            if (p->getHoras() < horas){
+                resultados.push_back(p);
+            }
+            it.advance();
+        }
+    }
+    
+    return resultados;
+}
 
+vector<Prototipo*> Catalogo::pesquisaCusto(float custo, string criterio){
+    vector<Prototipo*> resultados;
+    BSTItrIn<Prototipo*> it(prototipos);
+    if (criterio == "superior") {
+        while (!it.isAtEnd()){
+            Prototipo* p = it.retrieve();
+            if (p->getCusto() > custo){
+                resultados.push_back(p);
+            }
+            it.advance();
+        }
+    } else if (criterio == "inferior"){
+        while (!it.isAtEnd()){
+            Prototipo* p = it.retrieve();
+            if (p->getCusto() < custo){
+                resultados.push_back(p);
+            }
+            it.advance();
+        }
+    }
+    
+    return resultados;
+}
 
-
+vector<Prototipo*> Catalogo::pesquisaTecnologias(string pesquisa){
+    vector<Prototipo*> resultados;
+    BSTItrIn<Prototipo*> it(prototipos);
+    transform(pesquisa.begin(), pesquisa.end(), pesquisa.begin(), ::tolower);
+    string aux;
+    while (!it.isAtEnd() ) {
+        Prototipo* p = it.retrieve();
+        list<string> tecnologias = p->getTecnologias();
+        list<string>::iterator list_it;
+        for (list_it = tecnologias.begin(); list_it != tecnologias.end(); list_it++) {
+            aux = (*list_it);
+            transform(aux.begin(), aux.end(), aux.begin(), ::tolower);
+            if (string::npos != aux.find(pesquisa))
+            {
+                resultados.push_back(p);
+                break;
+            }
+        }
+        it.advance();
+    }
+    
+    return resultados;
+}

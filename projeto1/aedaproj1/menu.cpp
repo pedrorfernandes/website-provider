@@ -1691,6 +1691,55 @@ Prototipo* Menu::escolhe(const BST<Prototipo*> & escolhas, const string & perg){
     
 }
 
+Prototipo* Menu::escolhe(const vector<Prototipo*> & escolhas, const string & perg){
+    vector<Prototipo*>::const_iterator it;
+    int counter = 0;
+    cout << left
+    << setw(ESPACO_MUITO_PEQUENO) << "Numero"
+    << setw(ESPACO_LISTAGEM) << "Tipo"
+    << setw(ESPACO_LISTAGEM) << "Custo"
+    << setw(ESPACO_PEQUENO) << "Tempo prod."
+    << setw(ESPACO_LISTAGEM) << "Tecnologia(s)" << endl;
+    for (it = escolhas.begin(); it != escolhas.end(); it++) {
+        counter++;
+        Prototipo* p = (*it);
+        cout.setf(ios::fixed);
+        cout << left
+        << setw(ESPACO_MUITO_PEQUENO) << counter
+        << setw(ESPACO_LISTAGEM) << p->getTipo()
+        << "$" << setw(ESPACO_LISTAGEM) << setprecision(CENTIMOS) << p->getCusto()
+        << setw(ESPACO_PEQUENO) << p->getHoras();
+        if (p->getTecnologias().size() == 1) {
+            cout << setw(ESPACO_LISTAGEM) << p->getTecnologias().front() << endl;
+        } else {
+            stringstream tecnologias;
+            tecnologias << p->getTecnologias().front() << " e mais " << p->getTecnologias().size() -1;
+            cout << setw(ESPACO_LISTAGEM) << tecnologias.str() << endl;
+        }
+    }
+    
+    unsigned int numero_escolha;
+    cout << perg << endl << PROMPT;
+    cin >> numero_escolha;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    while ( cin.fail() || numero_escolha > counter ) {
+        cout << "Escolha invalida. Selecione uma opcao de 0 a " << counter << "." << endl << PROMPT;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin >> numero_escolha;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    Prototipo* escolha;
+    if (numero_escolha == 0) {
+        escolha = NULL;
+    } else{
+        escolha = escolhas.at(numero_escolha-1);
+    }
+    return escolha;
+}
+
+
+
 void Menu::opcoes(Prototipo * proto){
     while (true) {
         // imprimir as informacoes do prototipo
@@ -1779,6 +1828,112 @@ void Menu::opcoes(Prototipo * proto){
     }
 }
 
+void Menu::pesquisaNosPrototipos(){
+    unsigned int superiorOuInferior;
+    unsigned int horas;
+    float custo;
+    string tecnologia;
+    vector<Prototipo*> resultados;
+    stringstream resultados_da_pesquisa;
+    stringstream sem_resultados;
+    
+    switch (escolhe(pesquisa_prototipos, "Escolha o criterio da pesquisa")) {
+        case 0: // cancelar
+            break;
+        case 1: // pesquisar por horas
+            superiorOuInferior = escolhe(superior_ou_inferior,"Escolha como quer pesquisar horas de producao");
+            if (superiorOuInferior == 0) {
+                break;
+            }
+            
+            if (superiorOuInferior == 1) { // superior a
+                horas = pergunta<unsigned int>("Quer pesquisar um prototipo com horas de producao superior a? (0 para cancelar)");
+                resultados = wsp->getCatalogo().pesquisaHoras(horas, "superior");
+                resultados_da_pesquisa << "Os seguintes prototipos possuem tempo de producao superior a " << horas << " horas. Escolha um.";
+                sem_resultados << "Nao foram encontrados prototipos com tempo de producao superior a " << horas << " horas." << endl;
+            } else if (superiorOuInferior == 2){ // inferior a
+                horas = pergunta<unsigned int>("Quer pesquisar um prototipo com horas de producao inferiores a? (0 para cancelar)");
+                resultados = wsp->getCatalogo().pesquisaHoras(horas, "inferior");
+                resultados_da_pesquisa << "Os seguintes prototipos possuem tempo de producao inferior a " << horas << " horas. Escolha um.";
+                sem_resultados << "Nao foram encontrados prototipos com tempo de producao inferior a " << horas << " horas." << endl;
+            }
+            
+            while (true) {
+                if (resultados.size() == 0) {
+                    cout << sem_resultados.str();
+                    pressEnter();
+                    break;
+                }
+                Prototipo* escolha = escolhe(resultados, resultados_da_pesquisa.str());
+                if (escolha == NULL) {
+                    break;
+                }
+                opcoes(escolha);
+                // utilizador termina de mexer no site e regressa aqui
+            }
+            break;
+        case 2: // pesquisar por custo
+            superiorOuInferior = escolhe(superior_ou_inferior,"Escolha como quer pesquisar custo de producao");
+            if (superiorOuInferior == 0) {
+                break;
+            }
+            
+            if (superiorOuInferior == 1) { // superior a
+                custo = pergunta<unsigned int>("Quer pesquisar um prototipo com custo de producao superior a? (0 para cancelar)");
+                resultados = wsp->getCatalogo().pesquisaCusto(custo, "superior");
+                cout << resultados.size() << endl;
+                resultados_da_pesquisa << "Os seguintes prototipos possuem custo de producao superior a $" << custo << ". Escolha um.";
+                sem_resultados << "Nao foram encontrados prototipos com custo de producao superior a $" << custo << "." << endl;
+            } else if (superiorOuInferior == 2){ // inferior a
+                custo = pergunta<unsigned int>("Quer pesquisar um prototipo com custo de producao inferiores a? (0 para cancelar)");
+                resultados = wsp->getCatalogo().pesquisaCusto(custo, "inferior");
+                resultados_da_pesquisa << "Os seguintes prototipos possuem tempo de producao inferior a $" << custo << ". Escolha um.";
+                sem_resultados << "Nao foram encontrados prototipos com custo de producao inferior a $" << custo << "." << endl;
+            }
+            cout << resultados.size() << endl;
+            
+            while (true) {
+                if (resultados.size() == 0) {
+                    cout << sem_resultados.str();
+                    pressEnter();
+                    break;
+                }
+                Prototipo* escolha = escolhe(resultados, resultados_da_pesquisa.str());
+                if (escolha == NULL) {
+                    break;
+                }
+                opcoes(escolha);
+                // utilizador termina de mexer no site e regressa aqui
+            }
+            break;
+            
+        case 3: // pesquisar por tecnologia
+            tecnologia = pergunta<string>("Que tecnologia quer pesquisar? (0 para cancelar)");
+            if (tecnologia == "0") {
+                break;
+            }
+            while (true) {
+                vector<Prototipo*> resultados = wsp->getCatalogo().pesquisaTecnologias(tecnologia);
+                if (resultados.size() == 0) {
+                    cout << "Nao foram encontrados resultados da pesquisa \"" << tecnologia << "\""<< endl;
+                    pressEnter();
+                    break;
+                }
+                resultados_da_pesquisa << "A pesquisa \"" << tecnologia << "\"" << " retornou os resultados acima. Escolha um prototipo";
+                Prototipo* escolha = escolhe(resultados, resultados_da_pesquisa.str());
+                if (escolha == NULL) {
+                    break;
+                }
+                opcoes(escolha);
+                // utilizador termina de mexer no site e regressa aqui
+            }
+            break;
+        default:
+            break;
+    }
+    
+}
+
 void Menu::consultaCatalogo(){
     while (true) {
         cout << TITULO_PROTOTIPOS << endl;
@@ -1789,6 +1944,11 @@ void Menu::consultaCatalogo(){
                 break;
             case 1: // listar
             {
+                if (wsp->getCatalogo().getPrototipos().isEmpty()) {
+                    cout << "Ainda nao existem prototipos no catalogo!" << endl;
+                    pressEnter();
+                    break;
+                }
                 Prototipo* escolha = escolhe(wsp->getCatalogo().getPrototipos(), "Escolha um prototipo (0 para cancelar)");
                 if (escolha == NULL )
                     break;
@@ -1822,7 +1982,12 @@ void Menu::consultaCatalogo(){
                 
                 break;
             }
-            case 3: // adicionar proto
+            case 3: // pesquisas variadas
+            {
+                pesquisaNosPrototipos();
+                break;
+            }
+            case 4: // adicionar proto
             {
                 string tipo;
                 float custo;
@@ -2338,6 +2503,7 @@ Menu::Menu(){
     consulta_catalogo.push_back("Voltar ao menu anterior");
     consulta_catalogo.push_back("Listar catalogo");
     consulta_catalogo.push_back("Pesquisar um prototipo de website");
+    consulta_catalogo.push_back("Pesquisa avancada");
     consulta_catalogo.push_back("Adicionar um prototipo de website");
     
     opcoes_prototipo.push_back("Voltar ao menu anterior");
@@ -2346,6 +2512,11 @@ Menu::Menu(){
     opcoes_prototipo.push_back("Modificar tempo de desenvolvimento");
     opcoes_prototipo.push_back("Modificar tecnologias");
     opcoes_prototipo.push_back("Eliminar prototipo");
+    
+    pesquisa_prototipos.push_back("Cancelar");
+    pesquisa_prototipos.push_back("Horas");
+    pesquisa_prototipos.push_back("Custo");
+    pesquisa_prototipos.push_back("Tecnologia");
     
     consulta_exclientes.push_back("Voltar ao menu anterior");
     consulta_exclientes.push_back("Listar tabela de exclientes");
@@ -2363,7 +2534,6 @@ Menu::Menu(){
     consulta_tesouraria.push_back("Eliminar pedido de empresa");
     consulta_tesouraria.push_back("Eliminar pedido de particular");
     consulta_tesouraria.push_back("Adicionar um pedido");
-
 
     
     wsp = new GestorWSP();
