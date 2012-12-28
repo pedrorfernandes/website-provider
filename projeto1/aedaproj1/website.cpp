@@ -53,7 +53,7 @@ Utilizador* Website::getGestor() const{throw Erro("getGestor(): so acessivel a p
 void Website::setGestor(Utilizador* u){throw Erro("setGestor(): so acessivel a partir de SiteParticular");}
 
 // membros funcao para aceder aos dados da filha siteEmpresa
-const vector<string> Website::getTecnologias() const{throw Erro("getTecnologias(): so acessivel a partir de SiteEmpresa");}
+const vector<string> & Website::getTecnologias() const{throw Erro("getTecnologias(): so acessivel a partir de SiteEmpresa");}
 void Website::setTecnologias(const vector<string> &t){throw Erro("setTecnologias(): so acessivel a partir de SiteEmpresa");}
 const vector<Utilizador *> & Website::getGestores() const{throw Erro("getGestores(): so acessivel a partir de SiteEmpresa");}
 void Website::setGestores(const vector<Utilizador*> g){throw Erro("setGestores(): so acessivel a partir de SiteEmpresa");}
@@ -64,7 +64,7 @@ bool Website::retiraGestor(Utilizador* u){throw Erro("novoGestor(): so acessivel
 
 Website::Tipo Website::getTipo() const{throw Erro("getTipo(): nao acessivel por Website");}
 
-Website::Website(string i, unsigned int n, bool pedido): identificador(i), numeroPaginas(n), pedidoFinalizado(pedido){}
+Website::Website(string i, unsigned int n, bool pedido): numeroPaginas(n), identificador(i), pedidoFinalizado(pedido){}
 
 bool Website::getPedidoFinalizado() const{
     return pedidoFinalizado;

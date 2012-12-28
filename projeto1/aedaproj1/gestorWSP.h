@@ -46,9 +46,9 @@ class GestorWSP{
     vector<Website*> websites; /**< O vector de apontadores para todos os websites */
     vector<Utilizador*> gestores; /**< O vector de apontadores para todos os gestores */
     
-    Catalogo catalogo;
-    ExClientes exclientes;
-    Tesouraria tesouraria;
+    Catalogo catalogo; /**< O catalogo contem os prototipos de websites (em BST)*/
+    ExClientes exclientes; /**< A classe que contem os exclientes (em Hash-table)*/
+    Tesouraria tesouraria; /**< A tesouraria contem os pedidos de websites (em priority queues e queues)*/
     
     /**
      * Compara dois identificadores de websites
@@ -303,14 +303,33 @@ public:
      */
     bool numeroIdentidadeValido(unsigned int numero);
     
+    /**
+     * @return A referencia para o catalogo
+     */
     Catalogo & getCatalogo();
     
+    /**
+     * @return A referencia para os exclientes
+     */
     ExClientes & getExClientes();
     
+    /**
+     * Adiciona um novo website empresa ao vector de websites
+     * @param w Apontador para o website empresa que vai ser adicionado
+     * @return True se o website empresa foi adicionado, False se ja existir no vector de websites
+     */
     bool novoSite(SiteEmpresa* w);
-        
+    
+    /**
+     * Adiciona um novo website particular ao vector de websites
+     * @param w Apontador para o website particular que vai ser adicionado
+     * @return True se o website particular foi adicionado, False se ja existir no vector de websites
+     */
     bool novoSite(SiteParticular* w);
     
+    /**
+     * @return A referencia para a tesouraria
+     */
     Tesouraria & getTesouraria();
 
     

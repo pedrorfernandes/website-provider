@@ -44,7 +44,7 @@ ostream & operator<<(ostream &out, Website* site){
 }
 
 
-ostream & operator<<(ostream &out, Prototipo p){
+ostream & operator<<(ostream &out, Prototipo &p){
     out.setf(ios::fixed);
     out << p.tipo << FIM_DE_STRING_OUTPUT
     << setprecision(CENTIMOS) << p.custo << " "
@@ -306,7 +306,7 @@ bool Menu::leDados(){
             ficheiro >> custo;
             ficheiro >> horas;
             ficheiro >> numTecnologias;
-            unsigned int counter;
+            int counter;
             for (counter = 1; counter <= numTecnologias; counter++) {
                 ficheiro >> tecnologia;
                 ficheiro >> str;
@@ -1641,7 +1641,7 @@ void Menu::pesquisaNosWebsites(){
 Prototipo* Menu::escolhe(const BST<Prototipo*> & escolhas, const string & perg){
     //Prototipo notFound = Prototipo();
     BSTItrIn<Prototipo*> it(escolhas);
-    int counter = 0;
+    unsigned int counter = 0;
     vector<Prototipo*> vecEscolhas;
     cout << left
     << setw(ESPACO_MUITO_PEQUENO) << "Numero"
@@ -1693,7 +1693,7 @@ Prototipo* Menu::escolhe(const BST<Prototipo*> & escolhas, const string & perg){
 
 Prototipo* Menu::escolhe(const vector<Prototipo*> & escolhas, const string & perg){
     vector<Prototipo*>::const_iterator it;
-    int counter = 0;
+    unsigned int counter = 0;
     cout << left
     << setw(ESPACO_MUITO_PEQUENO) << "Numero"
     << setw(ESPACO_LISTAGEM) << "Tipo"

@@ -124,6 +124,11 @@ public:
      */
     friend vector<Utilizador*> operator-(const vector<Utilizador*> vec1, const vector<Utilizador*> vec2);
     
+    /**
+     * Retira um website do vector de websites responsaveis do gestor 
+     * @param w O website a ser eliminado
+     * @return True se o website existe e foi eliminado, False se nao existe no vector de websites responsaveis
+     */
     bool retiraWebsiteResponsavel(Website* w);
 
 };

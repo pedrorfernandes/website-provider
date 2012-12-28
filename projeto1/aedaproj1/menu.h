@@ -55,6 +55,13 @@
 
 using namespace std;
 
+
+/** @defgroup template Funcoes Template
+ * @{
+ *
+ * Functions for using the rtc interface
+ */
+
 /**
  * Funcao que faz uma pergunta e recebe o input do utilizador, devolvendo este mesmo.
  * @param perg A pergunta a ser lancada
@@ -76,7 +83,7 @@ template<> unsigned int pergunta(const string &perg);
 
 template<> bool pergunta(const string &perg);
 
-
+/** @} end of template */
 
 /**
  * O menu trata de todos os outputs do programa, cria um GestorWSP e gere todas as introducoes de dados no WSP
@@ -141,12 +148,14 @@ public:
     
     /**
      * Lista todas as opcoes disponiveis para a modificacao de informacoes de um website
+     * @param site O apontador para o website a ser acedido
      * @return Void
      */
     void opcoes(Website* site);
     
     /**
      * Lista todas as opcoes disponiveis para a modificacao de informacoes de um gestor
+     * @param gestor O apontador para o gestor a ser acedido
      * @return Void
      */
     void opcoes(Utilizador* gestor);
@@ -230,24 +239,72 @@ public:
      */
     inline void pressEnter();
     
+    /**
+     * Funcao para consultar as funcionalidades do catalogo de prototipos
+     * @return Void
+     */
     void consultaCatalogo();
     
+    /**
+     * Faz uma pergunta, lista uma BST de prototipos de websites e retorna o prototipo que foi escolhido pelo utilizador do programa
+     * @param escolhas A BST com os apontadores para os prototipos
+     * @param perg A pergunta a ser lancada
+     * @return O apontador para o prototipo escolhido (NULL caso o utilizador cancele)
+     */
     Prototipo* escolhe(const BST<Prototipo*> & escolhas, const string & perg);
     
+    /**
+     * Faz uma pergunta, lista um vector de prototipos de websites e retorna o prototipo que foi escolhido pelo utilizador do programa
+     * @param escolhas O vector com os apontadores para os prototipos
+     * @param perg A pergunta a ser lancada
+     * @return O apontador para o prototipo escolhido (NULL caso o utilizador cancele)
+     */
     Prototipo* escolhe(const vector<Prototipo*> & escolhas, const string & perg);
     
+    /**
+     * Lista todas as informacoes e as opcoes disponiveis para a modificacao de um prototipo de website
+     * @param proto O apontador para o website a ser acedido
+     * @return Void
+     */
     void opcoes(Prototipo* proto);
     
+    /**
+     * Funcao para consultar as funcionalidades da tabela de exclientes
+     * @return Void
+     */
     void consultaExClientes();
     
+    /**
+     * Faz uma pergunta, lista uma hashtable de exclientes e retorna o excliente que foi escolhido pelo utilizador do programa
+     * @param escolhas A hashtable com os exclientes
+     * @param perg A pergunta a ser lancada
+     * @return O apontador para o excliente escolhido (NULL caso o utilizador cancele)
+     */
     Utilizador* escolhe(const HashClientes & exclientes, const string & perg);
     
+    /**
+     * Lista todas as informacoes e as opcoes disponiveis para a modificacao de um excliente
+     * @param gestor O apontador para o excliente a ser acedido
+     * @return Void
+     */
     void opcoesExcliente(Utilizador* gestor);
     
+    /**
+     * Submenu para criar um novo excliente
+     * @return O apontador para o excliente criado
+     */
     Utilizador* criar_excliente();
 
+    /**
+     * Funcao para consultar as funcionalidades da tesouraria
+     * @return Void
+     */
     void consultaTesouraria();
     
+    /**
+     * Funcao para efetuar as pesquisas mais avancadas no catalogo de prototipos
+     * @return Void
+     */
     void pesquisaNosPrototipos();
 
     

@@ -125,6 +125,9 @@ public:
      */
     float getCusto() const;
     
+    /**
+     * @return Devolve o tipo de website (particular ou empresa)
+     */
     Website::Tipo getTipo() const;
 };
 

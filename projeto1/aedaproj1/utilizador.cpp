@@ -92,8 +92,6 @@ vector<Utilizador*> operator-(const vector<Utilizador*> vec1, const vector<Utili
 }
 
 bool Utilizador::retiraWebsiteResponsavel(Website* w){
-    //vector<Website*> & sites = (*gestor_it)->sitesResponsavel;
-    
     for (vector<Website*>::iterator site_it = sitesResponsavel.begin(); site_it != sitesResponsavel.end() ; site_it++) {
         if ( (*(*site_it)) == w ){
             site_it = sitesResponsavel.erase(site_it);

@@ -14,6 +14,7 @@
 
 
 #include <tr1/unordered_set>
+#include <algorithm>
 
 #include "utilizador.h"
 

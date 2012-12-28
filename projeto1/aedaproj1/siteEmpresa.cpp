@@ -33,7 +33,7 @@ SiteEmpresa::~SiteEmpresa(){ // e' necessario eliminar os sites dos gestores
     }
 }
 
-const vector<string> SiteEmpresa::getTecnologias() const{
+const vector<string> & SiteEmpresa::getTecnologias() const{
     return tecnologias;
 }
 

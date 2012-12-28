@@ -46,11 +46,11 @@ class Website{
 protected:
     unsigned int numeroPaginas; /**< O numero total de paginas do website */
     string identificador; /**< O identificador (URL) do website */
-    bool pedidoFinalizado;
+    bool pedidoFinalizado; /**< Estado do pedido do website (se o pedido ja foi concretizado ou nao) */
 public:
     enum Tipo {
         particular, empresa
-    };
+    }; /**< Enumeracao dos tipos de websites */
     /**
      * Construtor de um objeto Website
      * @param i O identificador do website
@@ -141,7 +141,7 @@ public:
      * Retorna o vector de tecnologias do website empresa
      * @return O vector de tecnologias (strings)
      */
-    virtual const vector<string> getTecnologias() const;
+    virtual const vector<string> & getTecnologias() const;
     
     /**
      * Modifica o vector de tecnologias do website empresa
@@ -209,12 +209,28 @@ public:
      */
     friend ostream & operator<<(ostream &out, Website* w);
 
+    /**
+     * @return Devolve o tipo de website (particular ou empresa)
+     */
     virtual Website::Tipo getTipo() const;
     
+    /**
+     * Construtor de um objeto Website. Necessario caso o pedido do website 
+     * @param i O identificador do website
+     * @param n O numero de paginas
+     * @param pedido O estado do pedido do website
+     */
     Website(string i, unsigned int n, bool pedido);
     
+    /**
+     * @return Retorna se true se o pedido do website foi finalizado, false caso contrario
+     */
     bool getPedidoFinalizado() const;
     
+    /**
+     * Modifica o estado do pedido do website
+     * @return Void
+     */
     void setPedidoFinalizado(bool status);
 };
 

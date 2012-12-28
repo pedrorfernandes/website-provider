@@ -220,7 +220,7 @@ int Catalogo::getNumPrototipos() const{
     return numPrototipos;
 }
 
-vector<Prototipo*> Catalogo::pesquisaHoras(int horas, string criterio){
+vector<Prototipo*> Catalogo::pesquisaHoras(unsigned int horas, string criterio){
     vector<Prototipo*> resultados;
     BSTItrIn<Prototipo*> it(prototipos);
     if (criterio == "superior") {

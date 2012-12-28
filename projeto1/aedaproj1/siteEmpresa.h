@@ -52,7 +52,7 @@ public:
      * Retorna o vector de tecnologias do website empresa
      * @return O vector de tecnologias (strings)
      */
-    const vector<string> getTecnologias() const;
+    const vector<string> & getTecnologias() const;
     
     /**
      * Modifica o vector de tecnologias do website empresa
@@ -121,6 +121,9 @@ public:
      */
     bool retiraGestor(Utilizador* u);
     
+    /**
+     * @return Devolve o tipo de website (particular ou empresa)
+     */
     Website::Tipo getTipo() const;
 
 };
