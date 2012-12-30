@@ -48,9 +48,12 @@ protected:
     string identificador; /**< O identificador (URL) do website */
     bool pedidoFinalizado; /**< Estado do pedido do website (se o pedido ja foi concretizado ou nao) */
 public:
+    /**
+     * Enumeracao dos tipos de websites
+     */
     enum Tipo {
         particular, empresa
-    }; /**< Enumeracao dos tipos de websites */
+    };
     /**
      * Construtor de um objeto Website
      * @param i O identificador do website

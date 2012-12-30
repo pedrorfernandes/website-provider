@@ -151,7 +151,7 @@ public:
      * Para alterar o nome de um excliente.
      * O excliente e' removido, modificado e reinserido na tabela de dispersao.
      * Atira excecao caso o excliente nao exista na tabela.
-     * @param numBI O novo numero de bilhete de identidade
+     * @param nome O novo numero de bilhete de identidade
      * @param u1 O apontador para o excliente a ser modificado
      * @return Void
      */
@@ -165,7 +165,7 @@ public:
     /**
      * Funcao para escrita de informacoes de uma tabela de exclientes
      * @param out Onde vao ser colocadas as informacoes da tabela
-     * @param u O catalogo que contem os prototipos
+     * @param ex O catalogo que contem os prototipos
      * @return Devolve out modificado
      */
     friend ostream & operator<<(ostream &out, ExClientes &ex);

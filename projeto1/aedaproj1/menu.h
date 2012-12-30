@@ -68,12 +68,14 @@ using namespace std;
  * @return O input do utilizador
  */
 template<class T> T pergunta(const string &perg);
+
 /**
  * Especializacao da a funcao pergunta() para strings. Nesta situacao, sera feito o getline do input do utilizador e devolvido este sob a forma de string
  * @param perg A pergunta a ser lancada
  * @return A string com o input do utilizador
  */
 template<> string pergunta(const string &perg);
+
 /**
  * Especializacao da a funcao pergunta() para unsigned ints. Nesta situacao, o numero sera gravado como int e sera feita a verificacao que e' positivo. Depois disto sera guardado como unsigned. Deste modo, sao evitados erros de overflow com o input
  * @param perg A pergunta a ser lancada
@@ -81,6 +83,11 @@ template<> string pergunta(const string &perg);
  */
 template<> unsigned int pergunta(const string &perg);
 
+/**
+ * Especializacao da a funcao pergunta() para bool. 
+ * @param perg A pergunta a ser lancada
+ * @return O input do utilizador, true ou false.
+ */
 template<> bool pergunta(const string &perg);
 
 /** @} end of template */
@@ -276,7 +283,7 @@ public:
     
     /**
      * Faz uma pergunta, lista uma hashtable de exclientes e retorna o excliente que foi escolhido pelo utilizador do programa
-     * @param escolhas A hashtable com os exclientes
+     * @param exclientes A hashtable com os exclientes
      * @param perg A pergunta a ser lancada
      * @return O apontador para o excliente escolhido (NULL caso o utilizador cancele)
      */

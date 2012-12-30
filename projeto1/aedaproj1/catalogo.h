@@ -128,7 +128,7 @@ public:
     /**
      * Funcao para escrita de informacoes de um prototipo
      * @param out Onde vao ser colocadas as informacoes do prototipo
-     * @param u O prototipo que contem as informacoes
+     * @param p O prototipo que contem as informacoes
      * @return Devolve out modificado
      */
     friend ostream & operator<<(ostream &out, Prototipo &p);
@@ -187,7 +187,7 @@ public:
      * Para modificar as tecnologias de um prototipo
      * É feita uma busca pelo prototipo, se for encontrado é removido, modificado e reinserido na BST novamente.
      * @param prototipo O prototipo a modificar (titulo)
-     * @param tecnologia A nova lista de tecnologias
+     * @param tecnologias A nova lista de tecnologias
      * @return Retorna true se o prototipo for modificado com sucesso, false caso nao exista no catalogo
      */
     bool alteraTecnologias(string prototipo, list<string> tecnologias);
@@ -223,7 +223,7 @@ public:
     /**
      * Funcao para escrita de informacoes de um catalogo
      * @param out Onde vao ser colocadas as informacoes do catalogo
-     * @param u O catalogo que contem os prototipos
+     * @param c O catalogo que contem os prototipos
      * @return Devolve out modificado
      */
     friend ostream & operator<<(ostream &out, Catalogo &c);
