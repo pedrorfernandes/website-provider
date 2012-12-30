@@ -151,15 +151,6 @@ bool Catalogo::alteraTecnologias(string prototipo, list<string> tecnologias){
     return false;
 }
 
-void Catalogo::imprimePrototipos() const{
-    BSTItrIn<Prototipo*> it(prototipos);
-    while (!it.isAtEnd()) {
-        cout << *(it.retrieve()) << endl;
-        it.advance();
-    }
-    return;
-}
-
 bool Catalogo::alteraTipo(string prototipo, string tipo){
     Prototipo p1(prototipo, 0, 0);
     BSTItrIn<Prototipo*> it(prototipos);
@@ -291,3 +282,13 @@ vector<Prototipo*> Catalogo::pesquisaTecnologias(string pesquisa){
     
     return resultados;
 }
+
+void Catalogo::imprimePrototipos() const{
+    BSTItrIn<Prototipo*> it(prototipos);
+    while (!it.isAtEnd()) {
+        cout << *(it.retrieve()) << endl;
+        it.advance();
+    }
+    return;
+}
+

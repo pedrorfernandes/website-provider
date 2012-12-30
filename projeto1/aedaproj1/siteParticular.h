@@ -29,7 +29,7 @@ using namespace std;
 class Utilizador;
 
 /**
- * Classe para lancar excecoes quando se tenta criar ou alterar o numero de paginas de um website particular para um valor superior ao limite definido
+ * Classe de excecoes para quando se tenta criar ou alterar o numero de paginas de um website particular para um valor superior ao limite definido
  */
 class LimiteDePaginasUltrapassado: public Erro{
 public:

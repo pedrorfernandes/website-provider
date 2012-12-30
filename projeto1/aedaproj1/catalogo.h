@@ -161,34 +161,130 @@ public:
     /**
      * Funcao para adicionar um prototipo 'a BST. Se o prototipo ja existe na BST, nada acontece.
      * @param p O prototipo a ser adicionado
+     * @return Void
      */
     void adicionar(Prototipo* p);
     
     /**
-     *
+     * Para modificar o custo de um prototipo.
+     * É feita uma busca pelo prototipo, se for encontrado é removido, modificado e reinserido na BST novamente.
+     * @param prototipo O tipo do prototipo a modificar (titulo)
+     * @param custo O novo custo
+     * @return Retorna true se o prototipo for modificado com sucesso, false caso nao exista no catalogo
      */
     bool alteraCusto(string prototipo, float custo);
+    
+    /**
+     * Para modificar as horas de producao de um prototipo
+     * É feita uma busca pelo prototipo, se for encontrado é removido, modificado e reinserido na BST novamente.
+     * @param prototipo O prototipo a modificar (titulo)
+     * @param horas As novas horas de producao
+     * @return Retorna true se o prototipo for modificado com sucesso, false caso nao exista no catalogo
+     */
     bool alteraHoras(string prototipo, unsigned int horas);
+    
+    /**
+     * Para modificar as tecnologias de um prototipo
+     * É feita uma busca pelo prototipo, se for encontrado é removido, modificado e reinserido na BST novamente.
+     * @param prototipo O prototipo a modificar (titulo)
+     * @param tecnologia A nova lista de tecnologias
+     * @return Retorna true se o prototipo for modificado com sucesso, false caso nao exista no catalogo
+     */
     bool alteraTecnologias(string prototipo, list<string> tecnologias);
+    
+    /**
+     * Para modificar o tipo de um prototipo (alterar o titulo).
+     * É feita uma busca pelo prototipo, se for encontrado é removido, modificado e reinserido na BST novamente.
+     * @param prototipo O prototipo a modificar o tipo
+     * @param tipo O novo tipo do prototipo (titulo)
+     * @return Retorna true se o prototipo for modificado com sucesso, false caso nao exista no catalogo
+     */
     bool alteraTipo(string prototipo, string tipo);
+    
+    /**
+     * Para eliminar um prototipo da BST
+     * @param prototipo O tipo de prototipo a ser eliminado (titulo)
+     * @return True se o prototipo foi encontrado e eliminado com sucesso, false caso contrario
+     */
     bool elimina(string prototipo);
+    
+    /**
+     * Procura na BST o tipo de prototipo especificado e retorna o.
+     * @param prototipo O tipo de prototipo a consultar
+     * @return O apontador para o prototipo indicado. Retorna NULL caso nao seja encontrado
+     */
     Prototipo* consulta(const string prototipo) const;
+    
+    /**
+     * @return O numero de prototipos diferentes existentes na BST
+     */
     int getNumPrototipos() const;
+    
+    /**
+     * Funcao para escrita de informacoes de um catalogo
+     * @param out Onde vao ser colocadas as informacoes do catalogo
+     * @param u O catalogo que contem os prototipos
+     * @return Devolve out modificado
+     */
     friend ostream & operator<<(ostream &out, Catalogo &c);
-    void imprimePrototipos() const;
+    
+    /**
+     * Pesquisa prototipos com certo numero de horas, segundo o criterio.
+     * Todos os resultados da pesquisa sao retornados sob a forma de um vector.
+     * @param horas O numero de horas a pesquisar
+     * @param criterio O criterio pode ser "superior" para pesquisar uma quantidade de horas superior ao argumento anterior. Tambem pode ser "inferior"
+     * @return Um vector com os apontadores para os prototipos resultantes da pesquisa
+     */
     vector<Prototipo*> pesquisaHoras(unsigned int horas, string criterio);
+    
+    /**
+     * Pesquisa prototipos com certo custo, segundo o criterio.
+     * Todos os resultados da pesquisa sao retornados sob a forma de um vector.
+     * @param custo O custo a pesquisar
+     * @param criterio O criterio pode ser "superior" para pesquisar um custo superior ao argumento anterior. Tambem pode ser "inferior"
+     * @return Um vector com os apontadores para os prototipos resultantes da pesquisa
+     */
     vector<Prototipo*> pesquisaCusto(float custo, string criterio);
+    
+    /**
+     * Pesquisa todas as tecnologias utilizadas pelos prototipos. Se um prototipo utiliza uma tecnologia que contem a palavra da pesquisa, entao e' considerado um resultado.
+     * Todos os resultados da pesquisa sao retornados sob a forma de um vector.
+     * @param pesquisa A palavra da tecnologia a pesquisar
+     * @return Um vector com os apontadores para os prototipos resultantes da pesquisa
+     */
     vector<Prototipo*> pesquisaTecnologias(string pesquisa);
+    
+    /**
+     * Funcao para imprimir um catalogo de prototipos
+     */
+    void imprimePrototipos() const;
+
 
 };
 
-class PrototipoNaoExistente{
+/**
+ * Uma excecao para lancar caso o utilizador queira consultar um prototipo que nao existe. Como o catalogo esta ordenado alfabeticamente, esta excecao guarda os prototipos existentes na BST anterior e posterior 'a pesquisa do utilizador
+ */
+class PrototipoNaoExistente: public Erro{
 private:
-    Prototipo* antes;
-    Prototipo* depois;
+    Prototipo* antes; /**< O prototipo anterior */
+    Prototipo* depois; /**< O prototipo posterior */
 public:
-    PrototipoNaoExistente(Prototipo* a, Prototipo* d): antes(a), depois(d){}
+    /**
+     * Construtor para uma excecao Prototipo Nao Existente
+     * @param a Prototipo anterior
+     * @param d Prototipo posterior
+     */
+    PrototipoNaoExistente(Prototipo* a, Prototipo* d): Erro("Prototipo nao existente"), antes(a), depois(d){}
+    
+    /**
+     * @return O apontador para o prototipo anterior
+     */
     Prototipo* getAntes() {return antes;}
+    
+    /**
+     * @return O apontador para o prototipo posterior
+     */
     Prototipo* getDepois() {return depois;}
 
 };
