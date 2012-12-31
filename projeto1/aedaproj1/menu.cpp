@@ -1971,7 +1971,7 @@ void Menu::consultaCatalogo(){
                     if ( e.getDepois() != NULL ){
                         outrosResultados.insert(e.getDepois() );
                     }
-                    Prototipo* escolha = escolhe(outrosResultados, "");
+                    Prototipo* escolha = escolhe(outrosResultados, "Pretendia encontrar alguma das escolhas acima? (selecione 0 para cancelar)");
                     if (escolha == NULL) {
                         break;
                     }
