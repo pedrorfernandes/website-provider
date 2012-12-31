@@ -2206,7 +2206,7 @@ void Menu::consultaExClientes(){
             case 2: // pesquisar um excliente
             {
                 string pesquisa = pergunta<string>("Que nome pretende pesquisar?");
-                Utilizador* escolha = escolhe(wsp->getExClientes().pesquisaExClientes(pesquisa), "Foram encontrados os seuintes resultados.\n Escolha um ex-cliente (0 para cancelar)");
+                Utilizador* escolha = escolhe(wsp->getExClientes().pesquisaExClientes(pesquisa), "Foram encontrados os seguintes resultados.\nEscolha um ex-cliente (0 para cancelar)");
                 if (escolha == NULL )
                     break;
                 opcoesExcliente(escolha);
